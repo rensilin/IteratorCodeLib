@@ -337,3 +337,84 @@ $$ </br>
 $$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ </br>
 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
 $$ M_i = M \div m_i \ , \forall \in $$
+
+## STL
+### 求合并,交集,并集，差集
+```cpp
+template<class _InIt1,class _InIt2,class _OutIt>
+inline_OutIt set_intersection(       //参数格式
+  _InIt1 _First1, _InIt1 _Last1,
+   _InIt2 _First2, _InIt2 _Last2, 
+  _OutIt _Dest)
+//传进去的两个容器必须是有序的
+
+merge()        //合并
+set_intersection()        //交集        A∩B
+set_union()                 //并集         A∪B
+set_difference()           //差集          A-B
+set_symmetric_difference() //并集减去交集  (A-B)∪(B-A)=A∪B - A∩B
+
+用法:
+merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
+```
+
+### 二分查找
+```cpp
+lower_bound()     //第一个大于等于
+upper_bound()    //第一个大于
+用法: 
+lower_bound(a.begin(),a.end(),x); //返回一个迭代器
+lower_bound(a,a+n,x) //返回找到元素的指针
+```
+
+### 字符串操作
+```cpp
+strstr(a,b)//在a中找b
+```
+
+### 读入优化
+```cpp
+#include <cctype>
+
+template<class TN>
+inline void kread(TN &x)
+{
+    x=0;
+    char c;
+    while(!isdigit(c=getchar()));
+    do{
+        x=x*10+c-'0';
+    }while(isdigit(c=getchar()));
+}
+
+template<class TN,class... ARGS>
+inline void kread(TN &first,ARGS& ... args)
+{
+    kread(first);
+    kread(args...);
+}
+```
+
+## Java
+### a+b problem
+```java
+import java.util.Scanner;
+public class Main{
+    public static void main(String args[]){
+        Scanner cin = new Scanner(System.in);
+        int a, b;
+        while (cin.hasNext()){
+            a = cin.nextInt(); b = cin.nextInt();
+            System.out.println(a + b);
+        }
+    }
+}
+```
+
+### BigInteger
+#### 构造函数
+```java
+BigInteger(String val, int radix) 
+Translates the String representation of a BigInteger in the specified radix into a BigInteger.
+```
+#### 方法
