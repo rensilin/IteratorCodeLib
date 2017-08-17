@@ -1,19 +1,24 @@
-# 实用数据结构
-## 加权并查集
->解决集合问题中，集合内元素有关系并且关系具有传递性的问题。
+# Iterator Code Lib
 
->从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
+## 实用数据结构
 
-### 头文件&宏&全局变量
+### 加权并查集
+
+>解决集合问题中，集合内元素有关系并且关系具有传递性的问题。</br>
+从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
+
+#### 头文件&宏&全局变量
+
 ```c++
 #define MAXN 100000//最大点数
 int p[MAXN];//父节点
-int v[MAXN];//到父节点边的权值(加权解决集合中点的相互关系的问题) 
+int v[MAXN];//到父节点边的权值(加权解决集合中点的相互关系的问题)
 ```
 
-### 初始化
+#### 初始化
+
 ```c++
-void union_init(int minn,int maxn)//编号最小值到最大值 
+void union_init(int minn,int maxn)//编号最小值到最大值
 {
     for(int i=minn;i<=maxn;i++)
     {
@@ -23,7 +28,8 @@ void union_init(int minn,int maxn)//编号最小值到最大值
 }
 ```
 
-### 查找
+#### 查找
+
 >执行后p[a]为a所在集合的根节点,v[a]为a到其集合的根节点的权值
 
 ```c++
@@ -36,11 +42,12 @@ void union_find(int a)
 }
 ```
 
-### 合并
+#### 合并
+
 >合并a,b所在集合,vab为 a到b的权值
 
 ```c++
-void union_merge(int a,int b,int vab) 
+void union_merge(int a,int b,int vab)
 {
     union_find(a);
     union_find(b);
@@ -48,10 +55,13 @@ void union_merge(int a,int b,int vab)
     p[p[a]]=p[b];
 }
 ```
-## 树状数组
+
+### 树状数组
+
 >要求所有数的和不能超出范围,也可修改为记录最值
 
-### 精准覆盖
+#### 精准覆盖
+
 ```c++
 struct DLX {
     int n, m, si; //n行数m列数si目前有的节点数
@@ -140,7 +150,7 @@ struct DLX {
         resume(c);
         return 0;
     }
-    
+
     //ZOJ 3209
     //求最小解
     void danceLeast(int d) //选取了d行
@@ -170,10 +180,11 @@ struct DLX {
         }
         resume(c);
     }
-} dlx; 
+} dlx;
 ```
 
-### 重复覆盖
+#### 重复覆盖
+
 ```c++
 struct DLX {//成员变量，init(),link()同上
     void remove(int c) //列表中删掉c列
@@ -186,7 +197,7 @@ struct DLX {//成员变量，init(),link()同上
         for(int i = U[c];i != c;i = U[i])
              L[R[i]]=R[L[i]]=i;
     }
-    
+
     bool v[MNN];
     int f()
     {
@@ -254,3 +265,37 @@ struct DLX {//成员变量，init(),link()同上
 } dlx;
 ```
 
+## 数论
+
+### 扩展欧几里得
+
+#### 定义
+
+> 对于不完全为 0 的非负整数 a，b，gcd（a，b）表示 a，b 的最大公约数，必然存在整数对 x，y ，使得 gcd（a，b）=ax+by。
+
+#### 代码
+
+```c++
+int exgcd(int a,int b,int &x,int &y){
+    if (b==0){
+        x=1,y=0;
+        return a;
+    }
+    int q=exgcd(b,a%b,y,x);
+    y-=a/b*x;
+    return q;
+}
+```
+
+#### 求逆元
+
+>求a对b的逆元，即(a^(-1))mod b </br>
+int x,y;</br>
+exgcd(a,b,x,y);</br>
+x即为a对b的逆元
+
+### 中国剩余定理
+
+#### 定义&通式
+
+>
