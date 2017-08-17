@@ -315,4 +315,4 @@ $$ </br>
 设</br>
 $$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ </br>
 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
-$$ M_i = M \div m_i \ , \forall \in $$
+$$ M_i = M \div m_i \ , \forall i \in $$
