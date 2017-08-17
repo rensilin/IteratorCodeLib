@@ -298,4 +298,21 @@ x即为a对b的逆元
 
 #### 定义&通式
 
->
+>给出了以下的一元线性同余方程组：</br>
+$$
+\left ( S \right ) :
+\left\{
+\begin{matrix}
+x \equiv a_1 \left ( mod\ m_1 \right )\\
+x \equiv a_2 \left ( mod\ m_2 \right )\\
+\vdots \\
+x \equiv a_n \left ( mod\ m_n \right )
+\end{matrix}
+\right.
+$$ </br>
+有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
+中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：</br>
+设</br>
+$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ </br>
+是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
+$$ M_i = M \div m_i \ , \forall \in $$
