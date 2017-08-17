@@ -3,21 +3,37 @@
 <!-- vim-markdown-toc GFM -->
 
 * [实用数据结构](#实用数据结构)
-    - [加权并查集](#加权并查集)
-		* [头文件&宏&全局变量](#头文件宏全局变量)
-		* [初始化](#初始化)
-		* [查找](#查找)
-		* [合并](#合并)
-	* [树状数组](#树状数组)
-		* [精准覆盖](#精准覆盖)
-		* [重复覆盖](#重复覆盖)
+	- [加权并查集](#加权并查集)
+		+ [头文件&宏&全局变量](#头文件宏全局变量)
+		+ [初始化](#初始化)
+		+ [查找](#查找)
+		+ [合并](#合并)
+	- [树状数组](#树状数组)
+		+ [精准覆盖](#精准覆盖)
+		+ [重复覆盖](#重复覆盖)
+	- [splay](#splay)
+		+ [头文件&宏&全局变量&结构体](#头文件宏全局变量结构体)
+		+ [辅助函数](#辅助函数)
+		+ [初始化](#初始化-1)
+		+ [可使用函数](#可使用函数)
+		+ [使用方法](#使用方法)
 * [数论](#数论)
-	* [扩展欧几里得](#扩展欧几里得)
-		* [定义](#定义)
-		* [代码](#代码)
-		* [求逆元](#求逆元)
-	* [中国剩余定理](#中国剩余定理)
-		* [定义&通式](#定义通式)
+	- [扩展欧几里得](#扩展欧几里得)
+		+ [定义](#定义)
+		+ [代码](#代码)
+		+ [求逆元](#求逆元)
+	- [中国剩余定理](#中国剩余定理)
+		+ [定义&通式](#定义通式)
+* [STL](#stl)
+	- [求合并,交集,并集，差集](#求合并交集并集差集)
+	- [二分查找](#二分查找)
+	- [字符串操作](#字符串操作)
+	- [读入优化](#读入优化)
+* [Java](#java)
+	- [a+b problem](#ab-problem)
+	- [BigInteger](#biginteger)
+		+ [构造函数](#构造函数)
+		+ [方法](#方法)
 
 <!-- vim-markdown-toc -->
 
@@ -286,9 +302,261 @@ struct DLX {//成员变量，init(),link()同上
 } dlx;
 ```
 
+### splay
+
+#### 头文件&宏&全局变量&结构体
+
+```c++
+#define MAXN 600010//MAXN是插入操作数量
+
+struct node{
+    int num;
+    node* p;
+    node* son[2];
+    int lazy;
+    bool lazyr;
+    int size;
+    int maxnum;
+}tree[MAXN],*nil,*root;
+int top=0;
+//用于伪内存分配
+```
+
+#### 辅助函数
+
+```c++
+node* new_node()//伪内存分配
+{
+    return &tree[top++];
+}
+ 
+void push_down(node* nown)//下移懒惰标记
+{
+    if(nown->lazyr)
+    {
+        swap(nown->son[0],nown->son[1]);
+        for(int i=0;i<2;i++)nown->son[i]->lazyr=!nown->son[i]->lazyr;
+        nown->lazyr=false;
+    }
+    for(int i=0;i<2;i++)nown->son[i]->lazy+=nown->lazy;
+    nown->num+=nown->lazy;
+    nown->maxnum+=nown->lazy;
+    nown->lazy=0;
+}
+ 
+void push_up(node* nown)//上移计算
+{
+    node *left=nown->son[0],*right=nown->son[1];
+    nown->maxnum=nown->num;
+    if(left!=nil)
+    {
+        push_down(left);
+        nown->maxnum=max(left->maxnum,nown->maxnum);
+    }
+    if(right!=nil)
+    {
+        push_down(right);
+        nown->maxnum=max(right->maxnum,nown->maxnum);
+    }
+    nown->size=left->size+right->size+1;
+}
+ 
+void push_up_parents(node* nown)
+{
+    while(nown!=root)
+    {
+        nown=nown->p;
+        push_up(nown);
+    }
+}
+ 
+void plant(node *nown,node *p,int i)
+{
+    nown->p=p;
+    p->son[i]=nown;
+}
+ 
+void rotate(node *nown)//旋转操作
+{
+    node *p=nown->p;
+    if(p==root)root=nown;
+    else plant(nown,p->p,p==p->p->son[0]?0:1);
+    int i=(nown==p->son[0])?0:1;
+    plant(nown->son[i^1],p,i);
+    plant(p,nown,i^1);
+    push_up(p);
+    push_up(nown);
+}
+ 
+void splay(node *nown,node* &r)//splay操作，把nown伸展到根r
+{
+    while(nown!=r)
+    {
+        if(nown->p==r)rotate(nown);
+        else
+        {
+            int i=(nown->p==nown->p->p->son[0])?0:1;
+            int j=(nown==nown->p->son[0])?0:1;
+            if(i^j)rotate(nown);
+            else rotate(nown->p);
+            rotate(nown);
+        }
+    }
+}
+ 
+void insert(node *nown,int k)//把树nown插入到位置k
+{
+    if(root==nil)
+    {
+        root=nown;
+        return;
+    }
+    node* p=root;
+    while(1)
+    {
+        push_down(p);
+        int i=(k<=p->son[0]->size)?0:1;
+        if(p->son[i]==nil)
+        {
+            plant(nown,p,i);
+            break;
+        }
+        if(i)k-=p->son[0]->size+1;
+        p=p->son[i];
+    }
+    push_up_parents(nown);
+}
+ 
+node *node_find(int k)//返回第k个数的节点(不要单独使用)
+{
+    node *nown=root;
+    while(nown!=nil)
+    {
+        push_down(nown);
+        if(nown->son[0]->size==k)return nown;
+        else 
+        {
+            int i=(k<nown->son[0]->size)?0:1;
+            if(i)k-=nown->son[0]->size+1;
+            nown=nown->son[i];
+        }
+    }
+    return nil;
+}
+ 
+node *interval_find(int l,int r)//返回一棵splay树，包含区间[l,r]的节点
+{
+    if(l==0&&r==root->size-1)return root;
+    else if(l==0)
+    {
+        splay(node_find(r+1),root);
+        return root->son[0];
+    }
+    else if(r==root->size-1)
+    {
+        splay(node_find(l-1),root);
+        return root->son[1];
+    }
+    splay(node_find(l-1),root);
+    splay(node_find(r+1),root->son[1]);
+    return root->son[1]->son[0];
+}
+```
+
+#### 初始化
+
+```c++
+void init_tree()//初始化
+{
+    top=0;
+    nil=new_node();
+    nil->size=0;
+    root=nil;
+}
+```
+
+#### 可使用函数
+
+```c++
+void insert(int x,int k)//把x插入到位置k
+{
+    node *nown=new_node();
+    nown->num=x;
+    nown->size=1;
+    nown->lazy=0;
+    nown->lazyr=false;
+    nown->maxnum=x;
+    nown->son[0]=nown->son[1]=nil;
+    insert(nown,k);
+    splay(nown,root);
+}
+
+int tree_find(int k)//返回第k个数的值
+{
+    node *nown=node_find(k);
+    splay(nown,root);
+    return nown->num;
+}
+ 
+node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
+{
+    node *nown=interval_find(l,r);
+    if(nown==root)root=nil;
+    else
+    {
+        if(nown==nown->p->son[0])nown->p->son[0]=nil;
+        else nown->p->son[1]=nil;
+        push_up_parents(nown);
+    }
+    return nown;
+}
+ 
+void flip(int l,int r)//把区间[l,r]的数翻转
+{
+    node *nown=interval_find(l,r);
+    nown->lazyr=!nown->lazyr;
+}
+ 
+void add_num(int l,int r,int x)//把区间[l,r]的数都加x
+{
+    node *nown=interval_find(l,r);
+    nown->lazy+=x;
+    push_up_parents(nown);
+}
+ 
+void cut(int l,int r,int k)//把区间[l,r]的数裁剪下来，并放到剩下树的第k个位置
+{
+    node *nown=erase(l,r);
+    insert(nown,k);
+}
+ 
+int max_num(int l,int r)
+{
+    node *nown=interval_find(l,r);
+    push_down(nown);
+    return nown->maxnum;
+}
+```
+
+#### 使用方法
+
+```c++
+insert(x,k);//把x插入到第k个位置，建树只用循环插入就行了O(n)!
+erase(l,r);//删除区间[l,r],如果想删第k个数，只用erase(k,k);
+tree_find(k);//返回第k个数的值
+flip(l,r);//翻转区间[l,r]
+add_num(l,r,x);//把区间[l,r]都加上x
+/*若想要把区间都赋成某个值或者都乘上一个数，添加对应懒惰标记,修改push_down,insert函数并创建对应的修改函数*/
+max_num(l,r);//查找区间[l,r]最大值
+/*若想维护区间和或最小值等，添加对应成员变量,修改push_down,push_up,insert函数并创建对应的修改函数*/
+```
+
+<!--TODO:-->
+
 ## 数论
 
 ### 扩展欧几里得
+
 
 #### 定义
 
@@ -310,7 +578,7 @@ int exgcd(int a,int b,int &x,int &y){
 
 #### 求逆元
 
->求a对b的逆元，即(a^(-1))mod b </br>
+>求a对b的逆元，即(a^(-1))mod b</br>
 int x,y;</br>
 exgcd(a,b,x,y);</br>
 x即为a对b的逆元
@@ -394,3 +662,86 @@ int main()
     return 0;
 }
 ```
+
+## STL
+
+### 求合并,交集,并集，差集
+
+```cpp
+template<class _InIt1,class _InIt2,class _OutIt>
+inline_OutIt set_intersection(       //参数格式
+  _InIt1 _First1, _InIt1 _Last1,
+   _InIt2 _First2, _InIt2 _Last2, 
+  _OutIt _Dest)
+//传进去的两个容器必须是有序的
+
+merge()        //合并
+set_intersection()        //交集        A∩B
+set_union()                 //并集         A∪B
+set_difference()           //差集          A-B
+set_symmetric_difference() //并集减去交集  (A-B)∪(B-A)=A∪B - A∩B
+
+用法:
+merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
+```
+
+### 二分查找
+```cpp
+lower_bound()     //第一个大于等于
+upper_bound()    //第一个大于
+用法: 
+lower_bound(a.begin(),a.end(),x); //返回一个迭代器
+lower_bound(a,a+n,x) //返回找到元素的指针
+```
+
+### 字符串操作
+```cpp
+strstr(a,b)//在a中找b
+```
+
+### 读入优化
+```cpp
+#include <cctype>
+
+template<class TN>
+inline void kread(TN &x)
+{
+    x=0;
+    char c;
+    while(!isdigit(c=getchar()));
+    do{
+        x=x*10+c-'0';
+    }while(isdigit(c=getchar()));
+}
+
+template<class TN,class... ARGS>
+inline void kread(TN &first,ARGS& ... args)
+{
+    kread(first);
+    kread(args...);
+}
+```
+
+## Java
+### a+b problem
+```java
+import java.util.Scanner;
+public class Main{
+    public static void main(String args[]){
+        Scanner cin = new Scanner(System.in);
+        int a, b;
+        while (cin.hasNext()){
+            a = cin.nextInt(); b = cin.nextInt();
+            System.out.println(a + b);
+        }
+    }
+}
+```
+
+### BigInteger
+#### 构造函数
+```java
+BigInteger(String val, int radix) 
+Translates the String representation of a BigInteger in the specified radix into a BigInteger.
+```
+#### 方法
