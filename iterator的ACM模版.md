@@ -1,5 +1,26 @@
 # Iterator Code Lib
 
+<!-- vim-markdown-toc GFM -->
+
+* [实用数据结构](#实用数据结构)
+    - [加权并查集](#加权并查集)
+		* [头文件&宏&全局变量](#头文件宏全局变量)
+		* [初始化](#初始化)
+		* [查找](#查找)
+		* [合并](#合并)
+	* [树状数组](#树状数组)
+		* [精准覆盖](#精准覆盖)
+		* [重复覆盖](#重复覆盖)
+* [数论](#数论)
+	* [扩展欧几里得](#扩展欧几里得)
+		* [定义](#定义)
+		* [代码](#代码)
+		* [求逆元](#求逆元)
+	* [中国剩余定理](#中国剩余定理)
+		* [定义&通式](#定义通式)
+
+<!-- vim-markdown-toc -->
+
 ## 实用数据结构
 
 ### 加权并查集
@@ -309,10 +330,67 @@ x \equiv a_2 \left ( mod\ m_2 \right )\\
 x \equiv a_n \left ( mod\ m_n \right )
 \end{matrix}
 \right.
-$$ </br>
-有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
+$$ 有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：</br>
 设</br>
-$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ </br>
-是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
-$$ M_i = M \div m_i \ , \forall i \in $$
+$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
+$$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} $$ 是除了mi以外的n- 1个整数的乘积。</br>
+设$t_i=M_i^{-1}$为$M_i$模$m_i$的数论倒数($t_i$为$M_i$意义下的逆元) </br>
+$$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \} $$ 方程组$\left ( S \right )$的通解形式为</br>
+$$
+\begin{aligned}
+x &= a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n + kM \\
+&= kM + \sum_{i=1}^na_it_iM_i, \ k \in \mathbb{Z}
+\end{aligned}
+$$ 在模$M_i$的意义下，方程组$\left ( S \right )$只有一个解:</br>
+$$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M $$
+
+#### 代码
+
+```c++
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+ 
+using namespace std;
+ 
+void extend_Euclid(int a, int b, int &x, int &y)
+{
+    if(b==0){
+        x = 1;
+        y = 0;
+        return;
+    }
+    extend_Euclid(b, a%b, x, y);
+    int tmp = x;
+    x = y;
+    y = tmp-(a/b)*y;
+}
+
+int CRT(int *a, int *m, int n)
+{
+    int M = 1, ans = 0;
+    for(int i = 1; i <= n; i++) M*=m[i];
+    for(int i = 1; i <= n; i++){
+        int x, y;
+        int Mi = M/m[i];
+        extend_Euclid(Mi, m[i], x, y);
+        ans = (ans+Mi*x*a[i])%M;
+    }
+    if(ans < 0) ans+=M;
+    return ans;
+}
+ 
+int main()
+{
+    int a[5], m[5] = {0, 23, 28, 33}, d, kase = 0;
+    while(cin>>a[1]>>a[2]>>a[3]>>d)
+    {
+        if(a[1]==-1&&a[2]==-1&&a[3]==-1&&d==-1)break;
+        int ans = CRT(a, m, 3);
+        if(ans <= d) ans+=21252;
+        printf("Case %d: the next triple peak occurs in %d days.\n", ++kase, ans-d);
+    }
+    return 0;
+}
+```
