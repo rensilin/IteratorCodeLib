@@ -551,6 +551,56 @@ max_num(l,r);//查找区间[l,r]最大值
 /*若想维护区间和或最小值等，添加对应成员变量,修改push_down,push_up,insert函数并创建对应的修改函数*/
 ```
 
+### 矩阵快速幂
+#### 代码
+```cpp
+#define ll long long
+const ll MOD = 1000000007;
+struct Matrix{  
+    ll a[N][N];  
+    int r, c; 
+}ori, res;  
+
+void init(){  
+    memset(res.a, 0, sizeof(res.a));  
+    res.r = 1; res.c = 2;
+    res.a[1][1] = p;
+    res.a[1][2] = 2;
+    ori.r = 2; ori.c = 2;//构造矩阵
+    ori.a[1][1] = p;
+    ori.a[1][2] = 1;
+    ori.a[2][1] = -q;  
+    ori.a[2][2] = 0;  
+}
+
+Matrix multi(Matrix x, Matrix y)//矩阵乘法
+{
+    Matrix z;
+    memset(z.a, 0, sizeof(z.a));  
+    z.r = x.r, z.c = y.c;
+    for(int i = 1; i <= x.r; i++){
+        for(int k = 1; k <= x.c; k++)//加速优化
+        {
+            if(x.a[i][k] == 0) continue;
+            for(int j = 1; j<= y.c; j++)
+                z.a[i][j] = (z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD) % MOD;
+        }
+    }
+    return z;
+}
+
+void Matrix_pow(int n)//矩阵快速幂
+{  
+    while(n){  
+        if(n & 1)  
+            res = multi(res, ori);  
+        ori = multi(ori, ori);  
+        n >>= 1;  
+    }  
+    printf("%llu\n", res.a[1][1] % MOD);
+}  
+```
+
 <!--TODO:-->
 
 ## 数论
