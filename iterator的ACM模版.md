@@ -16,14 +16,18 @@
 		+ [初始化](#初始化-1)
 		+ [可使用函数](#可使用函数)
 		+ [使用方法](#使用方法)
+	- [矩阵快速幂](#矩阵快速幂)
+		+ [代码](#代码)
 * [数论](#数论)
 	- [扩展欧几里得](#扩展欧几里得)
 		+ [定义](#定义)
-		+ [代码](#代码)
+		+ [代码](#代码-1)
 		+ [求逆元](#求逆元)
 	- [中国剩余定理](#中国剩余定理)
 		+ [定义&通式](#定义通式)
-		+ [代码](#代码-1)
+		+ [代码](#代码-2)
+	- [miller-rabin素性判断](#miller-rabin素性判断)
+		+ [代码](#代码-3)
 * [STL](#stl)
 	- [求合并,交集,并集，差集](#求合并交集并集差集)
 	- [二分查找](#二分查找)
@@ -714,7 +718,9 @@ int main()
 ```
 
 ### miller-rabin素性判断
+
 #### 代码
+
 ```cpp
 const int TIMES = 10;//随机次数
 
@@ -800,6 +806,7 @@ merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 ```
 
 ### 二分查找
+
 ```cpp
 lower_bound()     //第一个大于等于
 upper_bound()    //第一个大于
@@ -809,11 +816,13 @@ lower_bound(a,a+n,x) //返回找到元素的指针
 ```
 
 ### 字符串操作
+
 ```cpp
 strstr(a,b)//在a中找b
 ```
 
 ### 读入优化
+
 ```cpp
 #include <cctype>
 
@@ -837,7 +846,9 @@ inline void kread(TN &first,ARGS& ... args)
 ```
 
 ## Java
+
 ### a+b problem
+
 ```java
 import java.util.Scanner;
 public class Main{
@@ -853,9 +864,12 @@ public class Main{
 ```
 
 ### BigInteger
+
 #### 构造函数
+
 ```java
 BigInteger(String val, int radix) 
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
 #### 方法
+
