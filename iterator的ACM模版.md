@@ -311,234 +311,234 @@ struct DLX {//成员变量，init(),link()同上
 #### 头文件&宏&全局变量&结构体
 
 ```c++
-#define MAXN 600010//MAXN是插入操作数量
+#define MAXN 600010//MAXN是插入操作数量
 
-struct node{
-    int num;
-    node* p;
-    node* son[2];
-    int lazy;
-    bool lazyr;
-    int size;
-    int maxnum;
+struct node{
+    int num;
+    node* p;
+    node* son[2];
+    int lazy;
+    bool lazyr;
+    int size;
+    int maxnum;
 }tree[MAXN],*nil,*root;
-int top=0;
+int top=0;
 //用于伪内存分配
 ```
 
 #### 辅助函数
 
 ```c++
-node* new_node()//伪内存分配
+node* new_node()//伪内存分配
 {
-    return &tree[top++];
+    return &tree[top++];
 }
- 
-void push_down(node* nown)//下移懒惰标记
+
+void push_down(node* nown)//下移懒惰标记
 {
-    if(nown->lazyr)
-    {
-        swap(nown->son[0],nown->son[1]);
-        for(int i=0;i<2;i++)nown->son[i]->lazyr=!nown->son[i]->lazyr;
-        nown->lazyr=false;
-    }
-    for(int i=0;i<2;i++)nown->son[i]->lazy+=nown->lazy;
-    nown->num+=nown->lazy;
-    nown->maxnum+=nown->lazy;
-    nown->lazy=0;
+    if(nown->lazyr)
+    {
+        swap(nown->son[0],nown->son[1]);
+        for(int i=0;i<2;i++)nown->son[i]->lazyr=!nown->son[i]->lazyr;
+        nown->lazyr=false;
+    }
+    for(int i=0;i<2;i++)nown->son[i]->lazy+=nown->lazy;
+    nown->num+=nown->lazy;
+    nown->maxnum+=nown->lazy;
+    nown->lazy=0;
 }
- 
-void push_up(node* nown)//上移计算
+
+void push_up(node* nown)//上移计算
 {
-    node *left=nown->son[0],*right=nown->son[1];
-    nown->maxnum=nown->num;
-    if(left!=nil)
-    {
-        push_down(left);
-        nown->maxnum=max(left->maxnum,nown->maxnum);
-    }
-    if(right!=nil)
-    {
-        push_down(right);
-        nown->maxnum=max(right->maxnum,nown->maxnum);
-    }
-    nown->size=left->size+right->size+1;
+    node *left=nown->son[0],*right=nown->son[1];
+    nown->maxnum=nown->num;
+    if(left!=nil)
+    {
+        push_down(left);
+        nown->maxnum=max(left->maxnum,nown->maxnum);
+    }
+    if(right!=nil)
+    {
+        push_down(right);
+        nown->maxnum=max(right->maxnum,nown->maxnum);
+    }
+    nown->size=left->size+right->size+1;
 }
- 
-void push_up_parents(node* nown)
+
+void push_up_parents(node* nown)
 {
-    while(nown!=root)
-    {
-        nown=nown->p;
-        push_up(nown);
-    }
+    while(nown!=root)
+    {
+        nown=nown->p;
+        push_up(nown);
+    }
 }
- 
-void plant(node *nown,node *p,int i)
+
+void plant(node *nown,node *p,int i)
 {
-    nown->p=p;
-    p->son[i]=nown;
+    nown->p=p;
+    p->son[i]=nown;
 }
- 
-void rotate(node *nown)//旋转操作
+
+void rotate(node *nown)//旋转操作
 {
-    node *p=nown->p;
-    if(p==root)root=nown;
-    else plant(nown,p->p,p==p->p->son[0]?0:1);
-    int i=(nown==p->son[0])?0:1;
-    plant(nown->son[i^1],p,i);
-    plant(p,nown,i^1);
-    push_up(p);
-    push_up(nown);
+    node *p=nown->p;
+    if(p==root)root=nown;
+    else plant(nown,p->p,p==p->p->son[0]?0:1);
+    int i=(nown==p->son[0])?0:1;
+    plant(nown->son[i^1],p,i);
+    plant(p,nown,i^1);
+    push_up(p);
+    push_up(nown);
 }
- 
-void splay(node *nown,node* &r)//splay操作，把nown伸展到根r
+
+void splay(node *nown,node* &r)//splay操作，把nown伸展到根r
 {
-    while(nown!=r)
-    {
-        if(nown->p==r)rotate(nown);
-        else
-        {
-            int i=(nown->p==nown->p->p->son[0])?0:1;
-            int j=(nown==nown->p->son[0])?0:1;
-            if(i^j)rotate(nown);
-            else rotate(nown->p);
-            rotate(nown);
-        }
-    }
+    while(nown!=r)
+    {
+        if(nown->p==r)rotate(nown);
+        else
+        {
+            int i=(nown->p==nown->p->p->son[0])?0:1;
+            int j=(nown==nown->p->son[0])?0:1;
+            if(i^j)rotate(nown);
+            else rotate(nown->p);
+            rotate(nown);
+        }
+    }
 }
- 
-void insert(node *nown,int k)//把树nown插入到位置k
+
+void insert(node *nown,int k)//把树nown插入到位置k
 {
-    if(root==nil)
-    {
-        root=nown;
-        return;
-    }
-    node* p=root;
-    while(1)
-    {
-        push_down(p);
-        int i=(k<=p->son[0]->size)?0:1;
-        if(p->son[i]==nil)
-        {
-            plant(nown,p,i);
-            break;
-        }
-        if(i)k-=p->son[0]->size+1;
-        p=p->son[i];
-    }
-    push_up_parents(nown);
+    if(root==nil)
+    {
+        root=nown;
+        return;
+    }
+    node* p=root;
+    while(1)
+    {
+        push_down(p);
+        int i=(k<=p->son[0]->size)?0:1;
+        if(p->son[i]==nil)
+        {
+            plant(nown,p,i);
+            break;
+        }
+        if(i)k-=p->son[0]->size+1;
+        p=p->son[i];
+    }
+    push_up_parents(nown);
 }
- 
-node *node_find(int k)//返回第k个数的节点(不要单独使用)
+
+node *node_find(int k)//返回第k个数的节点(不要单独使用)
 {
-    node *nown=root;
-    while(nown!=nil)
-    {
-        push_down(nown);
-        if(nown->son[0]->size==k)return nown;
-        else 
-        {
-            int i=(k<nown->son[0]->size)?0:1;
-            if(i)k-=nown->son[0]->size+1;
-            nown=nown->son[i];
-        }
-    }
-    return nil;
+    node *nown=root;
+    while(nown!=nil)
+    {
+        push_down(nown);
+        if(nown->son[0]->size==k)return nown;
+        else
+        {
+            int i=(k<nown->son[0]->size)?0:1;
+            if(i)k-=nown->son[0]->size+1;
+            nown=nown->son[i];
+        }
+    }
+    return nil;
 }
- 
-node *interval_find(int l,int r)//返回一棵splay树，包含区间[l,r]的节点
+
+node *interval_find(int l,int r)//返回一棵splay树，包含区间[l,r]的节点
 {
-    if(l==0&&r==root->size-1)return root;
-    else if(l==0)
-    {
-        splay(node_find(r+1),root);
-        return root->son[0];
-    }
-    else if(r==root->size-1)
-    {
-        splay(node_find(l-1),root);
-        return root->son[1];
-    }
-    splay(node_find(l-1),root);
-    splay(node_find(r+1),root->son[1]);
-    return root->son[1]->son[0];
+    if(l==0&&r==root->size-1)return root;
+    else if(l==0)
+    {
+        splay(node_find(r+1),root);
+        return root->son[0];
+    }
+    else if(r==root->size-1)
+    {
+        splay(node_find(l-1),root);
+        return root->son[1];
+    }
+    splay(node_find(l-1),root);
+    splay(node_find(r+1),root->son[1]);
+    return root->son[1]->son[0];
 }
 ```
 
 #### 初始化
 
 ```c++
-void init_tree()//初始化
+void init_tree()//初始化
 {
-    top=0;
-    nil=new_node();
-    nil->size=0;
-    root=nil;
+    top=0;
+    nil=new_node();
+    nil->size=0;
+    root=nil;
 }
 ```
 
 #### 可使用函数
 
 ```c++
-void insert(int x,int k)//把x插入到位置k
+void insert(int x,int k)//把x插入到位置k
 {
-    node *nown=new_node();
-    nown->num=x;
-    nown->size=1;
-    nown->lazy=0;
-    nown->lazyr=false;
-    nown->maxnum=x;
-    nown->son[0]=nown->son[1]=nil;
-    insert(nown,k);
-    splay(nown,root);
+    node *nown=new_node();
+    nown->num=x;
+    nown->size=1;
+    nown->lazy=0;
+    nown->lazyr=false;
+    nown->maxnum=x;
+    nown->son[0]=nown->son[1]=nil;
+    insert(nown,k);
+    splay(nown,root);
 }
 
-int tree_find(int k)//返回第k个数的值
+int tree_find(int k)//返回第k个数的值
 {
-    node *nown=node_find(k);
-    splay(nown,root);
-    return nown->num;
+    node *nown=node_find(k);
+    splay(nown,root);
+    return nown->num;
 }
- 
-node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
+
+node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
 {
-    node *nown=interval_find(l,r);
-    if(nown==root)root=nil;
-    else
-    {
-        if(nown==nown->p->son[0])nown->p->son[0]=nil;
-        else nown->p->son[1]=nil;
-        push_up_parents(nown);
-    }
-    return nown;
+    node *nown=interval_find(l,r);
+    if(nown==root)root=nil;
+    else
+    {
+        if(nown==nown->p->son[0])nown->p->son[0]=nil;
+        else nown->p->son[1]=nil;
+        push_up_parents(nown);
+    }
+    return nown;
 }
- 
-void flip(int l,int r)//把区间[l,r]的数翻转
+
+void flip(int l,int r)//把区间[l,r]的数翻转
 {
-    node *nown=interval_find(l,r);
-    nown->lazyr=!nown->lazyr;
+    node *nown=interval_find(l,r);
+    nown->lazyr=!nown->lazyr;
 }
- 
-void add_num(int l,int r,int x)//把区间[l,r]的数都加x
+
+void add_num(int l,int r,int x)//把区间[l,r]的数都加x
 {
-    node *nown=interval_find(l,r);
-    nown->lazy+=x;
-    push_up_parents(nown);
+    node *nown=interval_find(l,r);
+    nown->lazy+=x;
+    push_up_parents(nown);
 }
- 
-void cut(int l,int r,int k)//把区间[l,r]的数裁剪下来，并放到剩下树的第k个位置
+
+void cut(int l,int r,int k)//把区间[l,r]的数裁剪下来，并放到剩下树的第k个位置
 {
-    node *nown=erase(l,r);
-    insert(nown,k);
+    node *nown=erase(l,r);
+    insert(nown,k);
 }
- 
-int max_num(int l,int r)
+
+int max_num(int l,int r)
 {
-    node *nown=interval_find(l,r);
-    push_down(nown);
-    return nown->maxnum;
+    node *nown=interval_find(l,r);
+    push_down(nown);
+    return nown->maxnum;
 }
 ```
 
@@ -560,27 +560,27 @@ max_num(l,r);//查找区间[l,r]最大值
 ```cpp
 #define ll long long
 const ll MOD = 1000000007;
-struct Matrix{  
-    ll a[N][N];  
-    int r, c; 
-}ori, res;  
+struct Matrix{
+    ll a[N][N];
+    int r, c;
+}ori, res;
 
-void init(){  
-    memset(res.a, 0, sizeof(res.a));  
+void init(){
+    memset(res.a, 0, sizeof(res.a));
     res.r = 1; res.c = 2;
     res.a[1][1] = p;
     res.a[1][2] = 2;
     ori.r = 2; ori.c = 2;//构造矩阵
     ori.a[1][1] = p;
     ori.a[1][2] = 1;
-    ori.a[2][1] = -q;  
-    ori.a[2][2] = 0;  
+    ori.a[2][1] = -q;
+    ori.a[2][2] = 0;
 }
 
 Matrix multi(Matrix x, Matrix y)//矩阵乘法
 {
     Matrix z;
-    memset(z.a, 0, sizeof(z.a));  
+    memset(z.a, 0, sizeof(z.a));
     z.r = x.r, z.c = y.c;
     for(int i = 1; i <= x.r; i++){
         for(int k = 1; k <= x.c; k++)//加速优化
@@ -594,15 +594,15 @@ Matrix multi(Matrix x, Matrix y)//矩阵乘法
 }
 
 void Matrix_pow(int n)//矩阵快速幂
-{  
-    while(n){  
-        if(n & 1)  
-            res = multi(res, ori);  
-        ori = multi(ori, ori);  
-        n >>= 1;  
-    }  
+{
+    while(n){
+        if(n & 1)
+            res = multi(res, ori);
+        ori = multi(ori, ori);
+        n >>= 1;
+    }
     printf("%llu\n", res.a[1][1] % MOD);
-}  
+}
 ```
 
 <!--TODO:-->
@@ -673,9 +673,9 @@ $$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ 
 #include <iostream>
 #include <cstdio>
 #include <cstring>
- 
+
 using namespace std;
- 
+
 void extend_Euclid(int a, int b, int &x, int &y)
 {
     if(b==0){
@@ -702,7 +702,7 @@ int CRT(int *a, int *m, int n)
     if(ans < 0) ans+=M;
     return ans;
 }
- 
+
 int main()
 {
     int a[5], m[5] = {0, 23, 28, 33}, d, kase = 0;
@@ -745,7 +745,7 @@ ll quick_mul(ll a, ll b, ll mod){
 
 //快速幂a^b%mod
 ll quick_pow(ll a, ll n, ll mod){
-    ll ans = 1; 
+    ll ans = 1;
     while(n){
         if(n&1)ans = quick_mul(ans, a, mod);
         a = quick_mul(a, a, mod);
@@ -791,7 +791,7 @@ bool miller_rabin(ll n){
 template<class _InIt1,class _InIt2,class _OutIt>
 inline_OutIt set_intersection(       //参数格式
   _InIt1 _First1, _InIt1 _Last1,
-   _InIt2 _First2, _InIt2 _Last2, 
+   _InIt2 _First2, _InIt2 _Last2,
   _OutIt _Dest)
 //传进去的两个容器必须是有序的
 
@@ -810,7 +810,7 @@ merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 ```cpp
 lower_bound()     //第一个大于等于
 upper_bound()    //第一个大于
-用法: 
+用法:
 lower_bound(a.begin(),a.end(),x); //返回一个迭代器
 lower_bound(a,a+n,x) //返回找到元素的指针
 ```
@@ -824,24 +824,24 @@ strstr(a,b)//在a中找b
 ### 读入优化
 
 ```cpp
-#include <cctype>
+#include <cctype>
 
-template<class TN>
-inline void kread(TN &x)
+template<class TN>
+inline void kread(TN &x)
 {
-    x=0;
-    char c;
-    while(!isdigit(c=getchar()));
-    do{
-        x=x*10+c-'0';
-    }while(isdigit(c=getchar()));
+    x=0;
+    char c;
+    while(!isdigit(c=getchar()));
+    do{
+        x=x*10+c-'0';
+    }while(isdigit(c=getchar()));
 }
 
-template<class TN,class... ARGS>
-inline void kread(TN &first,ARGS& ... args)
+template<class TN,class... ARGS>
+inline void kread(TN &first,ARGS& ... args)
 {
-    kread(first);
-    kread(args...);
+    kread(first);
+    kread(args...);
 }
 ```
 
@@ -852,14 +852,14 @@ inline void kread(TN &first,ARGS& ... args)
 ```java
 import java.util.Scanner;
 public class Main{
-    public static void main(String args[]){
-        Scanner cin = new Scanner(System.in);
-        int a, b;
-        while (cin.hasNext()){
-            a = cin.nextInt(); b = cin.nextInt();
-            System.out.println(a + b);
-        }
-    }
+    public static void main(String args[]){
+        Scanner cin = new Scanner(System.in);
+        int a, b;
+        while (cin.hasNext()){
+            a = cin.nextInt(); b = cin.nextInt();
+            System.out.println(a + b);
+        }
+    }
 }
 ```
 
@@ -868,8 +868,9 @@ public class Main{
 #### 构造函数
 
 ```java
-BigInteger(String val, int radix) 
+BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
 #### 方法
+
 
