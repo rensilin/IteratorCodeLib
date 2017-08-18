@@ -16,8 +16,17 @@
 		+ [初始化](#初始化-1)
 		+ [可使用函数](#可使用函数)
 		+ [使用方法](#使用方法)
+	- [可持久化线段树](#可持久化线段树)
+		+ [全局变量](#全局变量)
+		+ [离散化](#离散化)
+		+ [线段树相关](#线段树相关)
+		+ [实例](#实例)
+		+ [用法](#用法)
+* [算法](#算法)
 	- [矩阵快速幂](#矩阵快速幂)
 		+ [代码](#代码)
+	- [生成树计数](#生成树计数)
+		+ [定理](#定理)
 * [数论](#数论)
 	- [扩展欧几里得](#扩展欧几里得)
 		+ [定义](#定义)
@@ -45,8 +54,8 @@
 
 ### 加权并查集
 
->解决集合问题中，集合内元素有关系并且关系具有传递性的问题。</br>
-从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
+>解决集合问题中，集合内元素有关系并且关系具有传递性的问题。
+>从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
 
 #### 头文件&宏&全局变量
 
@@ -554,10 +563,148 @@ add_num(l,r,x);//把区间[l,r]都加上x
 max_num(l,r);//查找区间[l,r]最大值
 /*若想维护区间和或最小值等，添加对应成员变量,修改push_down,push_up,insert函数并创建对应的修改函数*/
 ```
+### 可持久化线段树
+
+#### 全局变量
+
+```c++
+const int maxn = 1e5 + 10;
+const int M = maxn * 30;
+
+int n, q, m, tot;
+// tot:节点总个数
+int a[maxn], t[maxn];
+// a:原数组元素 t:将原数组元素按大小去重映射到t数组上
+int T[maxn], lson[M], rson[M], c[M];
+// T:树的根节点 lson:节点左孩子指针 rson:节点右孩子指针 c:树节点上的权值
+```
+
+#### 离散化
+
+```c++
+//将原数组a元素按大小去重映射到t数组上
+void init_hash() {
+	for (int i = 1; i <= n; i++)
+	t[i] = a[i];
+	sort(t + 1, t + n + 1);
+	m = unique(t + 1, t + n + 1) - t - 1;
+}
+
+//在t数组上二分查找x，返回位置
+int hash(int x) {
+	return lower_bound(t + 1, t + 1 + m, x) - t;
+}
+```
+
+#### 线段树相关
+
+```c++
+//建空树
+int build(int l, int r) {
+	int rt = tot++;
+	c[rt] = 0;
+	if (l != r) {
+		int mid = (l + r) >> 1;
+		lson[rt] = build(l, mid);
+		rson[rt] = build(mid + 1, r);
+	}
+	return rt;
+}
+
+//更新节点，建立新树
+int update(int rt, int pos, int val) {
+	int newrt = tot++, tmp = newrt;
+	c[newrt] = c[rt] + val;
+	int l = 1, r = m;
+	while (l < r) {
+		int mid = (l + r) >> 1;
+		if (pos <= mid) {
+			//若更新节点在左子树，则新建左子树的根节点，
+			//右子树的根节点利用已有的节点，同时新树与原树同时移向左子树
+			lson[newrt] = tot++;
+			rson[newrt] = rson[rt];
+			newrt = lson[newrt];
+			rt = lson[rt];
+			r = mid;
+		} else { //同理
+			rson[newrt] = tot++;
+			lson[newrt] = lson[rt];
+			newrt = rson[newrt];
+			rt = rson[rt];
+			l = mid + 1;
+		}
+		c[newrt] = c[rt] + val; //更新新建节点
+	}
+	return tmp; //返回新树的根节点
+}
+
+//询问[lrt,rrt]区间第k大
+int query(int lrt, int rrt, int k) {
+	int l = 1, r = m;
+	//二分查找t[i]，使得[lrt,rrt]中小于等于t[i]的数的个数为k个
+	//则t[i]为区间第k大
+	while (l < r) {
+		int mid = (l + r) >> 1;
+		if (c[lson[lrt]] - c[lson[rrt]] >= k) {
+			r = mid;
+			lrt = lson[lrt];
+			rrt = lson[rrt];
+		} else {
+			l = mid + 1;
+			k -= c[lson[lrt]] - c[lson[rrt]];
+			lrt = rson[lrt];
+			rrt = rson[rrt];
+		}
+	}
+	return l;
+}
+```
+
+#### 实例
+
+```c++
+//poj 2104
+int main(){
+	while (~scanf("%d%d", &n, &q)) {
+
+		for (int i = 1; i <= n; i++)
+			scanf("%d", a + i);
+		init_hash();
+		tot = 0;
+		T[n + 1] = build(1, m); //建空树
+
+		//向空树中插入原数组中的元素
+		for (int i = n; i; i--) {
+			int pos = hash(a[i]);
+			T[i] = update(T[i + 1], pos, 1);
+		}
+
+		//处理询问
+		while (q--) {
+			int l, r, k;
+			scanf("%d%d%d", &l, &r, &k);
+			printf("%d\n", t[query(T[l], T[r + 1], k)]);
+		}
+	}
+	return 0;
+}
+```
+
+#### 用法
+
+```c++
+int build(int l, int r)//在[l,r]上建立空树；返回空树的根
+int update(int rt, int pos, int val)//建立新树更新以rt为根节点的树上，pos节点，权值+val；返回新树的根
+int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
+```
+
+## 算法
 
 ### 矩阵快速幂
+
 #### 代码
-```cpp
+
+```c++
 #define ll long long
 const ll MOD = 1000000007;
 struct Matrix{
@@ -605,7 +752,35 @@ void Matrix_pow(int n)//矩阵快速幂
 }
 ```
 
-<!--TODO:-->
+### 生成树计数
+
+#### 定理
+
+>算法引入：
+>给定一个无向图G，求它生成树的个数t(G);
+>
+>算法思想：
+>(1)G的度数矩阵D[G]是一个n*n的矩阵,并且满足:当i≠j时,dij=0;当i=j时,dij等于vi的度数;
+>(2)G的邻接矩阵A[G]是一个n*n的矩阵,并且满足:如果vi,vj之间有边直接相连,则aij=1,否则为0;
+>定义图G的Kirchhoff矩阵C[G]为C[G]=D[G]-A[G];
+>Matrix-Tree定理:G的所有不同的生成树的个数等于其Kirchhoff矩阵C[G]任何一个n-1阶主子式的行列式的绝对值；
+>所谓n-1阶主子式,就是对于r(1≤r≤n),将C[G]的第r行,第r列同时去掉后得到的新矩阵,用Cr[G]表示;
+>
+>Kirchhoff矩阵的特殊性质：
+>(1)对于任何一个图G,它的Kirchhoff矩阵C的行列式总是0,这是因为C每行每列所有元素的和均为0;
+>(2)如果G是不连通的,则它的Kirchhoff矩阵C的任一个主子式的行列式均为0;
+>(3)如果G是一颗树,那么它的Kirchhoff矩阵C的任一个n-1阶主子式的行列式均为1;
+>
+>算法举例： sd:
+>SPOJ104(Highways)
+>
+>题目地址：
+>[http://www.spoj.com/problems/HIGH/](http://www.spoj.com/problems/HIGH/)
+>
+>题目大意：
+>一个有n座城市的组成国家,城市1至n编号,其中一些城市之间可以修建高速公路;
+>需要有选择的修建一些高速公路,从而组成一个交通网络;
+>计算有多少种方案,使得任意两座城市之间恰好只有一条路径;
 
 ## 数论
 
@@ -632,10 +807,10 @@ int exgcd(int a,int b,int &x,int &y){
 
 #### 求逆元
 
->求a对b的逆元，即(a^(-1))mod b</br>
-int x,y;</br>
-exgcd(a,b,x,y);</br>
-x即为a对b的逆元
+>求a对b的逆元，即(a^(-1))mod b
+>int x,y;
+>exgcd(a,b,x,y);
+>x即为a对b的逆元
 
 ### 中国剩余定理
 
@@ -721,7 +896,7 @@ int main()
 
 #### 代码
 
-```cpp
+```c++
 const int TIMES = 10;//随机次数
 
 //返回[0, n]之间的一个随机数
@@ -787,7 +962,7 @@ bool miller_rabin(ll n){
 
 ### 求合并,交集,并集，差集
 
-```cpp
+```c++
 template<class _InIt1,class _InIt2,class _OutIt>
 inline_OutIt set_intersection(       //参数格式
   _InIt1 _First1, _InIt1 _Last1,
@@ -807,7 +982,7 @@ merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 
 ### 二分查找
 
-```cpp
+```c++
 lower_bound()     //第一个大于等于
 upper_bound()    //第一个大于
 用法:
@@ -817,13 +992,13 @@ lower_bound(a,a+n,x) //返回找到元素的指针
 
 ### 字符串操作
 
-```cpp
+```c++
 strstr(a,b)//在a中找b
 ```
 
 ### 读入优化
 
-```cpp
+```c++
 #include <cctype>
 
 template<class TN>
@@ -872,5 +1047,6 @@ BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
 #### 方法
+
 
 
