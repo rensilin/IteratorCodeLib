@@ -1,8 +1,9 @@
 # Iterator Code Lib
 
+* <font size=5>**目录**</font>
 <!-- vim-markdown-toc GFM -->
 * [实用数据结构](#实用数据结构)
-    - [加权并查集](#加权并查集)
+	- [加权并查集](#加权并查集)
 		+ [头文件&宏&全局变量](#头文件宏全局变量)
 		+ [初始化](#初始化)
 		+ [查找](#查找)
@@ -42,8 +43,19 @@
 	- [中国剩余定理](#中国剩余定理)
 		+ [定义&通式](#定义通式)
 		+ [代码](#代码-3)
-	- [miller-rabin素性判断](#miller-rabin素性判断)
+	- [欧拉函数](#欧拉函数)
+		+ [定义&通式](#定义通式-1)
 		+ [代码](#代码-4)
+	- [素数筛法](#素数筛法)
+		+ [线形筛](#线形筛)
+		+ [复杂度 $O(n^{\frac{3}{4}})$](#复杂度-onfrac34)
+		+ [复杂度 $O(n^{\frac{2}{3}})$](#复杂度-onfrac23)
+	- [miller-rabin素性判断](#miller-rabin素性判断)
+		+ [代码](#代码-5)
+	- [莫比乌斯函数](#莫比乌斯函数)
+		+ [定义](#定义-1)
+		+ [莫比乌斯反演](#莫比乌斯反演)
+		+ [技巧](#技巧)
 * [STL](#stl)
 	- [求合并,交集,并集，差集](#求合并交集并集差集)
 	- [二分查找](#二分查找)
@@ -1086,7 +1098,7 @@ x \equiv a_2 \left ( mod\ m_2 \right )\\
 x \equiv a_n \left ( mod\ m_n \right )
 \end{matrix}
 \right.
-$$ 
+$$
 有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：</br>
 设</br>
@@ -1183,7 +1195,7 @@ int make()
             {
                 phi[k]=phi[i]*p[j];
 /*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样（m[i]==p[j]）只差一个p[j]，就可以保证∏(p[i]-1)/p[i]前面也一样了*/
-                break;    
+                break;
             }
             else
                 phi[k]=phi[i]*(p[j]-1);//积性函数性质，f(i*k)=f(i)*f(k)
@@ -1222,7 +1234,7 @@ int phi(int n)
 int top;
 int prime[MAXN];
 bool notPrime[MAXN];
- 
+
 void calcPrime()
 {
     for(int i=2;i<MAXN;i++)
@@ -1240,145 +1252,145 @@ void calcPrime()
 #### 复杂度 $O(n^{\frac{3}{4}})$
 
 ```c++
-#include <bits/stdc++.h>  
+#include <bits/stdc++.h>
 #define ll long long
 
-using namespace std;  
+using namespace std;
 
-ll f[340000],g[340000],n; 
+ll f[340000],g[340000],n;
 
-void init(){  
-    ll i,j,m;  
-    for(m=1;m*m<=n;++m)f[m]=n/m-1;  
-    for(i=1;i<=m;++i)g[i]=i-1;  
-    for(i=2;i<=m;++i){  
-        if(g[i]==g[i-1])continue;  
-        for(j=1;j<=min(m-1,n/i/i);++j){  
-            if(i*j<m)f[j]-=f[i*j]-g[i-1];  
-            else f[j]-=g[n/i/j]-g[i-1];  
-        }  
-        for(j=m;j>=i*i;--j)g[j]-=g[j/i]-g[i-1];  
-    }  
-}  
+void init(){
+    ll i,j,m;
+    for(m=1;m*m<=n;++m)f[m]=n/m-1;
+    for(i=1;i<=m;++i)g[i]=i-1;
+    for(i=2;i<=m;++i){
+        if(g[i]==g[i-1])continue;
+        for(j=1;j<=min(m-1,n/i/i);++j){
+            if(i*j<m)f[j]-=f[i*j]-g[i-1];
+            else f[j]-=g[n/i/j]-g[i-1];
+        }
+        for(j=m;j>=i*i;--j)g[j]-=g[j/i]-g[i-1];
+    }
+}
 
-int main(){  
-    while(scanf("%I64d",&n)!=EOF){  
-        init();  
-        cout<<f[1]<<endl;  
-    }  
-    return 0;  
+int main(){
+    while(scanf("%I64d",&n)!=EOF){
+        init();
+        cout<<f[1]<<endl;
+    }
+    return 0;
 }
 ```
 #### 复杂度 $O(n^{\frac{2}{3}})$
 
 ```c++
-#include<cstdio>  
-#include<cmath>  
-using namespace std;  
-#define LL long long  
+#include<cstdio>
+#include<cmath>
+using namespace std;
+#define LL long long
 
-const int N = 5e6 + 2;  
-bool np[N];  
-int prime[N], pi[N];  
+const int N = 5e6 + 2;
+bool np[N];
+int prime[N], pi[N];
 
-int getprime()  
-{  
-    int cnt = 0;  
-    np[0] = np[1] = true;  
-    pi[0] = pi[1] = 0;  
-    for(int i = 2; i < N; ++i)  
-    {  
-        if(!np[i]) prime[++cnt] = i;  
-        pi[i] = cnt;  
-        for(int j = 1; j <= cnt && i * prime[j] < N; ++j)  
-        {  
-            np[i * prime[j]] = true;  
-            if(i % prime[j] == 0)   break;  
-        }  
-    }  
-    return cnt;  
-}  
-
-const int M = 7;  
-const int PM = 2 * 3 * 5 * 7 * 11 * 13 * 17;  
-int phi[PM + 1][M + 1], sz[M + 1]; 
-
-void init()  
-{  
-    getprime();  
-    sz[0] = 1;  
-    for(int i = 0; i <= PM; ++i)  phi[i][0] = i;  
-    for(int i = 1; i <= M; ++i)  
-    {  
-        sz[i] = prime[i] * sz[i - 1];  
-        for(int j = 1; j <= PM; ++j) phi[j][i] = phi[j][i - 1] - phi[j / prime[i]][i - 1];  
-    }  
+int getprime()
+{
+    int cnt = 0;
+    np[0] = np[1] = true;
+    pi[0] = pi[1] = 0;
+    for(int i = 2; i < N; ++i)
+    {
+        if(!np[i]) prime[++cnt] = i;
+        pi[i] = cnt;
+        for(int j = 1; j <= cnt && i * prime[j] < N; ++j)
+        {
+            np[i * prime[j]] = true;
+            if(i % prime[j] == 0)   break;
+        }
+    }
+    return cnt;
 }
 
-int sqrt2(LL x)  
-{  
-    LL r = (LL)sqrt(x - 0.1);  
-    while(r * r <= x)   ++r;  
-    return int(r - 1);  
+const int M = 7;
+const int PM = 2 * 3 * 5 * 7 * 11 * 13 * 17;
+int phi[PM + 1][M + 1], sz[M + 1];
+
+void init()
+{
+    getprime();
+    sz[0] = 1;
+    for(int i = 0; i <= PM; ++i)  phi[i][0] = i;
+    for(int i = 1; i <= M; ++i)
+    {
+        sz[i] = prime[i] * sz[i - 1];
+        for(int j = 1; j <= PM; ++j) phi[j][i] = phi[j][i - 1] - phi[j / prime[i]][i - 1];
+    }
 }
 
-int sqrt3(LL x)  
-{  
-    LL r = (LL)cbrt(x - 0.1);  
-    while(r * r * r <= x)   ++r;  
-    return int(r - 1);  
+int sqrt2(LL x)
+{
+    LL r = (LL)sqrt(x - 0.1);
+    while(r * r <= x)   ++r;
+    return int(r - 1);
 }
 
-LL getphi(LL x, int s)  
-{  
-    if(s == 0)  return x;  
-    if(s <= M)  return phi[x % sz[s]][s] + (x / sz[s]) * phi[sz[s]][s];  
-    if(x <= prime[s]*prime[s])   return pi[x] - s + 1;  
-    if(x <= prime[s]*prime[s]*prime[s] && x < N)  
-    {  
-        int s2x = pi[sqrt2(x)];  
-        LL ans = pi[x] - (s2x + s - 2) * (s2x - s + 1) / 2;  
-        for(int i = s + 1; i <= s2x; ++i) ans += pi[x / prime[i]];  
-        return ans;  
-    }  
-    return getphi(x, s - 1) - getphi(x / prime[s], s - 1);  
+int sqrt3(LL x)
+{
+    LL r = (LL)cbrt(x - 0.1);
+    while(r * r * r <= x)   ++r;
+    return int(r - 1);
 }
 
-LL getpi(LL x)  
-{  
-    if(x < N)   return pi[x];  
-    LL ans = getphi(x, pi[sqrt3(x)]) + pi[sqrt3(x)] - 1;  
-    for(int i = pi[sqrt3(x)] + 1, ed = pi[sqrt2(x)]; i <= ed; ++i) ans -= getpi(x / prime[i]) - i + 1;  
-    return ans;  
+LL getphi(LL x, int s)
+{
+    if(s == 0)  return x;
+    if(s <= M)  return phi[x % sz[s]][s] + (x / sz[s]) * phi[sz[s]][s];
+    if(x <= prime[s]*prime[s])   return pi[x] - s + 1;
+    if(x <= prime[s]*prime[s]*prime[s] && x < N)
+    {
+        int s2x = pi[sqrt2(x)];
+        LL ans = pi[x] - (s2x + s - 2) * (s2x - s + 1) / 2;
+        for(int i = s + 1; i <= s2x; ++i) ans += pi[x / prime[i]];
+        return ans;
+    }
+    return getphi(x, s - 1) - getphi(x / prime[s], s - 1);
 }
 
-LL lehmer_pi(LL x)  
-{  
-    if(x < N)   return pi[x];  
-    int a = (int)lehmer_pi(sqrt2(sqrt2(x)));  
-    int b = (int)lehmer_pi(sqrt2(x));  
-    int c = (int)lehmer_pi(sqrt3(x));  
-    LL sum = getphi(x, a) +(LL)(b + a - 2) * (b - a + 1) / 2;  
-    for (int i = a + 1; i <= b; i++)  
-    {  
-        LL w = x / prime[i];  
-        sum -= lehmer_pi(w);  
-        if (i > c) continue;  
-        LL lim = lehmer_pi(sqrt2(w));  
-        for (int j = i; j <= lim; j++) sum -= lehmer_pi(w / prime[j]) - (j - 1);  
-    }  
-    return sum;  
+LL getpi(LL x)
+{
+    if(x < N)   return pi[x];
+    LL ans = getphi(x, pi[sqrt3(x)]) + pi[sqrt3(x)] - 1;
+    for(int i = pi[sqrt3(x)] + 1, ed = pi[sqrt2(x)]; i <= ed; ++i) ans -= getpi(x / prime[i]) - i + 1;
+    return ans;
 }
 
-int main()  
-{  
-    init();  
-    LL n;  
-    while(~scanf("%lld",&n))  
-    {  
-        printf("%lld\n",lehmer_pi(n));  
-    }  
-    return 0;  
+LL lehmer_pi(LL x)
+{
+    if(x < N)   return pi[x];
+    int a = (int)lehmer_pi(sqrt2(sqrt2(x)));
+    int b = (int)lehmer_pi(sqrt2(x));
+    int c = (int)lehmer_pi(sqrt3(x));
+    LL sum = getphi(x, a) +(LL)(b + a - 2) * (b - a + 1) / 2;
+    for (int i = a + 1; i <= b; i++)
+    {
+        LL w = x / prime[i];
+        sum -= lehmer_pi(w);
+        if (i > c) continue;
+        LL lim = lehmer_pi(sqrt2(w));
+        for (int j = i; j <= lim; j++) sum -= lehmer_pi(w / prime[j]) - (j - 1);
+    }
+    return sum;
+}
+
+int main()
+{
+    init();
+    LL n;
+    while(~scanf("%lld",&n))
+    {
+        printf("%lld\n",lehmer_pi(n));
+    }
+    return 0;
 }
 ```
 
@@ -1455,7 +1467,7 @@ bool miller_rabin(ll n){
 
 #### 莫比乌斯反演
 
-> $$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$ 
+> $$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$
 > $$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$
 >倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$
 
@@ -1599,17 +1611,17 @@ Translates the String representation of a BigInteger in the specified radix into
 #### 舍入方式
 
 >以下在roundingMode参数填入
->ROUND_CEILING向正无穷方向舍入 
+>ROUND_CEILING向正无穷方向舍入
 >ROUND_DOWN向零方向舍入
->ROUND_FLOOR向负无穷方向舍入 
->ROUND_HALF_DOWN 
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5 
+>ROUND_FLOOR向负无穷方向舍入
+>ROUND_HALF_DOWN
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5
 >
->ROUND_HALF_EVEN 
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN 
+>ROUND_HALF_EVEN
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN
 >
->ROUND_HALF_UP 
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6 
+>ROUND_HALF_UP
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6
 >
 >ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
@@ -1622,6 +1634,3 @@ Translates the String representation of a BigInteger in the specified radix into
 | BigDecimal | setScale(int newScale)                                  |
 | BigDecimal | setScale(int newScale, int roundingMode)                |
 
-
-
-#### 方法
