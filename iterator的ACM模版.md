@@ -663,6 +663,70 @@ int main()
 }
 ```
 
+### miller-rabin素性判断
+#### 代码
+```cpp
+const int TIMES = 10;//随机次数
+
+//返回[0, n]之间的一个随机数
+ll random0(ll n){
+    return ((double)rand() / RAND_MAX*n + 0.5);
+}
+
+//快速乘a*b%mod
+ll quick_mul(ll a, ll b, ll mod){
+    ll ans = 0;
+    while(b){
+        if(b&1){
+            b--;
+            ans = (ans+a)%mod;
+        }
+        b >>= 1;
+        a = (a+a) % mod;
+    }
+    return ans;
+}
+
+//快速幂a^b%mod
+ll quick_pow(ll a, ll n, ll mod){
+    ll ans = 1; 
+    while(n){
+        if(n&1)ans = quick_mul(ans, a, mod);
+        a = quick_mul(a, a, mod);
+        n >>= 1;
+    }
+    return ans;
+}
+
+bool witness(ll a, ll n){
+    ll tmp = n-1;
+    int i = 0;
+    while(tmp % 2 == 0){
+        tmp >>= 1;
+        i++;
+    }
+    ll x = quick_pow(a, tmp, n);
+    if(x == 1 || x == n-1)return true;
+    while(i--){
+        x = quick_mul(x, x, n);
+        if(x == n-1)return true;
+    }
+    return false;
+}
+
+bool miller_rabin(ll n){
+    if(n == 2)return true;
+    if(n < 2 || n % 2 == 0)return false;
+    for(int i  = 1; i <= TIMES; i++){
+        ll a = random0(n-2)+1;
+        if(!witness(a, n))
+              return false;
+    }
+    return true;
+}
+
+```
+
 ## STL
 
 ### 求合并,交集,并集，差集
