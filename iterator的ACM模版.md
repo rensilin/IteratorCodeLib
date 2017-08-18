@@ -28,6 +28,9 @@
 	- [生成树计数](#生成树计数)
 		+ [定理](#定理)
 		+ [代码](#代码-1)
+	- [次小生成树](#次小生成树)
+		+ [全局变量&结构体](#全局变量结构体)
+		+ [算法](#算法-1)
 * [数论](#数论)
 	- [扩展欧几里得](#扩展欧几里得)
 		+ [定义](#定义)
@@ -839,6 +842,93 @@ int main()
 		for(int i=0; i<n; ++i)
 			C[i][i]=degree[i];
 		printf("%lld\n",det(C,n));
+	}
+	return 0;
+}
+```
+
+### 次小生成树
+
+#### 全局变量&结构体
+
+```c++
+const int maxn = 1003;
+const double DIS_INF = 999999;
+
+int t, n, x[maxn], y[maxn], p[maxn], cas, book[maxn] = {0}, St[maxn], topSt, used[maxn][maxn] = {0};
+//cas:样例数   book:标记点是否在生成树内     St、topSt:储存已经在生成树内的点    used:标记生成树内部的边
+double dis[maxn][maxn], tot, maxDis[maxn][maxn], ans, low[maxn];
+//dis:权值    tot:生成树总权值  maxDis[i][j]:生成树上i-j路径上最大权
+
+struct Edge {
+	int f, t;
+	Edge(int _f = 0, int _t = 0) : f(_f), t(_t) {}
+	bool operator<(const Edge &Right) const {
+		return dis[f][t] > dis[Right.f][Right.t];
+	}
+};
+
+priority_queue<Edge> pq;
+```
+
+#### 算法
+
+```c++
+void Prim() {
+	book[0] = cas;
+	St[topSt++] = 0;
+	for (int i = 0; i < n; i++) {
+		low[i] = dis[0][i];
+		pq.push(Edge(0, i));
+	}
+	while (!pq.empty()) {
+		Edge Front = pq.top();
+		pq.pop();
+		int f = Front.f, t = Front.t;
+		if (book[t] == cas) continue;
+		book[t] = cas;
+		for (int i = 0; i < topSt; i++) {
+			int u = St[i];
+			maxDis[u][t] = maxDis[t][u] = max(dis[f][t], maxDis[u][f]); //dp求每一条路径上的最大边
+		}
+		St[topSt++] = t;
+		tot += dis[f][t];
+		used[f][t] = used[t][f] = cas;
+		for (int i = 0; i < n; i++) {
+			if (book[i] != cas && dis[t][i] < low[i]) {
+				low[i] = dis[t][i];
+				pq.push(Edge(t, i));
+			}
+		}
+	}
+}
+
+int main() {
+	scanf("%d", &t);
+	for (cas = 1; cas <= t; cas++) {
+		scanf("%d", &n);
+		topSt = 0;
+		tot = 0;
+		ans = -1;
+		for (int i = 0; i < n; i++) {
+			scanf("%d%d%d", x + i, y + i, p + i);
+			for (int j = 0; j <= i; j++) {
+				dis[i][j] = dis[j][i] = sqrt((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j]));
+			}
+		}
+		Prim();
+		for(int i=0; i<n; i++){
+			for(int j=0; j<i; j++){
+				double B;
+				if(used[i][j] == cas){
+					B = 1.0*(p[i]+p[j])/(tot - dis[i][j]);
+				}else{
+					B = 1.0*(p[i]+p[j])/(tot - maxDis[i][j]);
+				}
+				ans = max(B, ans);
+			}
+		}
+		printf("%.2f\n", ans);
 	}
 	return 0;
 }
