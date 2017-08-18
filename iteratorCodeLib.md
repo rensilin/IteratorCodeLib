@@ -54,6 +54,9 @@
 	- [BigInteger](#biginteger)
 		+ [构造函数](#构造函数)
 		+ [方法](#方法)
+	- [BigDecimal](#bigdecimal)
+		+ [舍入方式](#舍入方式)
+		+ [方法](#方法-1)
 
 <!-- vim-markdown-toc -->
 
@@ -781,7 +784,7 @@ void Matrix_pow(int n)//矩阵快速幂
 >SPOJ104(Highways)
 >
 >题目地址：
->[http://www.spoj.com/problems/HIGH/](http://www.spoj.com/problems/HIGH/)
+><http://www.spoj.com/problems/HIGH/>
 >
 >题目大意：
 >一个有n座城市的组成国家,城市1至n编号,其中一些城市之间可以修建高速公路;
@@ -1045,7 +1048,7 @@ int main() {
 
 #### 定义
 
->对于不完全为 0 的非负整数 a，b，gcd（a，b）表示 a，b 的最大公约数，必然存在整数对 x，y ，使得 gcd（a，b）=ax+by。
+>对于不完全为0的非负整数ab,gcd(a,b)表示a,b的最大公约数,必然存在整数对x,y,使得gcd(a,b)=ax+by。
 
 #### 代码
 
@@ -1083,7 +1086,8 @@ x \equiv a_2 \left ( mod\ m_2 \right )\\
 x \equiv a_n \left ( mod\ m_n \right )
 \end{matrix}
 \right.
-$$ 有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
+$$ 
+有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：</br>
 设</br>
 $$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
@@ -1558,5 +1562,66 @@ public class Main{
 BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
+#### 方法
+
+| 返回值            | 函数                                      | 简介                                                                                       |
+|:------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------|
+| BigInteger        | abs()                                     | Returns a BigInteger whose value is the absolute value of this BigInteger.                 |
+| BigInteger        | add(BigInteger val)                       | Returns a BigInteger whose value is (this + val).                                          |
+| BigInteger        | and(BigInteger val)                       | Returns a BigInteger whose value is (this & val).                                          |
+| BigInteger        | andNot(BigInteger val)                    | Returns a BigInteger whose value is (this & ~val).                                         |
+| int               | compareTo(BigInteger val)                 | Compares this BigInteger with the specified BigInteger.                                    |
+| BigInteger        | divide(BigInteger val)                    | Returns a BigInteger whose value is (this / val).                                          |
+| BigInteger[]      | divideAndRemainder(BigInteger val)        | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
+| double            | doubleValue()                             | Converts this BigInteger to a double.                                                      |
+| boolean           | equals(Object x)                          | Compares this BigInteger with the specified Object for equality.                           |
+| BigInteger        | gcd(BigInteger val)                       | Returns a BigInteger whose value is the greatest common divisor of abs(this) and abs(val). |
+| BigInteger        | max(BigInteger val)                       | Returns the maximum of this BigInteger and val.                                            |
+| BigInteger        | min(BigInteger val)                       | Returns the minimum of this BigInteger and val.                                            |
+| BigInteger        | mod(BigInteger m)                         | Returns a BigInteger whose value is (this mod m).                                          |
+| BigInteger        | modInverse(BigInteger m)                  | Returns a BigInteger whose value is (this ^ -1 mod m).                                     |
+| BigInteger        | modPow(BigInteger exponent, BigInteger m) | Returns a BigInteger whose value is (this ^ exponent mod m).                               |
+| BigInteger        | multiply(BigInteger val)                  | Returns a BigInteger whose value is (this * val).                                          |
+| BigInteger        | negate()                                  | Returns a BigInteger whose value is (-this).                                               |
+| BigInteger        | or(BigInteger val)                        | Returns a BigInteger whose value is (this &#124; val).                                     |
+| BigInteger        | pow(int exponent)                         | Returns a BigInteger whose value is (this ^ exponent).                                     |
+| BigInteger        | remainder(BigInteger val)                 | Returns a BigInteger whose value is (this % val).                                          |
+| BigInteger        | shiftLeft(int n)                          | Returns a BigInteger whose value is (this << n).                                           |
+| BigInteger        | shiftRight(int n)                         | Returns a BigInteger whose value is (this >> n).                                           |
+| BigInteger        | subtract(BigInteger val)                  | Returns a BigInteger whose value is (this - val).                                          |
+| String            | toString()                                | Returns the decimal String representation of this BigInteger.                              |
+| String            | toString(int radix)                       | Returns the String representation of this BigInteger in the given radix.                   |
+| static BigInteger | valueOf(long val)                         | Returns a BigInteger whose value is equal to that of the specified long.                   |
+| BigInteger        | xor(BigInteger val)                       | Returns a BigInteger whose value is (this ^ val).                                          |
+
+### BigDecimal
+
+#### 舍入方式
+
+>以下在roundingMode参数填入
+>ROUND_CEILING向正无穷方向舍入 
+>ROUND_DOWN向零方向舍入
+>ROUND_FLOOR向负无穷方向舍入 
+>ROUND_HALF_DOWN 
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5 
+>
+>ROUND_HALF_EVEN 
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN 
+>
+>ROUND_HALF_UP 
+>向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6 
+>
+>ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
+
+#### 方法
+
+| 返回值     | 函数                                                    |
+|:-----------|:--------------------------------------------------------|
+| BigDecimal | divide(BigDecimal divisor, int roundingMode)            |
+| BigDecimal | divide(BigDecimal divisor, int scale, int roundingMode) |
+| BigDecimal | setScale(int newScale)                                  |
+| BigDecimal | setScale(int newScale, int roundingMode)                |
+
+
 
 #### 方法
