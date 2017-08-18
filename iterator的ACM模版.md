@@ -27,16 +27,17 @@
 		+ [代码](#代码)
 	- [生成树计数](#生成树计数)
 		+ [定理](#定理)
+		+ [代码](#代码-1)
 * [数论](#数论)
 	- [扩展欧几里得](#扩展欧几里得)
 		+ [定义](#定义)
-		+ [代码](#代码-1)
+		+ [代码](#代码-2)
 		+ [求逆元](#求逆元)
 	- [中国剩余定理](#中国剩余定理)
 		+ [定义&通式](#定义通式)
-		+ [代码](#代码-2)
-	- [miller-rabin素性判断](#miller-rabin素性判断)
 		+ [代码](#代码-3)
+	- [miller-rabin素性判断](#miller-rabin素性判断)
+		+ [代码](#代码-4)
 * [STL](#stl)
 	- [求合并,交集,并集，差集](#求合并交集并集差集)
 	- [二分查找](#二分查找)
@@ -435,7 +436,6 @@ void insert(node *nown,int k)//把树nown插入到位置k
             break;
         }
         if(i)k-=p->son[0]->size+1;
-        p=p->son[i];
     }
     push_up_parents(nown);
 }
@@ -782,10 +782,71 @@ void Matrix_pow(int n)//矩阵快速幂
 >需要有选择的修建一些高速公路,从而组成一个交通网络;
 >计算有多少种方案,使得任意两座城市之间恰好只有一条路径;
 
+#### 代码
+
+```c++
+const int N=15;
+
+typedef long long LL;
+
+int degree[N];
+LL C[N][N];
+
+LL det(LL a[][N],int n)//生成树计数:Matrix-Tree定理
+{
+	LL ret=1;
+	for(int i=1; i<n; i++)
+	{
+		for(int j=i+1; j<n; j++)
+			while(a[j][i])
+			{
+				LL t=a[i][i]/a[j][i];
+				for(int k=i; k<n; k++)
+					a[i][k]=(a[i][k]-a[j][k]*t);
+				for(int k=i; k<n; k++)
+					swap(a[i][k],a[j][k]);
+				ret=-ret;
+			}
+		if(a[i][i]==0)
+			return 0;
+		ret=ret*a[i][i];
+	}
+	if(ret<0)
+		ret=-ret;
+	return ret;
+}
+
+int main()
+{
+	int tcase;
+	scanf("%d",&tcase);
+	while(tcase--)
+	{
+		memset(degree,0,sizeof(degree));
+		memset(C,0,sizeof(C));
+		int n,m;
+		scanf("%d%d",&n,&m);
+		int u,v;
+		while(m--)
+		{
+			scanf("%d%d",&u,&v);
+			u--;
+			v--;
+			C[u][v]=C[v][u]=-1;
+			degree[u]++;
+			degree[v]++;
+		}
+		for(int i=0; i<n; ++i)
+			C[i][i]=degree[i];
+		printf("%lld\n",det(C,n));
+	}
+	return 0;
+}
+```
+
 ## 数论
 
 ### 扩展欧几里得
-
 
 #### 定义
 
