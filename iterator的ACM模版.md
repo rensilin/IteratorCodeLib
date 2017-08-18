@@ -3,7 +3,7 @@
 <!-- vim-markdown-toc GFM -->
 
 * [实用数据结构](#实用数据结构)
-	- [加权并查集](#加权并查集)
+    - [加权并查集](#加权并查集)
 		+ [头文件&宏&全局变量](#头文件宏全局变量)
 		+ [初始化](#初始化)
 		+ [查找](#查找)
@@ -329,7 +329,7 @@ node* new_node()//伪内存分配
 {
     return &tree[top++];
 }
- 
+
 void push_down(node* nown)//下移懒惰标记
 {
     if(nown->lazyr)
@@ -343,7 +343,7 @@ void push_down(node* nown)//下移懒惰标记
     nown->maxnum+=nown->lazy;
     nown->lazy=0;
 }
- 
+
 void push_up(node* nown)//上移计算
 {
     node *left=nown->son[0],*right=nown->son[1];
@@ -360,7 +360,7 @@ void push_up(node* nown)//上移计算
     }
     nown->size=left->size+right->size+1;
 }
- 
+
 void push_up_parents(node* nown)
 {
     while(nown!=root)
@@ -369,13 +369,13 @@ void push_up_parents(node* nown)
         push_up(nown);
     }
 }
- 
+
 void plant(node *nown,node *p,int i)
 {
     nown->p=p;
     p->son[i]=nown;
 }
- 
+
 void rotate(node *nown)//旋转操作
 {
     node *p=nown->p;
@@ -387,7 +387,7 @@ void rotate(node *nown)//旋转操作
     push_up(p);
     push_up(nown);
 }
- 
+
 void splay(node *nown,node* &r)//splay操作，把nown伸展到根r
 {
     while(nown!=r)
@@ -403,7 +403,7 @@ void splay(node *nown,node* &r)//splay操作，把nown伸展到根r
         }
     }
 }
- 
+
 void insert(node *nown,int k)//把树nown插入到位置k
 {
     if(root==nil)
@@ -426,7 +426,7 @@ void insert(node *nown,int k)//把树nown插入到位置k
     }
     push_up_parents(nown);
 }
- 
+
 node *node_find(int k)//返回第k个数的节点(不要单独使用)
 {
     node *nown=root;
@@ -434,7 +434,7 @@ node *node_find(int k)//返回第k个数的节点(不要单独使用)
     {
         push_down(nown);
         if(nown->son[0]->size==k)return nown;
-        else 
+        else
         {
             int i=(k<nown->son[0]->size)?0:1;
             if(i)k-=nown->son[0]->size+1;
@@ -443,7 +443,7 @@ node *node_find(int k)//返回第k个数的节点(不要单独使用)
     }
     return nil;
 }
- 
+
 node *interval_find(int l,int r)//返回一棵splay树，包含区间[l,r]的节点
 {
     if(l==0&&r==root->size-1)return root;
@@ -497,7 +497,7 @@ int tree_find(int k)//返回第k个数的值
     splay(nown,root);
     return nown->num;
 }
- 
+
 node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
 {
     node *nown=interval_find(l,r);
@@ -510,26 +510,26 @@ node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
     }
     return nown;
 }
- 
+
 void flip(int l,int r)//把区间[l,r]的数翻转
 {
     node *nown=interval_find(l,r);
     nown->lazyr=!nown->lazyr;
 }
- 
+
 void add_num(int l,int r,int x)//把区间[l,r]的数都加x
 {
     node *nown=interval_find(l,r);
     nown->lazy+=x;
     push_up_parents(nown);
 }
- 
+
 void cut(int l,int r,int k)//把区间[l,r]的数裁剪下来，并放到剩下树的第k个位置
 {
     node *nown=erase(l,r);
     insert(nown,k);
 }
- 
+
 int max_num(int l,int r)
 {
     node *nown=interval_find(l,r);
@@ -556,7 +556,6 @@ max_num(l,r);//查找区间[l,r]最大值
 ## 数论
 
 ### 扩展欧几里得
-
 
 #### 定义
 
@@ -619,9 +618,9 @@ $$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ 
 #include <iostream>
 #include <cstdio>
 #include <cstring>
- 
+
 using namespace std;
- 
+
 void extend_Euclid(int a, int b, int &x, int &y)
 {
     if(b==0){
@@ -648,7 +647,7 @@ int CRT(int *a, int *m, int n)
     if(ans < 0) ans+=M;
     return ans;
 }
- 
+
 int main()
 {
     int a[5], m[5] = {0, 23, 28, 33}, d, kase = 0;
@@ -671,7 +670,7 @@ int main()
 template<class _InIt1,class _InIt2,class _OutIt>
 inline_OutIt set_intersection(       //参数格式
   _InIt1 _First1, _InIt1 _Last1,
-   _InIt2 _First2, _InIt2 _Last2, 
+   _InIt2 _First2, _InIt2 _Last2,
   _OutIt _Dest)
 //传进去的两个容器必须是有序的
 
@@ -686,20 +685,23 @@ merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 ```
 
 ### 二分查找
+
 ```cpp
 lower_bound()     //第一个大于等于
 upper_bound()    //第一个大于
-用法: 
+用法:
 lower_bound(a.begin(),a.end(),x); //返回一个迭代器
 lower_bound(a,a+n,x) //返回找到元素的指针
 ```
 
 ### 字符串操作
+
 ```cpp
 strstr(a,b)//在a中找b
 ```
 
 ### 读入优化
+
 ```cpp
 #include <cctype>
 
@@ -723,7 +725,9 @@ inline void kread(TN &first,ARGS& ... args)
 ```
 
 ## Java
+
 ### a+b problem
+
 ```java
 import java.util.Scanner;
 public class Main{
@@ -739,9 +743,12 @@ public class Main{
 ```
 
 ### BigInteger
+
 #### 构造函数
+
 ```java
-BigInteger(String val, int radix) 
+BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
+
 #### 方法
