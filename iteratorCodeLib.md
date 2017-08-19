@@ -645,6 +645,124 @@ int update(int rt, int pos, int val)//建立新树更新以rt为根节点的树�
 int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
 ```
 
+## AC自动机
+
+### 头文件&宏&全局变量
+
+```c++
+#include <queue>
+
+#define MAXN 666666
+#define MAXK 26//字符数量
+
+struct Node{
+	Node *son[MAXK];
+	Node *fail;
+	int num;//以此节点为末尾的模式串数量
+	bool flag;//去重用,可选
+}node[MAXN],*root,*top;
+queue<Node*>q;//建立自动机时使用
+```
+
+### 辅助函数
+
+```c++
+int mapToK(char c)//把字符隐射到0~MAXK-1
+{
+	return c-'a';
+}
+
+Node *newNode()
+{
+	memset(top->son,0,sizeof(top->son));
+	top->num=0;
+	return top++;
+}
+
+void initNode()//初始化节点分配
+{
+	top=node;
+	root=newNode();
+}
+
+```
+
+### 主要函数
+
+```c++
+void addPattern(char *s)//添加模式串
+{
+	Node *nown=root;
+	while(*s)
+	{
+		int k=mapToK(*s);
+		if(!nown->son[k])nown->son[k]=newNode();
+		nown=nown->son[k];
+		s++;
+	}
+	nown->num++;
+}
+
+void buildACAutoMaton()//计算fail
+{
+	root->fail=nullptr;
+	q.push(root);
+	while(!q.empty())
+	{
+		Node *nown=q.front();q.pop();
+		for(int i=0;i<MAXK;i++)
+		{
+			if(nown->son[i])
+			{
+				Node *p=nown->fail;
+				while(p&&!p->son[i])p=p->fail;
+				nown->son[i]->fail=p?p->son[i]:root;
+				q.push(nown->son[i]);
+			}
+		}
+	}
+}
+```
+
+### 可选参考函数
+
+```c++
+void initFlag()//初始化去重标记
+{
+	root->flag=false;
+	for(Node *i=root+1;i<top;i++)
+		i->flag=true;
+}
+
+int match(char *s)//返回匹配次数
+{
+	initFlag();
+	Node *nown=root;
+	int ans=0;
+	while(*s)
+	{
+		int k=mapToK(*s);
+		while(nown&&!nown->son[k])nown=nown->fail;
+		nown=nown?nown->son[k]:root;
+		for(Node *i=nown;i->flag;i=i->fail)
+		{
+			ans+=i->num;
+			i->flag=false;
+		}
+		s++;
+	}
+	return ans;
+}
+```
+
+### 用法
+
+```c++
+先initNode();初始化
+然后addPattern添加模式串
+最后buildACAutoMaton
+```
+
 # 2. 算法
 
 ## 2.1. 最大权匹配KM
