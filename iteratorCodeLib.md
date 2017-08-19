@@ -889,9 +889,98 @@ int update(int rt, int pos, int val)//建立新树更新以rt为根节点的树�
 int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
 ```
 
-## 1.7. AC自动机
+# 2. 字符串
 
-### 1.7.1. 头文件&宏&全局变量
+## 2.1. 最长回文Manacher
+
+### 2.1.1. 代码
+
+```c++
+const int MAXN = 111234;
+
+char orign[MAXN], str[2 * MAXN]; //字符串
+int radius[2 * MAXN];            //对称轴为i的最长回文半径
+
+//orign:初始字符串、str:插入间隔符的字符串（长度为orign的两倍加一）、raidus:对称轴为i的最长回文半径、mark:间隔符
+int Manacher(char *orign, char *str, int *radius, char mark) {
+    //------------插入间隔符------------
+    int len = strlen(orign);
+    for (int i = 0; i < len; i++) {
+        str[2 * i + 1] = orign[i];
+        str[2 * i] = mark;
+    }
+    str[2 * len] = mark;
+    str[2 * len + 1] = '\0';
+    len = 2 * len + 1;
+    //------------插入间隔符------------
+
+    int ans = 2; //答案至少为2，即至少为 #a# 形式
+    int max_right = 0, pos = 0;
+    // max_right表示当前已知所有回文串右端点最大值，pos表示该回文的对称轴
+    for (int i = 0; i < len; i++) {
+        if (i < max_right)
+            radius[i] = min(radius[2 * pos - i], max_right - i);
+        else
+            radius[i] = 1;
+        //判断边界、对应字符是否相等
+        while(i-radius[i] >= 0 && i+radius[i] < len && str[i-radius[i]] == str[i+radius[i]]){
+            radius[i]++;
+        }
+        ans = max(ans, radius[i]);
+        //更新max_right、pos
+        if (i + radius[i] - 1 > max_right) {
+            max_right = i + radius[i] - 1;
+            pos = i;
+        }
+    }
+    return ans - 1;
+}
+```
+
+## 2.2. KMP
+
+### 2.2.1. 宏&全局变量
+
+```c++
+#define MAXN 6666666
+
+int nextn[MAXN];
+```
+
+### 2.2.2. 核心代码
+
+```c++
+void initNext(const char *pattern)
+{
+	nextn[0]=-1;
+	int i=0,j=-1;
+	while(pattern[i])
+	{
+		while(j!=-1&&pattern[i]!=pattern[j])j=nextn[j];
+		i++;
+		j++;
+		nextn[i]=j;
+	}
+}
+
+int kmp(const char *s,const char *pattern,bool flag=true)
+{
+	if(flag)initNext(pattern);
+	int i=0,j=0,cnt=0;
+	while(s[i])
+	{
+		while(j!=-1&&s[i]!=pattern[j])j=nextn[j];
+		i++;
+		j++;
+		if(!pattern[j])cnt++;
+	} 
+	return cnt;
+}
+```
+
+## 2.3. AC自动机
+
+### 2.3.1. 头文件&宏&全局变量
 
 ```c++
 #include <queue>
@@ -908,7 +997,7 @@ struct Node{
 queue<Node*>q;//建立自动机时使用
 ```
 
-### 1.7.2. 辅助函数
+### 2.3.2. 辅助函数
 
 ```c++
 int mapToK(char c)//把字符隐射到0~MAXK-1
@@ -931,7 +1020,7 @@ void initNode()//初始化节点分配
 
 ```
 
-### 1.7.3. 主要函数
+### 2.3.3. 主要函数
 
 ```c++
 void addPattern(char *s)//添加模式串
@@ -968,7 +1057,7 @@ void buildACAutoMaton()//计算fail
 }
 ```
 
-### 1.7.4. 可选参考函数
+### 2.3.4. 可选参考函数
 
 ```c++
 void initFlag()//初始化去重标记
@@ -999,7 +1088,7 @@ int match(char *s)//返回匹配次数
 }
 ```
 
-### 1.7.5. 用法
+### 2.3.5. 用法
 
 ```c++
 //先initNode();初始化
@@ -1007,9 +1096,9 @@ int match(char *s)//返回匹配次数
 //最后buildACAutoMaton
 ```
 
-## 1.8. 后缀数组
+## 2.4. 后缀数组
 
-### 1.8.1. 宏&全局变量
+### 2.4.1. 宏&全局变量
 
 ```c++
 #define MAXN 666666//大于字符串长度二倍
@@ -1023,7 +1112,7 @@ int st[MAXN][30];//st表
 int LOG[MAXN];//log表
 ```
 
-### 1.8.2. 辅助函数
+### 2.4.2. 辅助函数
 
 ```c++
 void initHeight(char *s,int n)//计算height数组
@@ -1086,7 +1175,7 @@ bool rSort(int n,int &m,int w)
 }
 ```
 
-### 1.8.3. 主要函数
+### 2.4.3. 主要函数
 
 ```c++
 void initSA(char *s,int n)//初始化后缀数组
@@ -1123,7 +1212,7 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 }
 ```
 
-### 1.8.4. 用法
+### 2.4.4. 用法
 
 ```c++
 //调用initSA后height,SA,krank数组都计算好了
@@ -1131,11 +1220,11 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 //调用calcLCP计算LCP,不需要可以去掉LOG表和st表
 ```
 
-# 2. 算法
+# 3. 图论
 
-## 2.1. 最大权匹配KM
+## 3.1. 最大权匹配KM
 
-### 2.1.1. 头文件&宏&结构体&全局变量
+### 3.1.1. 头文件&宏&结构体&全局变量
 
 ```c++
 #include <vector>
@@ -1161,7 +1250,7 @@ bool R[MAXN];
 int ans;
 ```
 
-### 2.1.2. 初始化
+### 3.1.2. 初始化
 ```c++
 void init()
 {
@@ -1180,7 +1269,7 @@ void init()
 }
 ```
 
-### 2.1.3. 辅助函数
+### 3.1.3. 辅助函数
 
 ```c++
 bool dfs(int nown)
@@ -1202,7 +1291,7 @@ bool dfs(int nown)
 }
 ```
 
-### 2.1.4. 核心代码
+### 3.1.4. 核心代码
 
 ```c++
 int KM() //自己建图edge
@@ -1231,103 +1320,390 @@ int KM() //自己建图edge
 }
 ```
 
-## 2.2. KMP
+## 3.2. 全局最小割SW
 
-### 2.2.1. 宏&全局变量
+### 3.2.1. 头文件&宏&全局变量
 
 ```c++
-#define MAXN 6666666
+#include <algorithm>
+#include <ext/pb_ds/priority_queue.hpp>
 
-int nextn[MAXN];
+#define MAXN 3333
+#define MAXM 444444//最好是边数的两倍
+
+const long long INF=0x3f3f3f3f;
+
+int n,m;
+
+struct Edge{
+	long long v;
+	int to;
+	int next;
+	int re;
+}edge[MAXM];//边
+int head[MAXN],top;//邻接链表
+int dist[MAXN];
+
+typedef __gnu_pbds::priority_queue<pair<int,int>,less<pair<int,int>>,__gnu_pbds::pairing_heap_tag> Heap;
+Heap pq;
+Heap::point_iterator pqIterator[MAXN];
 ```
 
-### 2.2.2. 核心代码
+### 3.2.2. 建图
 
 ```c++
-void initNext(const char *pattern)
+void init()//初始化链表
 {
-	nextn[0]=-1;
-	int i=0,j=-1;
-	while(pattern[i])
+	top=0;
+	memset(head,-1,sizeof(head));
+}
+
+void addEdge(int a,int b,long long v)//a->b,容量为v的边
+{
+	if(v==0)return;
+	edge[top].v=v;
+	edge[top].to=b;
+	edge[top].re=top+1;
+	edge[top].next=head[a];
+	head[a]=top++;
+
+	edge[top].v=v;
+	edge[top].to=a;
+	edge[top].re=top-1;
+	edge[top].next=head[b];
+	head[b]=top++;
+}
+```
+
+### 3.2.3. 核心代码
+
+```c++
+int findST(int &s,int &t)//找到某一s点和t点间最小割
+{
+	for(int i=1;i<=n;i++)
 	{
-		while(j!=-1&&pattern[i]!=pattern[j])j=nextn[j];
-		i++;
-		j++;
-		nextn[i]=j;
+		if(head[i]!=-2)
+		{
+			dist[i]=0;
+			pqIterator[i]=pq.push(make_pair(dist[i],i));
+		}
+	}//初始化
+	while(pq.size()>1)
+	{
+		s=pq.top().second;pq.pop();
+		pqIterator[s]=pq.end();
+		for(int j=head[s];j!=-1;j=edge[j].next)
+			if(pqIterator[edge[j].to]!=pq.end())
+				pq.modify(pqIterator[edge[j].to],make_pair(dist[edge[j].to]+=edge[j].v,edge[j].to));
 	}
+	t=pq.top().second;pq.pop();
+	return dist[t];//dist[t]为s-t最小割
 }
 
-int kmp(const char *s,const char *pattern,bool flag=true)
+void merge(int s,int t)//合并s和t点
 {
-	if(flag)initNext(pattern);
-	int i=0,j=0,cnt=0;
-	while(s[i])
+	int i=head[t],next;
+	while(i!=-1)
 	{
-		while(j!=-1&&s[i]!=pattern[j])j=nextn[j];
-		i++;
-		j++;
-		if(!pattern[j])cnt++;
-	} 
-	return cnt;
+		next=edge[i].next;
+		edge[i].next=head[s];
+		head[s]=i;
+		edge[edge[i].re].to=s;
+		i=next;
+	}
+	head[t]=-2;//标记t被合并
+}
+
+int StoerWagner()
+{
+	int mincut=INF,s,t;
+	for(int i=1;i<n;i++)//最多合并n-1次
+	{
+		mincut=min(mincut,findST(s,t));
+		if(mincut==0)return 0;//达到下限
+		merge(s,t);
+	}
+	return mincut;
 }
 ```
 
-## 2.3. 矩阵快速幂
-
-### 2.3.1. 代码
+### 3.2.4. 用法
 
 ```c++
-#define ll long long
-
-const ll MOD = 1000000007;
-struct Matrix{
-    ll a[N][N];
-    int r, c;
-}ori, res;
-
-void init(){
-    memset(res.a, 0, sizeof(res.a));
-    res.r = 1; res.c = 2;
-    res.a[1][1] = p;
-    res.a[1][2] = 2;
-    ori.r = 2; ori.c = 2;//构造矩阵
-    ori.a[1][1] = p;
-    ori.a[1][2] = 1;
-    ori.a[2][1] = -q;
-    ori.a[2][2] = 0;
+int work()
+{
+	init();
+	int a,b;
+	long long v;
+	for(int i=0;i<m;i++)
+	{
+		kread(a,b,v);
+		addEdge(a,b,v);
+	}
+	return StoerWagner();
 }
 
-Matrix multi(Matrix x, Matrix y)//矩阵乘法
+int main()
 {
-    Matrix z;
-    memset(z.a, 0, sizeof(z.a));
-    z.r = x.r, z.c = y.c;
-    for(int i = 1; i <= x.r; i++){
-        for(int k = 1; k <= x.c; k++)//加速优化
-        {
-            if(x.a[i][k] == 0) continue;
-            for(int j = 1; j<= y.c; j++)
-                z.a[i][j] = (z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD) % MOD;
-        }
-    }
-    return z;
-}
-
-void Matrix_pow(int n)//矩阵快速幂
-{
-    while(n){
-        if(n & 1)
-            res = multi(res, ori);
-        ori = multi(ori, ori);
-        n >>= 1;
-    }
-    printf("%llu\n", res.a[1][1] % MOD);
+	while(~scanf("%d%d",&n,&m))printf("%d\n",work());
+	return 0;
 }
 ```
 
-## 2.4. 生成树计数
+## 3.3. 网络流Dinic
 
-### 2.4.1. 定理
+### 3.3.1. 头文件&全局变量&宏
+
+```c++
+#include <algorithm>
+#include <cstring>
+#include <queue>
+
+using namespace std;
+
+const int MAXN = 6666;
+const int MAXM=66666;
+const int INF = 0x3f3f3f3f;
+
+int S,T;
+int n;
+
+int head[MAXN*2],top;
+int cur[MAXN*2];
+int level[MAXN*2];
+queue<int>q;
+struct the_edge{
+	int next;
+	int to;
+	int v;
+	int re;
+}edge[MAXM];
+int va[MAXN];
+int vb[MAXN];
+int m;
+```
+
+### 3.3.2. 建图
+
+```c++
+void init_edge()
+{
+	memset(head,-1,sizeof(head));
+	top=0;
+}
+
+void add_edge(int a,int b,int v)
+{
+	edge[top].to=b;
+	edge[top].v=v;
+	edge[top].next=head[a];
+	head[a]=top++;
+
+	edge[top].to=a;
+	edge[top].v=0;
+	edge[top].next=head[b];
+	head[b]=top++;
+}
+```
+
+### 3.3.3. 辅助函数
+
+```c++
+bool bfs()
+{
+	memset(level,-1,sizeof(level));
+	level[S]=0;
+	q.push(S);
+	while(!q.empty())
+	{
+		int nown=q.front();q.pop();
+		for(int i=head[nown];i!=-1;i=edge[i].next)
+		{
+			if(!edge[i].v||level[edge[i].to]!=-1)continue;
+			level[edge[i].to]=level[nown]+1;
+			q.push(edge[i].to);
+		}
+	}
+	return level[T]!=-1;
+}
+
+int dfs(int nown,int maxf)
+{
+	if(nown==T)return maxf;
+	int nowf=0,flow;
+	for(int &i=cur[nown];i!=-1;i=edge[i].next)
+	{
+		if(!edge[i].v||level[edge[i].to]!=level[nown]+1)continue;
+		if((flow=dfs(edge[i].to,min(maxf-nowf,edge[i].v)))!=0)
+		{
+			nowf+=flow;
+			edge[i].v-=flow;
+			edge[i^1].v+=flow;
+			if(nowf==maxf)return maxf;
+		}
+	}
+	return nowf;
+}
+```
+
+### 3.3.4. 核心代码
+
+``` c++
+int dinic()
+{
+	int ans=0;
+	while(bfs())
+	{
+		memcpy(cur,head,sizeof(cur));
+		ans+=dfs(S,INF);
+	}
+	return ans;
+}
+```
+
+### 3.3.5. 用法
+
+```c++
+int main(){
+	freopen("./divide/divide5.in","r",stdin);
+	kread(n,m);
+	S=1;T=n;
+	init_edge();
+	for(int i=2;i<n;i++)kread(va[i]);
+	for(int i=2;i<n;i++)kread(vb[i]);
+	int x,y,a,b,c;
+	for(int i=0;i<m;i++)
+	{
+		kread(x,y,a,b,c);
+		add_edge(x,y,c);
+		add_edge(y,x,c);
+	}
+	printf("%d\n",-dinic());
+	return 0;
+}
+```
+
+## 3.4. 最小费用流
+
+### 3.4.1. 头文件&宏&全局变量
+
+```c++
+#include <queue>
+
+#define MAXN 2222
+#define MAXM MAXN*MAXN
+#define INF 0x3f3f3f3f 
+
+using namespace std;
+
+int S,T; //源点 汇点   
+struct Edge  
+{  
+	int from,to,flow,worth,next; //结点，流量，费用，链表   
+	Edge(){}  
+	Edge(int fr,int ro,int fl,int wo,int ne)  
+	{  
+		from=fr,to=ro,flow=fl,worth=wo,next=ne;  
+	}  
+}edge[MAXM];  
+int head[MAXN]; // 建立链表  
+int top;  //边数
+bool visque[MAXN]; //查看是否入队  
+int dis[MAXN]; //最小距离  
+int pre[MAXN],prx[MAXN]; //记录路线用于更新残量图   
+queue<int>q;  
+```
+
+### 3.4.2. 建图
+
+```c++
+void init() //初始化  
+{  
+	memset(head,0,sizeof(head));  
+	top=0;  
+}
+
+void addEdge(int from,int to,int flow,int worth)  //建图   
+{  
+	edge[top]=Edge(from,to,flow,worth,head[from]);  
+	head[from]=top++;  
+	edge[top]=Edge(to,from,0,-worth,head[to]);    //反向弧   
+	head[to]=top++;  
+}  
+```
+
+### 3.4.3. 辅助函数
+
+```c++
+int bfs() //寻找最短路  
+{  
+
+	while(!q.empty()) q.pop(); //初始化队列  
+	for(int i=0;i<=MAXN;i++) dis[i]=INF; //初始化距离   
+	q.push(S); //源点入队  
+	dis[S]=0;  
+	visque[S]=true;  
+	while(!q.empty())  
+	{  
+		int u=q.front();  
+		q.pop();  
+		for(int i=head[u];i;i=edge[i].next)  
+		{  
+			if(edge[i].flow>0&&dis[u]+edge[i].worth<dis[edge[i].to]) //更新最短路   
+			{  
+				dis[edge[i].to]=dis[u]+edge[i].worth;  
+				pre[edge[i].to]=u;  
+				prx[edge[i].to]=i;  
+				if(!visque[edge[i].to])  
+				{  
+					visque[edge[i].to]=true;  
+					q.push(edge[i].to);  
+				}  
+			}  
+		}  
+		visque[u]=false; //前面已经让u出队了所以这里要写一下   
+	}   
+	return dis[T]!=INF; //判断是否可以到达汇点   
+}   
+int dfs()  
+{  
+	int u=T;  
+	int ans=INF;  
+	while(u!=S) //找当前路中的最小流量   
+	{  
+		if(edge[prx[u]].flow<ans) ans=edge[prx[u]].flow;  
+		u=pre[u];  
+	}  
+	u=T;  
+	while(u!=S) //更新残量图   
+	{  
+		edge[prx[u]].flow-=ans;  
+		edge[prx[u]^1].flow+=ans;  
+		u=pre[u];  
+	}  
+	return ans*dis[T];  
+}
+```
+
+### 3.4.4. 主要函数
+
+```c++
+int solve()  
+{  
+	int cur=0;  
+	int ans=INF;  
+	while(bfs())  
+	{  
+		cur+=dfs();  
+		if(cur<ans) ans=cur;  
+	}   
+	return ans;  
+}
+```
+
+## 3.5. 生成树计数
+
+### 3.5.1. 定理
 
 >算法引入：
 >给定一个无向图G，求它生成树的个数t(G);
@@ -1355,7 +1731,7 @@ void Matrix_pow(int n)//矩阵快速幂
 >需要有选择的修建一些高速公路,从而组成一个交通网络;
 >计算有多少种方案,使得任意两座城市之间恰好只有一条路径;
 
-### 2.4.2. 代码
+### 3.5.2. 代码
 
 ```c++
 const int N=15;
@@ -1417,9 +1793,9 @@ int main()
 }
 ```
 
-## 2.5. 次小生成树
+## 3.6. 次小生成树
 
-### 2.5.1. 全局变量&结构体
+### 3.6.1. 全局变量&结构体
 
 ```c++
 const int maxn = 1003;
@@ -1441,7 +1817,7 @@ struct Edge {
 priority_queue<Edge> pq;
 ```
 
-### 2.5.2. 算法
+### 3.6.2. 算法
 
 ```c++
 void Prim() {
@@ -1504,9 +1880,9 @@ int main() {
 }
 ```
 
-## 2.6. 最小树形图
+## 3.7. 最小树形图
 
-### 2.6.1. 宏&常量&结构体&变量
+### 3.7.1. 宏&常量&结构体&变量
 
 ```c++
 #define M 109
@@ -1529,7 +1905,7 @@ type In[M];
 int n, m;
 ```
 
-### 2.6.2. 算法
+### 3.7.2. 算法
 
 ```c++
 type Directed_MST(int root, int NV, int NE) {
@@ -1606,15 +1982,15 @@ int main() {
 }
 ```
 
-# 3. 数论
+# 4. 数论
 
-## 3.1. 扩展欧几里得
+## 4.1. 扩展欧几里得
 
-### 3.1.1. 定义
+### 4.1.1. 定义
 
 >对于不完全为0的非负整数ab,gcd(a,b)表示a,b的最大公约数,必然存在整数对x,y,使得gcd(a,b)=ax+by。
 
-### 3.1.2. 代码
+### 4.1.2. 代码
 
 ```c++
 int exgcd(int a,int b,int &x,int &y){
@@ -1628,16 +2004,69 @@ int exgcd(int a,int b,int &x,int &y){
 }
 ```
 
-### 3.1.3. 求逆元
+### 4.1.3. 求逆元
 
 >求a对b的逆元，即(a^(-1))mod b
 >int x,y;
 >exgcd(a,b,x,y);
 >x即为a对b的逆元
 
-## 3.2. 中国剩余定理
+## 4.2. 矩阵快速幂
 
-### 3.2.1. 定义&通式
+### 4.2.1. 代码
+
+```c++
+#define ll long long
+
+const ll MOD = 1000000007;
+struct Matrix{
+    ll a[N][N];
+    int r, c;
+}ori, res;
+
+void init(){
+    memset(res.a, 0, sizeof(res.a));
+    res.r = 1; res.c = 2;
+    res.a[1][1] = p;
+    res.a[1][2] = 2;
+    ori.r = 2; ori.c = 2;//构造矩阵
+    ori.a[1][1] = p;
+    ori.a[1][2] = 1;
+    ori.a[2][1] = -q;
+    ori.a[2][2] = 0;
+}
+
+Matrix multi(Matrix x, Matrix y)//矩阵乘法
+{
+    Matrix z;
+    memset(z.a, 0, sizeof(z.a));
+    z.r = x.r, z.c = y.c;
+    for(int i = 1; i <= x.r; i++){
+        for(int k = 1; k <= x.c; k++)//加速优化
+        {
+            if(x.a[i][k] == 0) continue;
+            for(int j = 1; j<= y.c; j++)
+                z.a[i][j] = (z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD) % MOD;
+        }
+    }
+    return z;
+}
+
+void Matrix_pow(int n)//矩阵快速幂
+{
+    while(n){
+        if(n & 1)
+            res = multi(res, ori);
+        ori = multi(ori, ori);
+        n >>= 1;
+    }
+    printf("%llu\n", res.a[1][1] % MOD);
+}
+```
+
+## 4.3. 中国剩余定理
+
+### 4.3.1. 定义&通式
 
 >给出了以下的一元线性同余方程组：</br>
 $$
@@ -1666,7 +2095,7 @@ x &= a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n + kM \\
 $$ 在模$M_i$的意义下，方程组$\left ( S \right )$只有一个解:</br>
 $$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M $$
 
-### 3.2.2. 代码
+### 4.3.2. 代码
 
 ```c++
 #include <iostream>
@@ -1716,9 +2145,9 @@ int main()
 }
 ```
 
-## 3.3. 欧拉函数
+## 4.4. 欧拉函数
 
-### 3.3.1. 定义&通式
+### 4.4.1. 定义&通式
 
 >欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。</br>
 通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$ </br>
@@ -1726,7 +2155,7 @@ int main()
 a^b \equiv a^{b \  \% \  \varphi \left( n\right) + \varphi \left( n \right)} (mod\ n)\ (b > \varphi (n))
 $$
 
-### 3.3.2. 代码
+### 4.4.2. 代码
 
 ```c++
 /*线性筛O(n)时间复杂度内筛出maxn内欧拉函数值*/
@@ -1778,9 +2207,9 @@ int phi(int n)
 }
 ```
 
-## 3.4. 素数筛法
+## 4.5. 素数筛法
 
-### 3.4.1. 线形筛
+### 4.5.1. 线形筛
 
 ```c++
 int top;
@@ -1801,7 +2230,7 @@ void calcPrime()
 }
 ```
 
-### 3.4.2. 复杂度 $O(n^{\frac{3}{4}})$
+### 4.5.2. 复杂度 $O(n^{\frac{3}{4}})$
 
 ```c++
 #include <bits/stdc++.h>
@@ -1833,7 +2262,7 @@ int main(){
     return 0;
 }
 ```
-### 3.4.3. 复杂度 $O(n^{\frac{2}{3}})$
+### 4.5.3. 复杂度 $O(n^{\frac{2}{3}})$
 
 ```c++
 #include<cstdio>
@@ -1946,9 +2375,9 @@ int main()
 }
 ```
 
-## 3.5. miller-rabin素性判断
+## 4.6. miller-rabin素性判断
 
-### 3.5.1. 代码
+### 4.6.1. 代码
 
 ```c++
 const int TIMES = 10;//随机次数
@@ -2011,19 +2440,19 @@ bool miller_rabin(ll n){
 }
 
 ```
-## 3.6. 莫比乌斯函数
+## 4.7. 莫比乌斯函数
 
-### 3.6.1. 定义
+### 4.7.1. 定义
 
 > $$ \mu = \begin{cases} 1 & n=1 \\ (-1)^k & n = p_1p_2\cdots p_k \\ 0 & other \end{cases}$$
 
-### 3.6.2. 莫比乌斯反演
+### 4.7.2. 莫比乌斯反演
 
 > $$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$
 > $$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$
 >倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$
 
-### 3.6.3. 技巧
+### 4.7.3. 技巧
 >若$g(d)=[\frac n d]*[\frac m d]$之类的阶梯状函数</br>
 记录$\mu$的前缀和
 
@@ -2038,18 +2467,18 @@ while(d<=min(n,m))
 }
 ```
 
-## 3.7. 求原根
+## 4.8. 求原根
 
-### 3.7.1. 定义
+### 4.8.1. 定义
 >给定一个数$n$，若存在一个与 $n$互素的 $a$,使得 $a^i(i=0,1,\cdots,\varphi(n))$在模$n$ 下两两不同,那么称$a$是$n$的一个原根。
 
-### 3.7.2. 性质
+### 4.8.2. 性质
 >$1,2,4,p^n,2p^n$有原根，其中$p$是奇素数
 >一个数$n$如果有原根，原根个数为 $\varphi(\varphi(n))$
 >一个数$n$的全体原根的乘积模 $n$余1
 >一个数$n$的全体原根的总和模 $n$余 $\mu(n-1)$(莫比乌斯函数)
 
-### 3.7.3. 头文件&全局变量
+### 4.8.3. 头文件&全局变量
  
 ```c++
 #include <algorithm>
@@ -2063,7 +2492,7 @@ int prime[maxn], ptop;
 bool book[maxn]={0};
 int pr[maxn];
 ```
-### 3.7.4. 辅助函数
+### 4.8.4. 辅助函数
 
 ```c++
 int gcd(int a, int b){
@@ -2118,7 +2547,7 @@ long long quickPowMod(long long a, int k, int mod) {
 }
 ```
 
-### 3.7.5. 核心代码
+### 4.8.5. 核心代码
 
 ```c++
 //判断是否有原根
@@ -2184,7 +2613,7 @@ int cntPrimitiveRoot(int n) {
     return phi[phi[n]];
 }
 ```
-### 3.7.6. 用法
+### 4.8.6. 用法
 
 ```c++
 int main() {
@@ -2196,9 +2625,9 @@ int main() {
 }
 ```
 
-# 4. STL
+# 5. STL
 
-## 4.1. 求合并,交集,并集，差集
+## 5.1. 求合并,交集,并集，差集
 
 ```c++
 template<class _InIt1,class _InIt2,class _OutIt>
@@ -2218,7 +2647,7 @@ set_symmetric_difference() //并集减去交集  (A-B)∪(B-A)=A∪B - A∩B
 merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 ```
 
-## 4.2. 二分查找
+## 5.2. 二分查找
 
 ```c++
 lower_bound()     //第一个大于等于
@@ -2228,13 +2657,13 @@ lower_bound(a.begin(),a.end(),x); //返回一个迭代器
 lower_bound(a,a+n,x) //返回找到元素的指针
 ```
 
-## 4.3. 字符串操作
+## 5.3. 字符串操作
 
 ```c++
 strstr(a,b)//在a中找b
 ```
 
-## 4.4. 读入优化
+## 5.4. 读入优化
 
 ```c++
 #include <cctype>
@@ -2258,9 +2687,29 @@ inline void kread(TN &first,ARGS& ... args)
 }
 ```
 
-# 5. Java
+## 5.5. pbds
 
-## 5.1. a+b problem
+### 5.5.1. 优先队列
+
+```c++
+#include <ext/pb_ds/priority_queue.hpp>
+typedef __gnu_pbds::priority_queue<int ,less<int>,__gnu_pbds::pairing_heap_tag> Heap;
+//thin_heap_tag 斐波那契堆
+//pairing_heap_tag 配对堆
+```
+
+### 5.5.2. 平衡树
+
+```c++
+#include <ext/pb_ds/assoc_container.hpp>
+typedef __gnu_pbds::tree<int,__gnu_pbds::null_type, less<int>, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update> Tree;
+//rb_tree_tag 红黑树
+//splay_tag splay树
+```
+
+# 6. Java
+
+## 6.1. a+b problem
 
 ```java
 import java.util.Scanner;
@@ -2276,15 +2725,15 @@ public class Main{
 }
 ```
 
-## 5.2. BigInteger
+## 6.2. BigInteger
 
-### 5.2.1. 构造函数
+### 6.2.1. 构造函数
 
 ```java
 BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
-### 5.2.2. 方法
+### 6.2.2. 方法
 
 | 返回值            | 函数                                      | 简介                                                                                       |
 |:------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------|
@@ -2316,9 +2765,9 @@ Translates the String representation of a BigInteger in the specified radix into
 | static BigInteger | valueOf(long val)                         | Returns a BigInteger whose value is equal to that of the specified long.                   |
 | BigInteger        | xor(BigInteger val)                       | Returns a BigInteger whose value is (this ^ val).                                          |
 
-## 5.3. BigDecimal
+## 6.3. BigDecimal
 
-### 5.3.1. 舍入方式
+### 6.3.1. 舍入方式
 
 >以下在roundingMode参数填入
 >ROUND_CEILING向正无穷方向舍入
@@ -2335,7 +2784,7 @@ Translates the String representation of a BigInteger in the specified radix into
 >
 >ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
-### 5.3.2. 方法
+### 6.3.2. 方法
 
 | 返回值     | 函数                                                    |
 |:-----------|:--------------------------------------------------------|
