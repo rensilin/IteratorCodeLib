@@ -387,6 +387,126 @@ int tree_find(int left,int right,int k,int l,int r,int v)
 }
 ```
 
+## 树链剖分
+
+### 宏&全局变量&结构体
+
+```c++
+int n;//点数
+
+int size[MAXN];//子树大小
+int dep[MAXN];//节点深度
+int pa[MAXN];//直系父节点
+int PA[MAXN];//重链开始处
+int id[MAXN];//编号
+int ID;
+
+struct Edge{
+	int to;
+	int v;
+	int next;
+}edge[MAXN*2];//大小至少为点的二倍
+int head[MAXN],top;
+int kkke[MAXN];//储存点权
+```
+
+### 初始化&加边函数
+
+```c++
+void init()
+{
+	kkke[0]=0;
+	ID=0;
+	top=0;
+	memset(head,-1,sizeof(head));
+}
+
+void addEdge(int a,int b,int v)
+{
+	edge[top].to=a;
+	edge[top].v=v;
+	edge[top].next=head[b];
+	head[b]=top++;
+
+	edge[top].to=b;
+	edge[top].v=v;
+	edge[top].next=head[a];
+	head[a]=top++;
+}
+```
+
+### 主要函数
+
+```c++
+void calcSize(int nown=1,int p=-1,int DEP=0)//计算每棵子树大小
+{
+	pa[nown]=p;
+	size[nown]=1;
+	dep[nown]=DEP;
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==p)continue;
+		calcSize(edge[i].to,nown,DEP+1);
+		size[nown]+=size[edge[i].to];
+	}
+}
+
+//树链剖分，id[PA[nown]]~id[nown]间都属于这条链
+void dfs(int nown=1,int p=1)
+{
+	id[nown]=ID++;
+	PA[nown]=p;
+	int maxi=-1;
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown])continue;
+		if(maxi==-1||size[edge[i].to]>size[maxi])
+			maxi=edge[i].to;
+	}
+	if(maxi==-1)return;
+	dfs(maxi,p);
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown]||edge[i].to==maxi)continue;
+		dfs(edge[i].to,edge[i].to);
+	}
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown])continue;
+		kkke[id[edge[i].to]]=edge[i].v;//初始化点权
+	}
+}
+```
+
+### 参考查找函数
+
+```c++
+//线段树函数省略
+//a->b路径长度
+int findDist(int a,int b)
+{
+	int ans=0;
+	while(PA[a]!=PA[b])
+	{
+		if(dep[PA[a]]<dep[PA[b]])swap(a,b);
+		ans+=treeFind(0,n-1,1,id[PA[a]],id[a]);
+		a=pa[PA[a]];
+	}
+	if(dep[a]<dep[b])ans+=treeFind(0,n-1,1,id[a]+1,id[b]);
+	else if(dep[a]>dep[b])ans+=treeFind(0,n-1,1,id[b]+1,id[a]);
+	return ans;
+}
+```
+
+### 使用方法
+
+```c++
+init()
+for(each a->b)addEdge(a,b,v);
+calcSize();
+dfs();
+```
+
 ## 1.3. splay
 
 ### 1.3.1. 头文件&宏&全局变量&结构体
@@ -1908,7 +2028,7 @@ bool miller_rabin(ll n){
 记录$\mu$的前缀和
 
 ```c++
-nt d=1;
+int d=1;
 int ans=0;
 while(d<=min(n,m))
 {
