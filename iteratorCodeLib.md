@@ -263,6 +263,130 @@ struct DLX {//成员变量，init(),link()同上
 } dlx;
 ```
 
+## 线段树
+
+### 宏&结构体&全局变量
+
+```c++
+#define MAXN 10000
+
+struct Tree{
+	int v;//此区间存的值 
+	int lazy_inc;//整个区间被增加的值 
+	bool lazy;//区间是否被整体修改过 
+	int lazy_chg;//区间被整体修改后的值(lazy==true时有效) 
+}tree[MAXN*4];
+
+int kkke[MAXN];//用于初始化的数组
+```
+
+### 辅助函数
+
+```c++
+int lson(int k){return k<<1;}
+int rson(int k){return (k<<1)|1;}
+void tree_update(int k)//更新此区间存的值 
+{
+	tree[k].v=max(tree[lson(k)].v,tree[rson(k)].v)+tree[k].lazy_inc;
+	/**可更改(max/min/sum)**/
+}
+void tree_chg(int left,int right,int k,int v)//将编号k的区间全变为v 
+{
+	tree[k].v=v;/**可更改(求和则为v*(right-left+1))**/
+	tree[k].lazy=true;
+	tree[k].lazy_chg=v;
+	tree[k].lazy_inc=0;
+}
+void tree_pushdown(int left,int right,int k)//将整体修改的信息向下传递 
+{
+	if(tree[k].lazy)
+	{
+		tree[k].lazy=false;
+		int mid=(left+right)>>1;
+		tree_chg(left,mid,lson(k),tree[k].lazy_chg);
+		tree_chg(mid+1,right,rson(k),tree[k].lazy_chg);
+	}
+}
+```
+
+### 初始化
+
+```c++
+void tree_init()
+{
+	memset(tree,0,sizeof(tree));//清0 
+}
+void tree_build(int left,int right,int k)//初始化维护某个数组 
+{
+	tree[k].lazy=false;
+	tree[k].lazy_inc=0;
+	if(left==right)
+	{
+		tree[k].v=kkke[left];/**需对应为原数组的名称**/
+	}
+	else
+	{
+		int mid=(left+right)>>1;
+		tree_build(left,mid,lson(k));
+		tree_build(mid+1,right,rson(k));
+		tree_update(k);
+	}
+}
+```
+
+### 主要使用函数
+
+```c++
+//区间增加
+//把l到r间的值都增加v 
+void tree_add(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)
+	{
+		tree[k].v+=v;
+		tree[k].lazy_inc+=v;
+	}
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid)tree_add(left,mid,lson(k),l,r,v);
+		if(r>mid)tree_add(mid+1,right,rson(k),l,r,v);
+		tree_update(k);
+	}
+}
+//区间修改 
+//把l到r间的值都修改为v 
+void tree_change(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)tree_chg(left,right,k,v);
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid)tree_change(left,mid,lson(k),l,r,v);
+		if(r>mid)tree_change(mid+1,right,rson(k),l,r,v);
+		tree_update(k);
+	}
+}
+//区间查询
+//查询区间[l,r]维护的值
+int tree_find(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)return tree[k].v;
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid&&r>mid)
+			return max(tree_find(left,mid,lson(k),l,r,v),tree_find(mid+1,right,rson(k),l,r,v));
+		/**可更改(max/min/sum)**/
+		if(l<=mid)return tree_find(left,mid,lson(k),l,r,v);
+		return tree_find(mid+1,right,rson(k),l,r,v);
+	}
+}
+```
+
 ## 1.3. splay
 
 ### 1.3.1. 头文件&宏&全局变量&结构体
