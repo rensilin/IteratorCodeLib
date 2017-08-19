@@ -263,6 +263,250 @@ struct DLX {//成员变量，init(),link()同上
 } dlx;
 ```
 
+## 线段树
+
+### 宏&结构体&全局变量
+
+```c++
+#define MAXN 10000
+
+struct Tree{
+	int v;//此区间存的值 
+	int lazy_inc;//整个区间被增加的值 
+	bool lazy;//区间是否被整体修改过 
+	int lazy_chg;//区间被整体修改后的值(lazy==true时有效) 
+}tree[MAXN*4];
+
+int kkke[MAXN];//用于初始化的数组
+```
+
+### 辅助函数
+
+```c++
+int lson(int k){return k<<1;}
+int rson(int k){return (k<<1)|1;}
+void tree_update(int k)//更新此区间存的值 
+{
+	tree[k].v=max(tree[lson(k)].v,tree[rson(k)].v)+tree[k].lazy_inc;
+	/**可更改(max/min/sum)**/
+}
+void tree_chg(int left,int right,int k,int v)//将编号k的区间全变为v 
+{
+	tree[k].v=v;/**可更改(求和则为v*(right-left+1))**/
+	tree[k].lazy=true;
+	tree[k].lazy_chg=v;
+	tree[k].lazy_inc=0;
+}
+void tree_pushdown(int left,int right,int k)//将整体修改的信息向下传递 
+{
+	if(tree[k].lazy)
+	{
+		tree[k].lazy=false;
+		int mid=(left+right)>>1;
+		tree_chg(left,mid,lson(k),tree[k].lazy_chg);
+		tree_chg(mid+1,right,rson(k),tree[k].lazy_chg);
+	}
+}
+```
+
+### 初始化
+
+```c++
+void tree_init()
+{
+	memset(tree,0,sizeof(tree));//清0 
+}
+void tree_build(int left,int right,int k)//初始化维护某个数组 
+{
+	tree[k].lazy=false;
+	tree[k].lazy_inc=0;
+	if(left==right)
+	{
+		tree[k].v=kkke[left];/**需对应为原数组的名称**/
+	}
+	else
+	{
+		int mid=(left+right)>>1;
+		tree_build(left,mid,lson(k));
+		tree_build(mid+1,right,rson(k));
+		tree_update(k);
+	}
+}
+```
+
+### 主要使用函数
+
+```c++
+//区间增加
+//把l到r间的值都增加v 
+void tree_add(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)
+	{
+		tree[k].v+=v;
+		tree[k].lazy_inc+=v;
+	}
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid)tree_add(left,mid,lson(k),l,r,v);
+		if(r>mid)tree_add(mid+1,right,rson(k),l,r,v);
+		tree_update(k);
+	}
+}
+//区间修改 
+//把l到r间的值都修改为v 
+void tree_change(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)tree_chg(left,right,k,v);
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid)tree_change(left,mid,lson(k),l,r,v);
+		if(r>mid)tree_change(mid+1,right,rson(k),l,r,v);
+		tree_update(k);
+	}
+}
+//区间查询
+//查询区间[l,r]维护的值
+int tree_find(int left,int right,int k,int l,int r,int v)
+{
+	if(l<=left&&right<=r)return tree[k].v;
+	else
+	{
+		tree_pushdown(left,right,k);
+		int mid=(left+right)>>1;
+		if(l<=mid&&r>mid)
+			return max(tree_find(left,mid,lson(k),l,r,v),tree_find(mid+1,right,rson(k),l,r,v));
+		/**可更改(max/min/sum)**/
+		if(l<=mid)return tree_find(left,mid,lson(k),l,r,v);
+		return tree_find(mid+1,right,rson(k),l,r,v);
+	}
+}
+```
+
+## 树链剖分
+
+### 宏&全局变量&结构体
+
+```c++
+int n;//点数
+
+int size[MAXN];//子树大小
+int dep[MAXN];//节点深度
+int pa[MAXN];//直系父节点
+int PA[MAXN];//重链开始处
+int id[MAXN];//编号
+int ID;
+
+struct Edge{
+	int to;
+	int v;
+	int next;
+}edge[MAXN*2];//大小至少为点的二倍
+int head[MAXN],top;
+int kkke[MAXN];//储存点权
+```
+
+### 初始化&加边函数
+
+```c++
+void init()
+{
+	kkke[0]=0;
+	ID=0;
+	top=0;
+	memset(head,-1,sizeof(head));
+}
+
+void addEdge(int a,int b,int v)
+{
+	edge[top].to=a;
+	edge[top].v=v;
+	edge[top].next=head[b];
+	head[b]=top++;
+
+	edge[top].to=b;
+	edge[top].v=v;
+	edge[top].next=head[a];
+	head[a]=top++;
+}
+```
+
+### 主要函数
+
+```c++
+void calcSize(int nown=1,int p=-1,int DEP=0)//计算每棵子树大小
+{
+	pa[nown]=p;
+	size[nown]=1;
+	dep[nown]=DEP;
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==p)continue;
+		calcSize(edge[i].to,nown,DEP+1);
+		size[nown]+=size[edge[i].to];
+	}
+}
+
+//树链剖分，id[PA[nown]]~id[nown]间都属于这条链
+void dfs(int nown=1,int p=1)
+{
+	id[nown]=ID++;
+	PA[nown]=p;
+	int maxi=-1;
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown])continue;
+		if(maxi==-1||size[edge[i].to]>size[maxi])
+			maxi=edge[i].to;
+	}
+	if(maxi==-1)return;
+	dfs(maxi,p);
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown]||edge[i].to==maxi)continue;
+		dfs(edge[i].to,edge[i].to);
+	}
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==pa[nown])continue;
+		kkke[id[edge[i].to]]=edge[i].v;//初始化点权
+	}
+}
+```
+
+### 参考查找函数
+
+```c++
+//线段树函数省略
+//a->b路径长度
+int findDist(int a,int b)
+{
+	int ans=0;
+	while(PA[a]!=PA[b])
+	{
+		if(dep[PA[a]]<dep[PA[b]])swap(a,b);
+		ans+=treeFind(0,n-1,1,id[PA[a]],id[a]);
+		a=pa[PA[a]];
+	}
+	if(dep[a]<dep[b])ans+=treeFind(0,n-1,1,id[a]+1,id[b]);
+	else if(dep[a]>dep[b])ans+=treeFind(0,n-1,1,id[b]+1,id[a]);
+	return ans;
+}
+```
+
+### 使用方法
+
+```c++
+init()
+for(each a->b)addEdge(a,b,v);
+calcSize();
+dfs();
+```
+
 ## 1.3. splay
 
 ### 1.3.1. 头文件&宏&全局变量&结构体
@@ -758,9 +1002,133 @@ int match(char *s)//返回匹配次数
 ### 1.5.5. 用法
 
 ```c++
-先initNode();初始化
-然后addPattern添加模式串
-最后buildACAutoMaton
+//先initNode();初始化
+//然后addPattern添加模式串
+//最后buildACAutoMaton
+```
+
+## 后缀数组
+
+### 宏&全局变量
+
+```c++
+#define MAXN 666666//大于字符串长度二倍
+
+int krank[MAXN];//第i个元素是第几大 1~n
+int SA[MAXN];//第i大的元素在原数组中位置 1~n
+int height[MAXN];
+int *const tmp=height;//一开始height没用,使用它当tmp
+int cnt[MAXN];//用于基数排序,统计
+int st[MAXN][30];//st表
+int LOG[MAXN];//log表
+```
+
+### 辅助函数
+
+```c++
+void initHeight(char *s,int n)//计算height数组
+{
+	int j,k=0;
+	for(int i=1;i<=n;height[krank[i++]]=k)
+		for(k=max(k-1,0),j=SA[krank[i]-1];krank[i]>1&&s[i+k-1]==s[j+k-1];k++)
+			;
+}
+
+void initLOG()
+{
+	if(LOG[0]==-1)return;
+	LOG[0]=-1;
+	for(int i=1;i<MAXN;i++)
+		LOG[i]=(i&(i-1))?LOG[i-1]:LOG[i-1]+1;
+}
+
+void initSt(int n)
+{
+	initLOG();
+	for(int i=0;i<n;i++)st[i][0]=height[i+1];
+	for(int j=1;(1<<j)<=n;j++)
+		for(int i=0;i+(1<<j)<=n;i++)
+			st[i][j]=min(st[i][j-1],st[i+(1<<(j-1))][j-1]);
+}
+
+bool comp(int n,int a,int b,int w)
+{
+	//判断a和b,a+w和b+w的第一关键字是否对应相等
+	if(tmp[a]==tmp[b])
+	{
+		if(a+w>n||b+w>n)
+		{
+			if(a+w>n&&b+w>n)return true;
+			return false;
+		}
+		if(tmp[a+w]==tmp[b+w])return true;
+	}
+	return false;
+}
+
+bool rSort(int n,int &m,int w)
+{
+	//krank当作第一关键字，tmp相当于第二关键字的SA
+	//此时第二关键字已有序,顺序是tmp
+	memset(cnt+1,0,m*sizeof(cnt[0]));
+	for(int i=1;i<=n;i++)cnt[krank[i]]++;//统计
+	for(int i=2;i<=m;i++)cnt[i]+=cnt[i-1];
+	for(int i=n;i;i--)//比其第一关键字小的数量就是其新位置
+		SA[cnt[krank[tmp[i]]]--]=tmp[i];
+
+	//用tmp的空间暂存rank
+	memcpy(tmp+1,krank+1,n*sizeof(krank[0]));
+	krank[SA[1]]=m=1;
+	for(int i=2;i<=n;i++)//生成新的rank
+		krank[SA[i]]=comp(n,SA[i],SA[i-1],w)?m:++m;
+	return m>=n;//分为n类,排序完成
+
+}
+```
+
+### 主要函数
+
+```c++
+void initSA(char *s,int n)//初始化后缀数组
+{
+	int m=0;
+	for(int i=1;i<=n;i++)
+	{
+		krank[i]=s[i-1];
+		m=max(m,krank[i]);
+		tmp[i]=i;
+	}
+	int w=0;
+	while(!rSort(n,m,w))
+	{
+		if(w)w<<=1;
+		else w=1;
+		//重新计算tmp
+		int top=0;
+		for(int i=n-w+1;i<=n;i++)tmp[++top]=i;//越界的最小
+		for(int i=1;i<=n;i++)
+			if(SA[i]>w)//不越界的从小到大排
+				tmp[++top]=SA[i]-w;
+	}
+	initHeight(s,n);
+	initSt(n);
+}
+
+int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
+{
+	l=krank[l];r=krank[r];
+	if(l>r)swap(l,r);
+	int k=LOG[r-l];
+	return min(st[l][k],st[r-(1<<k)][k]);
+}
+```
+
+### 用法
+
+```c++
+//调用initSA后height,SA,krank数组都计算好了
+//下标都从1开始
+//调用calcLCP计算LCP,不需要可以去掉LOG表和st表
 ```
 
 # 2. 算法
@@ -1660,7 +2028,7 @@ bool miller_rabin(ll n){
 记录$\mu$的前缀和
 
 ```c++
-nt d=1;
+int d=1;
 int ans=0;
 while(d<=min(n,m))
 {
