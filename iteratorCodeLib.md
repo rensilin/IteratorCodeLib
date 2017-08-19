@@ -2194,11 +2194,11 @@ int main() {
     }
     return 0;
 }
- ```
+```
 
-# 5. STL
+# 4. STL
 
-## 5.1. 求合并,交集,并集，差集
+## 4.1. 求合并,交集,并集，差集
 
 ```c++
 template<class _InIt1,class _InIt2,class _OutIt>
@@ -2218,7 +2218,7 @@ set_symmetric_difference() //并集减去交集  (A-B)∪(B-A)=A∪B - A∩B
 merge(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.begin()));
 ```
 
-## 5.2. 二分查找
+## 4.2. 二分查找
 
 ```c++
 lower_bound()     //第一个大于等于
@@ -2228,16 +2228,16 @@ lower_bound(a.begin(),a.end(),x); //返回一个迭代器
 lower_bound(a,a+n,x) //返回找到元素的指针
 ```
 
-## 5.3. 字符串操作
+## 4.3. 字符串操作
 
 ```c++
 strstr(a,b)//在a中找b
 ```
 
-## 5.4. 读入优化
+## 4.4. 读入优化
 
 ```c++
-# 4. include <cctype>
+#include <cctype>
 
 template<class TN>
 inline void kread(TN &x)
@@ -2258,9 +2258,9 @@ inline void kread(TN &first,ARGS& ... args)
 }
 ```
 
-# 6. Java
+# 5. Java
 
-## 6.1. a+b problem
+## 5.1. a+b problem
 
 ```java
 import java.util.Scanner;
@@ -2276,15 +2276,15 @@ public class Main{
 }
 ```
 
-## 6.2. BigInteger
+## 5.2. BigInteger
 
-### 6.2.1. 构造函数
+### 5.2.1. 构造函数
 
 ```java
 BigInteger(String val, int radix)
 Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 ```
-### 6.2.2. 方法
+### 5.2.2. 方法
 
 | 返回值            | 函数                                      | 简介                                                                                       |
 |:------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------|
@@ -2316,9 +2316,9 @@ Translates the String representation of a BigInteger in the specified radix into
 | static BigInteger | valueOf(long val)                         | Returns a BigInteger whose value is equal to that of the specified long.                   |
 | BigInteger        | xor(BigInteger val)                       | Returns a BigInteger whose value is (this ^ val).                                          |
 
-## 6.3. BigDecimal
+## 5.3. BigDecimal
 
-### 6.3.1. 舍入方式
+### 5.3.1. 舍入方式
 
 >以下在roundingMode参数填入
 >ROUND_CEILING向正无穷方向舍入
@@ -2335,7 +2335,7 @@ Translates the String representation of a BigInteger in the specified radix into
 >
 >ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
-### 6.3.2. 方法
+### 5.3.2. 方法
 
 | 返回值     | 函数                                                    |
 |:-----------|:--------------------------------------------------------|
