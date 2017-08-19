@@ -2051,8 +2051,8 @@ while(d<=min(n,m))
 
 ### 3.7.3. 头文件&全局变量
  
- ```c++
-# 4. include <algorithm>
+```c++
+#include <algorithm>
 
 const int maxn = 1e6 + 6;
 
@@ -2063,7 +2063,7 @@ int prime[maxn], ptop;
 bool book[maxn]={0};
 int pr[maxn];
 ```
-### 辅助函数
+### 3.7.4. 辅助函数
 
 ```c++
 int gcd(int a, int b){
@@ -2118,7 +2118,7 @@ long long quickPowMod(long long a, int k, int mod) {
 }
 ```
 
-### 核心代码
+### 3.7.5. 核心代码
 
 ```c++
 //判断是否有原根
@@ -2184,7 +2184,7 @@ int cntPrimitiveRoot(int n) {
     return phi[phi[n]];
 }
 ```
-### 用法
+### 3.7.6. 用法
 
 ```c++
 int main() {
@@ -2237,7 +2237,7 @@ strstr(a,b)//在a中找b
 ## 5.4. 读入优化
 
 ```c++
-#include <cctype>
+# 4. include <cctype>
 
 template<class TN>
 inline void kread(TN &x)
