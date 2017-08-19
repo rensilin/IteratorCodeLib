@@ -1670,6 +1670,164 @@ while(d<=min(n,m))
 }
 ```
 
+## 求原根
+
+### 定义
+>给定一个数$n$，若存在一个与 $n$互素的 $a$,使得 $a^i(i=0,1,\cdots,\varphi(n))$在模$n$ 下两两不同,那么称$a$是$n$的一个原根。
+
+### 性质
+>$1,2,4,p^n,2p^n$有原根，其中$p$是奇素数</br>
+一个数$n$如果有原根，原根个数为 $\varphi(\varphi(n))$</br>
+一个数$n$的全体原根的乘积模 $n$余1</br>
+一个数$n$的全体原根的总和模 $n$余 $\mu(n-1)$(莫比乌斯函数)
+
+### 头文件&全局变量
+ 
+ ```c++
+#include <algorithm>
+
+const int maxn = 1e6 + 6;
+
+long long m[maxn], phi[maxn], p[maxn], pt; //m[i]是i的最小素因数，p是素数，pt是素数个数
+int n, T;
+long long sum[maxn];
+int prime[maxn], ptop;
+bool book[maxn]={0};
+int pr[maxn];
+```
+### 辅助函数
+
+```c++
+int gcd(int a, int b){
+    return (b>0)?gcd(b,a%b):a;
+}
+
+void getPrime(int n) {
+    ptop = 0;
+    for (int i = 0; p[i] <= n; i++) {
+        if (n % p[i] == 0) {
+            prime[ptop++] = p[i];
+            while (n % p[i] == 0) {
+                n /= p[i];
+            }
+        }
+    }
+}
+
+void make() {
+    phi[1] = 1;
+    int N = maxn;
+    int k;
+    for (int i = 2; i < N; i++) {
+        if (!m[i]) //i是素数
+            p[pt++] = m[i] = i, phi[i] = i - 1, book[i] = 1;
+        for (int j = 0; j < pt && (k = p[j] * i) < N; j++) {
+            m[k] = p[j];
+            if (m[i] == p[j]) //为了保证以后的数不被再筛，要break
+            {
+                phi[k] = phi[i] * p[j];
+                /*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样（m[i]==p[j]）只差一个p[j]，就可以保证∏(p[i]-1)/p[i]前面也一样了*/
+                break;
+            } else
+                phi[k] = phi[i] * (p[j] - 1); //积性函数性质，f(i*k)=f(i)*f(k)
+        }
+    }
+}
+
+
+long long quickPowMod(long long a, int k, int mod) {
+    long long ans = 1;
+    while (k) {
+        if (k & 1) {
+            ans *= a;
+            ans %= mod;
+        }
+        a *= a;
+        a %= mod;
+        k /= 2;
+    }
+    return ans;
+}
+```
+
+### 核心代码
+
+```c++
+//判断是否有原根
+bool hasPrimitiveRoot(int n){
+    if(n == 2 || n == 4) return true;
+    if(book[n]) return true;
+    if(n % 2 == 0) n /= 2;
+    for(int i=1; p[i] <= n; i++){
+        if(n % p[i] == 0){
+            while(n % p[i] == 0){
+                n /= p[i];
+            }
+            if(n==1) return true;
+            else return false;
+        }
+    }
+    return false;
+}
+
+int cntPrimitiveRoot(int n) {
+    if(!hasPrimitiveRoot(n)){
+        printf("-1\n");
+        return -1;
+    }
+    int cnt = 0;
+    int phi_n = phi[n];
+    getPrime(phi_n);
+    //枚举
+    if(n == 2){
+        cnt = 1;
+        printf("1\n");
+        return 1;
+    }
+    for (int a = 2; a < n; a++) {
+        //判断a是否为n的原根
+        bool flag = true;
+        if (quickPowMod(a, phi_n, n) != 1) continue;
+        for (int i = 0; i < ptop; i++) {
+            int k = phi_n / prime[i];
+            if (quickPowMod(a, k, n) == 1) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            pr[cnt++] = a;
+            break;
+        }
+    }
+    
+    for(int i=2; i<phi_n; i++){
+        if(gcd(i, phi_n) == 1) pr[cnt++] = quickPowMod(pr[0], i, n);
+    }
+
+    sort(pr, pr+cnt);
+    int prt = unique(pr, pr+cnt) - pr;
+    for(int i=0; i<prt; i++){
+        printf("%d", pr[i]);
+        if(i!=prt-1)printf(" ");
+        else printf("\n"); 
+    }
+    //printf("%d %lld\n", cnt, phi[phi[n]]);
+    return phi[phi[n]];
+}
+```
+### 用法
+
+```c++
+int main() {
+    make();
+    while (~scanf("%d", &n)) {
+        cntPrimitiveRoot(n);
+    }
+    return 0;
+}
+ ```
+
 # 4. STL
 
 ## 4.1. 求合并,交集,并集，差集
