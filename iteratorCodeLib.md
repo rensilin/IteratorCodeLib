@@ -379,7 +379,8 @@ int tree_find(int left,int right,int k,int l,int r,int v)
 		tree_pushdown(left,right,k);
 		int mid=(left+right)>>1;
 		if(l<=mid&&r>mid)
-			return max(tree_find(left,mid,lson(k),l,r,v),tree_find(mid+1,right,rson(k),l,r,v));
+			return max(tree_find(left,mid,lson(k),l,r,v)
+					  ,tree_find(mid+1,right,rson(k),l,r,v));
 		/**可更改(max/min/sum)**/
 		if(l<=mid)return tree_find(left,mid,lson(k),l,r,v);
 		return tree_find(mid+1,right,rson(k),l,r,v);
@@ -750,9 +751,11 @@ erase(l,r);//删除区间[l,r],如果想删第k个数，只用erase(k,k);
 tree_find(k);//返回第k个数的值
 flip(l,r);//翻转区间[l,r]
 add_num(l,r,x);//把区间[l,r]都加上x
-/*若想要把区间都赋成某个值或者都乘上一个数，添加对应懒惰标记,修改push_down,insert函数并创建对应的修改函数*/
+/*若想要把区间都赋成某个值或者都乘上一个数，添加对应懒惰标记,
+修改push_down,insert函数并创建对应的修改函数*/
 max_num(l,r);//查找区间[l,r]最大值
-/*若想维护区间和或最小值等，添加对应成员变量,修改push_down,push_up,insert函数并创建对应的修改函数*/
+/*若想维护区间和或最小值等，添加对应成员变量,修改push_down,
+push_up,insert函数并创建对应的修改函数*/
 ```
 ## 可持久化线段树
 
@@ -885,7 +888,8 @@ int main(){
 
 ```c++
 int build(int l, int r)//在[l,r]上建立空树；返回空树的根
-int update(int rt, int pos, int val)//建立新树更新以rt为根节点的树上，pos节点，权值+val；返回新树的根
+int update(int rt, int pos, int val)
+//建立新树更新以rt为根节点的树上，pos节点，权值+val；返回新树的根
 int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
 ```
 
@@ -901,7 +905,8 @@ const int MAXN = 111234;
 char orign[MAXN], str[2 * MAXN]; //字符串
 int radius[2 * MAXN];            //对称轴为i的最长回文半径
 
-//orign:初始字符串、str:插入间隔符的字符串（长度为orign的两倍加一）、raidus:对称轴为i的最长回文半径、mark:间隔符
+//orign:初始字符串、str:插入间隔符的字符串（长度为orign的两倍加一）
+//raidus:对称轴为i的最长回文半径、mark:间隔符
 int Manacher(char *orign, char *str, int *radius, char mark) {
     //------------插入间隔符------------
     int len = strlen(orign);
@@ -923,7 +928,8 @@ int Manacher(char *orign, char *str, int *radius, char mark) {
         else
             radius[i] = 1;
         //判断边界、对应字符是否相等
-        while(i-radius[i] >= 0 && i+radius[i] < len && str[i-radius[i]] == str[i+radius[i]]){
+        while(i-radius[i] >= 0 && i+radius[i] < len 
+				&& str[i-radius[i]] == str[i+radius[i]]){
             radius[i]++;
         }
         ans = max(ans, radius[i]);
@@ -1260,7 +1266,7 @@ void init()
 		from[i]=-1;
 		Y[i]=0;
 		X[i]=-INF;
-		for(vector<Edge>::iterator j=edge[i].begin();j!=edge[i].end();j++)
+		for(auto j=edge[i].begin();j!=edge[i].end();j++)
 		{
 			X[i]=max(X[i],j->v);
 		}
@@ -1275,7 +1281,7 @@ void init()
 bool dfs(int nown)
 {
 	L[nown]=true;
-	for(vector<Edge>::iterator i=edge[nown].begin();i!=edge[nown].end();i++)
+	for(auto i=edge[nown].begin();i!=edge[nown].end();i++)
 	{
 		if(X[nown]+Y[i->to]!=i->v)continue;
 
@@ -1304,7 +1310,7 @@ int KM() //自己建图edge
 		int d=INF;
 		for(int i=0;i<n;i++)
 			if(L[i])
-				for(vector<Edge>::iterator j=edge[i].begin();j!=edge[i].end();j++)
+				for(auto j=edge[i].begin();j!=edge[i].end();j++)
 					if(!R[j->to])
 						d=min(d,X[i]+Y[j->to]-j->v);
 		ans-=d;
@@ -1344,7 +1350,9 @@ struct Edge{
 int head[MAXN],top;//邻接链表
 int dist[MAXN];
 
-typedef __gnu_pbds::priority_queue<pair<int,int>,less<pair<int,int>>,__gnu_pbds::pairing_heap_tag> Heap;
+typedef __gnu_pbds::priority_queue<pair<int,int>,
+	less<pair<int,int>>,__gnu_pbds::pairing_heap_tag
+	> Heap;
 Heap pq;
 Heap::point_iterator pqIterator[MAXN];
 ```
@@ -1394,7 +1402,9 @@ int findST(int &s,int &t)//找到某一s点和t点间最小割
 		pqIterator[s]=pq.end();
 		for(int j=head[s];j!=-1;j=edge[j].next)
 			if(pqIterator[edge[j].to]!=pq.end())
-				pq.modify(pqIterator[edge[j].to],make_pair(dist[edge[j].to]+=edge[j].v,edge[j].to));
+				pq.modify(pqIterator[edge[j].to]
+						 ,make_pair(dist[edge[j].to]+=edge[j].v
+							    	,edge[j].to));
 	}
 	t=pq.top().second;pq.pop();
 	return dist[t];//dist[t]为s-t最小割
@@ -1533,7 +1543,8 @@ int dfs(int nown,int maxf)
 	int nowf=0,flow;
 	for(int &i=cur[nown];i!=-1;i=edge[i].next)
 	{
-		if(!edge[i].v||level[edge[i].to]!=level[nown]+1)continue;
+		if(!edge[i].v||
+			level[edge[i].to]!=level[nown]+1)continue;
 		if((flow=dfs(edge[i].to,min(maxf-nowf,edge[i].v)))!=0)
 		{
 			nowf+=flow;
@@ -1649,7 +1660,9 @@ int bfs() //寻找最短路
 		q.pop();  
 		for(int i=head[u];i;i=edge[i].next)  
 		{  
-			if(edge[i].flow>0&&dis[u]+edge[i].worth<dis[edge[i].to]) //更新最短路   
+			if(edge[i].flow>0
+				&&dis[u]+edge[i].worth<dis[edge[i].to]) 
+				//更新最短路   
 			{  
 				dis[edge[i].to]=dis[u]+edge[i].worth;  
 				pre[edge[i].to]=u;  
@@ -1801,10 +1814,12 @@ int main()
 const int maxn = 1003;
 const double DIS_INF = 999999;
 
-int t, n, x[maxn], y[maxn], p[maxn], cas, book[maxn] = {0}, St[maxn], topSt, used[maxn][maxn] = {0};
-//cas:样例数   book:标记点是否在生成树内     St、topSt:储存已经在生成树内的点    used:标记生成树内部的边
+int t, n, x[maxn], y[maxn], p[maxn], cas, book[maxn] = {0}
+//cas:样例数 book:标记点是否在生成树内   
+int St[maxn], topSt, used[maxn][maxn] = {0};
+//St、topSt:储存已经在生成树内的点 used:标记生成树内部的边
 double dis[maxn][maxn], tot, maxDis[maxn][maxn], ans, low[maxn];
-//dis:权值    tot:生成树总权值  maxDis[i][j]:生成树上i-j路径上最大权
+//dis:权值 tot:生成树总权值 maxDis[i][j]:生成树上i-j路径上最大权
 
 struct Edge {
 	int f, t;
@@ -1835,7 +1850,9 @@ void Prim() {
 		book[t] = cas;
 		for (int i = 0; i < topSt; i++) {
 			int u = St[i];
-			maxDis[u][t] = maxDis[t][u] = max(dis[f][t], maxDis[u][f]); //dp求每一条路径上的最大边
+			maxDis[u][t] = maxDis[t][u]
+						 = max(dis[f][t], maxDis[u][f]); 
+						 //dp求每一条路径上的最大边
 		}
 		St[topSt++] = t;
 		tot += dis[f][t];
@@ -1859,7 +1876,9 @@ int main() {
 		for (int i = 0; i < n; i++) {
 			scanf("%d%d%d", x + i, y + i, p + i);
 			for (int j = 0; j <= i; j++) {
-				dis[i][j] = dis[j][i] = sqrt((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j]));
+				dis[i][j] = dis[j][i] 
+						  = sqrt((x[i] - x[j]) *(x[i] - x[j])
+						  	+ (y[i] - y[j])* (y[i] - y[j]));
 			}
 		}
 		Prim();
@@ -1924,7 +1943,8 @@ type Directed_MST(int root, int NV, int NE) {
 		}
 		for (int i = 0; i < NV; i++) {
 			if (i == root) continue;
-			if (In[i] == inf) return -1; //除了跟以外有点没有入边,则根无法到达它
+			if (In[i] == inf) return -1;
+			//除了跟以外有点没有入边,则根无法到达它
 		}
 		//2.找环
 		int cntnode = 0;
@@ -2046,7 +2066,9 @@ Matrix multi(Matrix x, Matrix y)//矩阵乘法
         {
             if(x.a[i][k] == 0) continue;
             for(int j = 1; j<= y.c; j++)
-                z.a[i][j] = (z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD) % MOD;
+                z.a[i][j] =(
+						z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD
+					) % MOD;
         }
     }
     return z;
@@ -2139,7 +2161,8 @@ int main()
         if(a[1]==-1&&a[2]==-1&&a[3]==-1&&d==-1)break;
         int ans = CRT(a, m, 3);
         if(ans <= d) ans+=21252;
-        printf("Case %d: the next triple peak occurs in %d days.\n", ++kase, ans-d);
+        printf("Case %d: the next triple peak occurs in %d days.\n",
+		++kase, ans-d);
     }
     return 0;
 }
@@ -2159,7 +2182,8 @@ $$
 
 ```c++
 /*线性筛O(n)时间复杂度内筛出maxn内欧拉函数值*/
-int m[maxn],phi[maxn],p[maxn],pt;//m[i]是i的最小素因数，p是素数，pt是素数个数
+int m[maxn],phi[maxn],p[maxn],pt;
+//m[i]是i的最小素因数，p是素数，pt是素数个数
 int make()
 {
     phi[1]=1;
@@ -2175,7 +2199,8 @@ int make()
             if(m[i]==p[j])//为了保证以后的数不被再筛，要break
             {
                 phi[k]=phi[i]*p[j];
-/*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样（m[i]==p[j]）只差一个p[j]，就可以保证∏(p[i]-1)/p[i]前面也一样了*/
+	/*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样
+	（m[i]==p[j]）只差一个p[j]，就可以保证∏(p[i]-1)/p[i]前面也一样了*/
                 break;
             }
             else
@@ -2304,7 +2329,8 @@ void init()
     for(int i = 1; i <= M; ++i)
     {
         sz[i] = prime[i] * sz[i - 1];
-        for(int j = 1; j <= PM; ++j) phi[j][i] = phi[j][i - 1] - phi[j / prime[i]][i - 1];
+        for(int j = 1; j <= PM; ++j) 
+			phi[j][i] = phi[j][i - 1] - phi[j / prime[i]][i - 1];
     }
 }
 
@@ -2341,7 +2367,8 @@ LL getpi(LL x)
 {
     if(x < N)   return pi[x];
     LL ans = getphi(x, pi[sqrt3(x)]) + pi[sqrt3(x)] - 1;
-    for(int i = pi[sqrt3(x)] + 1, ed = pi[sqrt2(x)]; i <= ed; ++i) ans -= getpi(x / prime[i]) - i + 1;
+    for(int i = pi[sqrt3(x)] + 1, ed = pi[sqrt2(x)]; i <= ed; ++i) 
+		ans -= getpi(x / prime[i]) - i + 1;
     return ans;
 }
 
@@ -2358,7 +2385,8 @@ LL lehmer_pi(LL x)
         sum -= lehmer_pi(w);
         if (i > c) continue;
         LL lim = lehmer_pi(sqrt2(w));
-        for (int j = i; j <= lim; j++) sum -= lehmer_pi(w / prime[j]) - (j - 1);
+        for (int j = i; j <= lim; j++) 
+			sum -= lehmer_pi(w / prime[j]) - (j - 1);
     }
     return sum;
 }
@@ -2485,7 +2513,8 @@ while(d<=min(n,m))
 
 const int maxn = 1e6 + 6;
 
-long long m[maxn], phi[maxn], p[maxn], pt; //m[i]是i的最小素因数，p是素数，pt是素数个数
+long long m[maxn], phi[maxn], p[maxn], pt; 
+//m[i]是i的最小素因数，p是素数，pt是素数个数
 int n, T;
 long long sum[maxn];
 int prime[maxn], ptop;
@@ -2523,10 +2552,13 @@ void make() {
             if (m[i] == p[j]) //为了保证以后的数不被再筛，要break
             {
                 phi[k] = phi[i] * p[j];
-                /*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样（m[i]==p[j]）只差一个p[j]，就可以保证∏(p[i]-1)/p[i]前面也一样了*/
+                /*这里的phi[k]与phi[i]后面的∏(p[i]-1)/p[i]都一样
+				（m[i]==p[j]）只差一个p[j]，
+				就可以保证∏(p[i]-1)/p[i]前面也一样了*/
                 break;
             } else
-                phi[k] = phi[i] * (p[j] - 1); //积性函数性质，f(i*k)=f(i)*f(k)
+                phi[k] = phi[i] * (p[j] - 1); 
+				//积性函数性质，f(i*k)=f(i)*f(k)
         }
     }
 }
@@ -2693,7 +2725,9 @@ inline void kread(TN &first,ARGS& ... args)
 
 ```c++
 #include <ext/pb_ds/priority_queue.hpp>
-typedef __gnu_pbds::priority_queue<int ,less<int>,__gnu_pbds::pairing_heap_tag> Heap;
+typedef __gnu_pbds::priority_queue<int ,less<int>
+						,__gnu_pbds::pairing_heap_tag>
+						Heap;
 //thin_heap_tag 斐波那契堆
 //pairing_heap_tag 配对堆
 ```
@@ -2702,7 +2736,10 @@ typedef __gnu_pbds::priority_queue<int ,less<int>,__gnu_pbds::pairing_heap_tag> 
 
 ```c++
 #include <ext/pb_ds/assoc_container.hpp>
-typedef __gnu_pbds::tree<int,__gnu_pbds::null_type, less<int>, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update> Tree;
+typedef __gnu_pbds::tree<int,__gnu_pbds::null_type, less<int>,
+					__gnu_pbds::rb_tree_tag
+					, __gnu_pbds::tree_order_statistics_node_update>
+					Tree;
 //rb_tree_tag 红黑树
 //splay_tag splay树
 ```
@@ -2729,10 +2766,9 @@ public class Main{
 
 ### 构造函数
 
-```java
-BigInteger(String val, int radix)
-Translates the String representation of a BigInteger in the specified radix into a BigInteger.
-```
+>BigInteger(String val, int radix)
+>Translates the String representation of a BigInteger in the specified radix into a BigInteger.
+
 ### 方法
 
 | 返回值            | 函数                                      | 简介                                                                                       |
@@ -2743,7 +2779,7 @@ Translates the String representation of a BigInteger in the specified radix into
 | BigInteger        | andNot(BigInteger val)                    | Returns a BigInteger whose value is (this & ~val).                                         |
 | int               | compareTo(BigInteger val)                 | Compares this BigInteger with the specified BigInteger.                                    |
 | BigInteger        | divide(BigInteger val)                    | Returns a BigInteger whose value is (this / val).                                          |
-| BigInteger[]      | divideAndRemainder(BigInteger val)        | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
+| BigInteger[]      | divideAndRemainder</br>(BigInteger val)   | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
 | double            | doubleValue()                             | Converts this BigInteger to a double.                                                      |
 | boolean           | equals(Object x)                          | Compares this BigInteger with the specified Object for equality.                           |
 | BigInteger        | gcd(BigInteger val)                       | Returns a BigInteger whose value is the greatest common divisor of abs(this) and abs(val). |
