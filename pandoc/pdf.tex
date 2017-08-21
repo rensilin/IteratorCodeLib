@@ -25,21 +25,13 @@ $endif$
   \ifxetex
     \usepackage{xltxtra,xunicode}
     \usepackage{ctex}
+    \setmainfont{WenQuanYi Micro Hei}
+    \setsansfont{WenQuanYi Micro Hei}
+    \setmonofont{WenQuanYi Micro Hei Mono}
+    \setmathfont{WenQuanYi Micro Hei}
   \fi
   \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
   \newcommand{\euro}{€}
-$if(mainfont)$
-    \setmainfont{$mainfont$}
-$endif$
-$if(sansfont)$
-    \setsansfont{$sansfont$}
-$endif$
-$if(monofont)$
-    \setmonofont{$monofont$}
-$endif$
-$if(mathfont)$
-    \setmathfont{$mathfont$}
-$endif$
 \fi
 % use microtype if available
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
