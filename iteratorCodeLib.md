@@ -3,6 +3,7 @@
 ## 加权并查集
 
 >解决集合问题中，集合内元素有关系并且关系具有传递性的问题。
+
 >从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
 
 ### 头文件&宏&全局变量
@@ -2172,11 +2173,13 @@ int main()
 
 ### 定义&通式
 
->欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。</br>
-通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$ </br>
-应用：欧拉降幂公式</br>$$
-a^b \equiv a^{b \  \% \  \varphi \left( n\right) + \varphi \left( n \right)} (mod\ n)\ (b > \varphi (n))
-$$
+> 欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。
+
+> 通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$
+
+> 应用：欧拉降幂公式
+
+> $a^b \equiv a^{b \  \% \  \varphi \left( n\right) + \varphi \left( n \right)} (mod\ n)\ (b > \varphi (n))$
 
 ### 代码
 
@@ -2779,7 +2782,7 @@ public class Main{
 | BigInteger        | andNot(BigInteger val)                    | Returns a BigInteger whose value is (this & ~val).                                         |
 | int               | compareTo(BigInteger val)                 | Compares this BigInteger with the specified BigInteger.                                    |
 | BigInteger        | divide(BigInteger val)                    | Returns a BigInteger whose value is (this / val).                                          |
-| BigInteger[]      | divideAndRemainder</br>(BigInteger val)   | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
+| BigInteger[]      | divideAndRemainder     (BigInteger val)   | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
 | double            | doubleValue()                             | Converts this BigInteger to a double.                                                      |
 | boolean           | equals(Object x)                          | Compares this BigInteger with the specified Object for equality.                           |
 | BigInteger        | gcd(BigInteger val)                       | Returns a BigInteger whose value is the greatest common divisor of abs(this) and abs(val). |
