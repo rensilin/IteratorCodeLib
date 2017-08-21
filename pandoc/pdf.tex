@@ -12,6 +12,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
+\usepackage{setspace}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 % use upquote if available, for straight quotes in verbatim environments
@@ -23,21 +24,21 @@ $if(euro)$
 $endif$
 \else % if luatex or xelatex
   \ifxetex
+    \usepackage{mathspec}
     \usepackage{xltxtra,xunicode}
     \usepackage{ctex}
-    \setmainfont{WenQuanYi Micro Hei}
-    \setsansfont{WenQuanYi Micro Hei}
-    \setmonofont{WenQuanYi Micro Hei Mono}
-    \setmathfont{WenQuanYi Micro Hei}
+	\usepackage{xeCJK}
+    \setCJKmainfont{WenQuanYi Micro Hei} 	% 設定中文字型
+    \setmainfont{WenQuanYi Micro Hei} 	% 設定英文字型
+    \setromanfont{WenQuanYi Micro Hei} 	% 字型
+	\setmonofont{WenQuanYi Micro Hei Mono}
+    \XeTeXlinebreaklocale "zh" 	% 針對中文自動換行
+	\renewcommand\labelitemi{\ensuremath{\bullet}}
   \fi
   \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
 \fi
 % use microtype if available
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
-$if(geometry)$
-\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
-$endif$
 $if(natbib)$
 \usepackage{natbib}
 \bibliographystyle{plainnat}
@@ -100,13 +101,9 @@ $if(strikeout)$
 % avoid problems with \sout in headers with hyperref:
 \pdfstringdefDisableCommands{\renewcommand{\sout}{}}
 $endif$
-\setlength{\parindent}{0pt}
-%\setlength{\parskip}{6pt plus 2pt minus 1pt}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
 
-\title{\huge 在OSX平台上的XeLaTeX中文測試} % 設置標題，使用巨大字體
-\author{FoolEgg.com} 		% 設置作者
-\date{February 2013} 		% 設置日期
+\author{iterator} 		% 設置作者
+\date{2017} 		% 設置日期
 \usepackage{titling}
 \setlength{\droptitle}{-8em} 	% 將標題移動至頁面的上面
 
@@ -156,6 +153,8 @@ $if(toc)$
 \tableofcontents
 }
 $endif$
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}  %表格自动换行
+\fontsize{10pt}{0}
 $body$
 
 $if(natbib)$
