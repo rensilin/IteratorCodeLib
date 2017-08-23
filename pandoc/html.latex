@@ -3,9 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>IteratorCodeLibrary</title>
-        <link rel="stylesheet" type="text/css" href="./markdownToc_files/github2-rightpart.css" media="all">
-        <link rel="stylesheet" type="text/css" href="./markdownToc_files/github1-contents.css">
-        <link rel="stylesheet" href="./markdownToc_files/zTreeStyle.css" type="text/css">
+        <link rel="stylesheet" type="text/css" href="./src/github2-rightpart.css" media="all">
+        <link rel="stylesheet" type="text/css" href="./src/github1-contents.css">
+        <link rel="stylesheet" href="./src/zTreeStyle.css" type="text/css">
         <style>
 		  $highlighting-css$
             .ztree li a.curSelectedNode {
@@ -51,9 +51,9 @@ $body$
 </center>
             </div>
         </div>
-    <script src="./markdownToc_files/jquery-1.10.2.min.js"></script>
-    <script src="./markdownToc_files/jquery.ztree.all-3.5.min.js"></script>
-    <script src="./markdownToc_files/jquery.ztree_toc.min.js"></script>
+    <script src="./src/jquery-1.10.2.min.js"></script>
+    <script src="./src/jquery.ztree.all-3.5.min.js"></script>
+    <script src="./src/jquery.ztree_toc.min.js"></script>
     <script type="text/javascript">
         $$(document).ready(function(){
             $$('#tree').ztree_toc({
