@@ -2735,6 +2735,15 @@ typedef __gnu_pbds::priority_queue<int ,less<int>
 //pairing_heap_tag 配对堆
 ```
 
+## boost
+
+### dynamic_bitset
+
+```c++
+#include <boost/dynamic_bitset.hpp>
+using namespace boost;
+```
+
 ### 平衡树
 
 ```c++
