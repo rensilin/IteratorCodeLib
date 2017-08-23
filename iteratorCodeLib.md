@@ -2742,6 +2742,7 @@ typedef __gnu_pbds::priority_queue<int ,less<int>
 ```c++
 #include <boost/dynamic_bitset.hpp>
 using namespace boost;
+//可以像vector一样用push_back,resize改变长度
 ```
 
 ### 平衡树
