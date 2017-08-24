@@ -631,6 +631,8 @@ void insert(node *nown,int k)//把树nown插入到位置k
         if(i)k-=p->son[0]->size+1;
     }
     push_up_parents(nown);
+	push_down(nown);
+    splay(nown,root);
 }
 
 node *kth_node(int k)//返回第k个数的节点,并旋转至根
@@ -698,7 +700,6 @@ void insert(int x,int k)//把x插入到位置k
     nown->maxnum=x;
     nown->son[0]=nown->son[1]=nil;
     insert(nown,k);
-    splay(nown,root);
 }
 
 int kth(int k)//返回第k个数的值
