@@ -629,6 +629,7 @@ void insert(node *nown,int k)//把树nown插入到位置k
             break;
         }
         if(i)k-=p->son[0]->size+1;
+		p=p->son[i];
     }
     push_up_parents(nown);
 	push_down(nown);
