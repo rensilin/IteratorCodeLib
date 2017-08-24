@@ -633,13 +633,17 @@ void insert(node *nown,int k)//把树nown插入到位置k
     push_up_parents(nown);
 }
 
-node *node_find(int k)//返回第k个数的节点(不要单独使用)
+node *kth_node(int k)//返回第k个数的节点,并旋转至根
 {
     node *nown=root;
     while(nown!=nil)
     {
         push_down(nown);
-        if(nown->son[0]->size==k)return nown;
+        if(nown->son[0]->size==k)
+		{
+			splay(nown,root);
+			return nown;
+		}
         else
         {
             int i=(k<nown->son[0]->size)?0:1;
@@ -655,16 +659,16 @@ node *interval_find(int l,int r)//返回一棵splay树，包含区间[l,r]的节
     if(l==0&&r==root->size-1)return root;
     else if(l==0)
     {
-        splay(node_find(r+1),root);
+        splay(kth_node(r+1),root);
         return root->son[0];
     }
     else if(r==root->size-1)
     {
-        splay(node_find(l-1),root);
+        splay(kth_node(l-1),root);
         return root->son[1];
     }
-    splay(node_find(l-1),root);
-    splay(node_find(r+1),root->son[1]);
+    splay(kth_node(l-1),root);
+    splay(kth_node(r+1),root->son[1]);
     return root->son[1]->son[0];
 }
 ```
@@ -697,11 +701,9 @@ void insert(int x,int k)//把x插入到位置k
     splay(nown,root);
 }
 
-int tree_find(int k)//返回第k个数的值
+int kth(int k)//返回第k个数的值
 {
-    node *nown=node_find(k);
-    splay(nown,root);
-    return nown->num;
+    return kth_node(k)->num;
 }
 
 node* erase(int l,int r)//删除区间[l,r],并返回被删除的树的根
@@ -749,7 +751,7 @@ int max_num(int l,int r)
 ```c++
 insert(x,k);//把x插入到第k个位置，建树只用循环插入就行了O(n)!
 erase(l,r);//删除区间[l,r],如果想删第k个数，只用erase(k,k);
-tree_find(k);//返回第k个数的值
+kth(k);//返回第k个数的值
 flip(l,r);//翻转区间[l,r]
 add_num(l,r,x);//把区间[l,r]都加上x
 /*若想要把区间都赋成某个值或者都乘上一个数，添加对应懒惰标记,
