@@ -2787,6 +2787,16 @@ lower_bound(a.begin(),a.end(),x); //返回一个迭代器
 lower_bound(a,a+n,x) //返回找到元素的指针
 ```
 
+## 随机排列
+
+```c++
+template<class RandomAccessIterator>
+   void random_shuffle(
+      RandomAccessIterator _First, //指向序列首元素的迭代器
+      RandomAccessIterator _Last  //指向序列最后一个元素的下一个位置的迭代器
+   );
+```
+
 ## 字符串操作
 
 ```c++
