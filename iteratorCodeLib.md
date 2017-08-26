@@ -2893,6 +2893,44 @@ inline void kread(TN &first,ARGS& ... args)
 }
 ```
 
+## 哈希表unordered_set & unordered_map
+
+### 声明
+
+```c++
+template < class Key,  
+    class Hash = hash<Key>,  
+    class Pred = equal_to<Key>,  
+    class Alloc = allocator<Key>  
+> class unordered_set;  
+```
+
+### 特例化hash类
+
+```c++
+template<class TN>
+inline void hash_combine(size_t& seed, const TN &v)
+{
+	seed ^= hash<TN>()(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
+//以pair<int,int>为例
+namespace std{
+		template<>
+			struct hash<pair<int,int>>{
+				typedef pair<int,int> type;
+				explicit hash(){};
+				size_t operator()(const type &p)const
+				{
+					size_t seed=0;
+					hash_combine(seed,p.first);
+					hash_combine(seed,p.second);
+					return seed;
+				}
+			};
+}
+```
+
 ## pbds
 
 ### 优先队列
