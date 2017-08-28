@@ -3058,7 +3058,7 @@ int main()
 ## 离散对数
 
 ## 问题描述
->给定B、N、P，求一个整数L $B^L \equiv N \ (mod \ P)$
+>给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
 
 ### 全局变量 & 宏
 
@@ -3120,6 +3120,120 @@ int main()
         int ans = BSGS(B,N,P);
         if(ans == -1)printf("no solution\n");
         else printf("%d\n",ans);
+    }
+    return 0;
+}
+```
+
+## 扩展离散对数
+
+### 问题描述
+>给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
+
+### 全局变量&结构体&宏
+
+```c++
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+ 
+#define MAXN 65536
+#define ll long long
+ 
+struct LINK{
+    ll data;
+    ll j;
+    ll next;
+}HASH_LINK[MAXN];
+ll ad, head[MAXN];
+```
+
+### 辅助函数
+
+```c++
+ll Gcd(ll a, ll b){
+return b ? Gcd(b, a % b) : a;
+}
+ 
+ll Ext_Gcd(ll a, ll b, ll &x, ll &y){
+    if(!b){
+       x = 1; y = 0;
+       return a;
+    }
+    ll r = Ext_Gcd(b, a % b, x, y);
+    ll t = x; x = y; y = t - a / b * y;
+    return r;
+}
+ 
+ll POWER(ll a, ll b, ll c){
+    ll ans = 1;
+    while(b){
+       if(b & 1) ans = ans * a % c;
+       a = a * a % c;
+       b >>= 1;
+    }
+    return ans;
+}
+ 
+void clear(){
+    memset(head, -1, sizeof(head));
+    ad = 0;
+}
+ 
+ll hash(ll a){
+    return a % MAXN;
+}
+ 
+void INSERT_HASH(ll i, ll buf){
+    ll hs = hash(buf), tail;
+    for(tail = head[hs]; ~tail; tail = HASH_LINK[tail]. next)
+       if(buf == HASH_LINK[tail]. data) return;
+    HASH_LINK[ad]. data = buf;
+    HASH_LINK[ad]. j    = i;
+    HASH_LINK[ad]. next = head[hs];
+    head[hs] = ad ++;
+}
+```
+
+### 扩展BSGS算法
+
+```c++
+// a^ans = b (mod c)
+ll bady_step_giant_step(ll a, ll b, ll c){
+    ll i, buf, m, temp, g, D, x, y, n = 0;
+    for(i = 0, buf = 1; i < 100; i ++, buf = buf * a % c)
+       if(buf == b) return i;
+    D = 1;
+    while((g = Gcd(a, c)) != 1){
+       if(b % g) return -1; // g | b 不满足，则说明无解
+       b /= g;
+       c /= g;
+       D = D * a / g % c;
+       ++ n;
+    }
+    clear();
+    m = ceil(sqrt((long double) c));
+    for(i = 0, buf = 1; i <= m; buf = buf * a % c, i ++) INSERT_HASH(i, buf);
+    for(i = 0, temp = POWER(a, m, c), buf = D; i <= m; i ++, buf = temp * buf % c){
+       Ext_Gcd(buf, c, x, y);
+       x = ((x * b) % c + c) % c;
+       for(ll tail = head[hash(x)]; ~tail; tail = HASH_LINK[tail].next)
+           if(HASH_LINK[tail]. data == x) return HASH_LINK[tail].j + n + i * m;
+    }
+    return -1;
+}
+```
+
+### 用法
+
+```c++
+// k^D = n (mod p)
+int main(){
+    ll k, p, n, ans;
+    while(~scanf("%lld %lld %lld", &k, &p, &n)){
+       if(n >= p){ printf("Orz,I can’t find D!n"); continue; }
+       ans = bady_step_giant_step(k, n, p);
+       ans == -1 ? printf("Orz,I can’t find D!\n") : printf("%lld\n", ans);
     }
     return 0;
 }
