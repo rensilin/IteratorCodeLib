@@ -3133,18 +3133,18 @@ int main()
 ### 全局变量&结构体&宏
 
 ```c++
-#include <stdio.h>
 #include <string.h>
 #include <math.h>
  
 #define MAXN 65536
-#define ll long long
+
+typedef long long ll;
  
 struct LINK{
     ll data;
     ll j;
     ll next;
-}HASH_LINK[MAXN];
+}HASH_LINK[1000000];
 ll ad, head[MAXN];
 ```
 
@@ -3198,7 +3198,7 @@ void INSERT_HASH(ll i, ll buf){
 ### 扩展BSGS算法
 
 ```c++
-// a^ans = b (mod c)
+// a^ans = b(mod c)
 ll bady_step_giant_step(ll a, ll b, ll c){
     ll i, buf, m, temp, g, D, x, y, n = 0;
     for(i = 0, buf = 1; i < 100; i ++, buf = buf * a % c)
@@ -3227,11 +3227,11 @@ ll bady_step_giant_step(ll a, ll b, ll c){
 ### 用法
 
 ```c++
-// k^D = n (mod p)
+//k^ans = n(mod p) 
 int main(){
     ll k, p, n, ans;
     while(~scanf("%lld %lld %lld", &k, &p, &n)){
-       if(n >= p){ printf("Orz,I can’t find D!n"); continue; }
+       if(n >= p){ printf("Orz,I can’t find D!\n"); continue; }
        ans = bady_step_giant_step(k, n, p);
        ans == -1 ? printf("Orz,I can’t find D!\n") : printf("%lld\n", ans);
     }
