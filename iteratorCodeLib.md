@@ -3063,6 +3063,9 @@ int main()
 ### 全局变量 & 宏
 
 ```c++
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 #define MOD 76543
 int hs[MOD],head[MOD],next[MOD],id[MOD],top;
 ```
@@ -3088,6 +3091,7 @@ int find(int x)
 ### BSGS算法
 
 ```c++
+//a^ans = b (mod n)
 int BSGS(int a,int b,int n)
 {
     memset(head,-1,sizeof(head));
@@ -3110,10 +3114,10 @@ int BSGS(int a,int b,int n)
 ```c++
 int main()
 {
-    int a,b,n;
-    while(scanf("%d%d%d",&n,&a,&b) == 3)
+    int P,B,N;
+    while(scanf("%d%d%d",&P,&B,&N) == 3)
     {
-        int ans = BSGS(a,b,n);
+        int ans = BSGS(B,N,P);
         if(ans == -1)printf("no solution\n");
         else printf("%d\n",ans);
     }
