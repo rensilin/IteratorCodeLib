@@ -2933,6 +2933,129 @@ void xor_gauss(TN bits[],int n,int m)//n行m列
 }
 ```
 
+## 二次剩余
+
+### 引用自
+http://blog.csdn.net/xf_zhen/article/details/52097988
+
+### 代码
+
+```c++
+#include <iostream>  
+#include <cstdio>  
+using namespace std;  
+  
+#define LL long long  
+  
+LL quick_mod(LL a,LL b,LL p)//快速幂  
+{  
+    LL ans = 1;  
+    a%=p;  
+    while(b)  
+    {  
+        if(b&1)  
+        {  
+            ans = ans * a%p;  
+            b--;  
+        }  
+        b>>=1;  
+        a = a*a%p;  
+    }  
+    return (ans+p)%p;  
+}  
+LL Legendre(LL a,LL p)//求勒让得符号（-1,0,1）这里-1返回p-1  
+{  
+    return quick_mod(a,(p-1)>>1,p);  
+}  
+struct T //二次域  
+{  
+    LL p,d;  
+};  
+LL w; //二次域第二个单位参数  
+  
+LL mod(LL t, LL p)  
+{  
+    t %=p;  
+    if(t<0) t+=p;  
+    return t;  
+}  
+T multi_er(T a,T b, LL p)//二次域乘法  
+{  
+    T ans;  
+    ans.p = (a.p*b.p%p+ a.d*b.d%p*w%p)%p;  
+    ans.d = (a.p*b.d%p +a.d*b.p%p)%p;  
+    return ans;  
+}  
+T pow_er(T a,LL b,LL p)//二次域上的快速幂  
+{  
+     T ans;  
+     ans.p=1;  
+     ans.d =0;  
+  
+    while(b)  
+    {  
+        if(b&1)  
+        {  
+           ans = multi_er(ans, a, p);  
+            b--;  
+        }  
+        b>>=1;  
+        a = multi_er(a, a, p);  
+    }  
+    return ans;  
+}  
+int solve(int n,int p)  
+{  
+    if(p==2) return 1;  
+    if(Legendre(n,p)+1 == p) return -1;  
+   // printf("solve ...\n");  
+    LL a = -1,t;  
+    while(true)  
+    {  
+        a = rand()%p;  
+        t = a*a -n;  
+        w = mod(t,p);  
+        if(Legendre(w,p)+1==p) break;  
+    }  
+    T tmp;  
+    tmp.p = a;  
+    tmp.d = 1;  
+    T ans = pow_er(tmp,(p+1)>>1,p);  
+    return ans.p;  
+}  
+int main()  
+{  
+   int cas;  
+   scanf("%d",&cas);  
+   while(cas--)  
+   {  
+       int n,p;  
+       scanf("%d %d",&n,&p);  
+       n %=p;  
+       int a = solve(n,p);  
+       if(a == -1)  
+       {  
+           puts("No root");  
+           continue;  
+       }  
+       else  
+       {  
+           int b = p - a;  
+           if(a==b)  
+           {  
+               printf("%d\n",a);  
+           }  
+           else  
+           {  
+               if(a>b) swap(a,b);  
+               printf("%d %d\n",a,b);  
+           }  
+       }  
+   }  
+    return 0;  
+}
+```
+
 # STL
 
 ## 求合并,交集,并集，差集
