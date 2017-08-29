@@ -3243,7 +3243,7 @@ int main(){
 
 ## 插头DP
 
-### 示例
+### 示例代码
 
 ```c++
 inline long long work()
