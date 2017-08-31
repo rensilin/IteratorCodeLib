@@ -1294,6 +1294,8 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 
 ## 最大权匹配KM
 
+> 复杂度$O(nm)$
+
 ### 头文件&宏&结构体&全局变量
 
 ```c++
@@ -1391,6 +1393,8 @@ int KM() //自己建图edge
 ```
 
 ## 全局最小割SW
+
+> 复杂度 $O(nm)$
 
 ### 头文件&宏&全局变量
 
@@ -2159,7 +2163,7 @@ void add_edge(int u, int v){
 
 ### 匈牙利算法代码
 
-### 复杂度：V×E
+> 复杂度： $O(nm)$
 
 ```c++
 int matching[N];
@@ -2219,7 +2223,7 @@ void add_edge(int u, int v){
 
 ### Hopcroft_Karp算法代码
 
-### 复杂度：sqrt(V)×E
+> 复杂度：$O(\sqrt{V}E)$
 
 ```c++
 //xlink[i]表示左集合顶点i匹配的右集合的点，ylink[i]表示右集合顶点i匹配的左集合的点
