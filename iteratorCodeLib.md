@@ -58,210 +58,52 @@ void union_merge(int a,int b,int vab)
 ## 树状数组
 
 >要求所有数的和不能超出范围,也可修改为记录最值
+>数组下标应从1开始
 
-### 精准覆盖
+### 头文件&宏&全局变量
 
 ```c++
-struct DLX {
-    int n, m, si; //n行数m列数si目前有的节点数
-    //十字链表组成部分
-    int U[MNN], D[MNN], L[MNN], R[MNN], Row[MNN], Col[MNN];
-    //第i个结点的U向上指针D下L左R右，所在位置Row行Col列
-    int H[MN], S[MM]; //记录行的选择情况和列的覆盖情况
-    int ansd, ans[MN];
-    void init(int _n, int _m) //初始化空表
-    {
-        n = _n;
-        m = _m;
-        for (int i = 0; i <= m; i++) //初始化第一横行（表头）
-        {
-            S[i] = 0;
-            U[i] = D[i] = i; //目前纵向的链是空的
-            L[i] = i - 1;
-            R[i] = i + 1; //横向的连起来
-        }
-        R[m] = 0;
-        L[0] = m;
-        si = m; //目前用了前0~m个结点
-        for (int i = 1; i <= n; i++)
-            H[i] = -1;
-    }
-    void link(int r, int c) //插入点(r,c)
-    {
-        ++S[Col[++si] = c]; //si++;Col[si]=c;S[c]++;
-        Row[si] = r;
-        D[si] = D[c];
-        U[D[c]] = si;
-        U[si] = c;
-        D[c] = si;
-        if (H[r] < 0)
-            H[r] = L[si] = R[si] = si;
-        else {
-            R[si] = R[H[r]];
-            L[R[H[r]]] = si;
-            L[si] = H[r];
-            R[H[r]] = si;
-        }
-    }
-    void remove(int c) //列表中删掉c列
-    {
-        L[R[c]] = L[c]; //表头操作
-        R[L[c]] = R[c];
-        for (int i = D[c]; i != c; i = D[i])
-            for (int j = R[i]; j != i; j = R[j]) {
-                U[D[j]] = U[j];
-                D[U[j]] = D[j];
-                --S[Col[j]];
-            }
-    }
-    void resume(int c) //恢复c列
-    {
-        for (int i = U[c]; i != c; i = U[i])
-            for (int j = L[i]; j != i; j = L[j])
-                ++S[Col[U[D[j]] = D[U[j]] = j]];
-        L[R[c]] = R[L[c]] = c;
-    }
-
-    // HUST-1017
-    //仅仅判断有无解
-    bool dance(int d) //选取了d行
-    {
-        if (R[0] == 0) //全部覆盖了
-        {
-            //全覆盖了之后的操作
-            ansd = d;
-            return 1;
-        }
-        int c = R[0];
-        for (int i = R[0]; i != 0; i = R[i])
-            if (S[i] < S[c])
-                c = i;
-        remove(c);
-        for (int i = D[c]; i != c; i = D[i]) {
-            ans[d] = Row[i];
-            for (int j = R[i]; j != i; j = R[j])
-                remove(Col[j]);
-            if (dance(d + 1))
-                return 1;
-            for (int j = L[i]; j != i; j = L[j])
-                resume(Col[j]);
-        }
-        resume(c);
-        return 0;
-    }
-
-    //ZOJ 3209
-    //求最小解
-    void danceLeast(int d) //选取了d行
-    {
-        if (ansd != -1 && ansd <= d) return;
-        if (R[0] == 0) //全部覆盖了
-        {
-            //全覆盖了之后的操作
-            if (ansd == -1)
-                ansd = d;
-            else if (d < ansd)
-                ansd = d;
-            return;
-        }
-        int c = R[0];
-        for (int i = R[0]; i != 0; i = R[i])
-            if (S[i] < S[c])
-                c = i;
-        remove(c);
-        for (int i = D[c]; i != c; i = D[i]) {
-            ans[d] = Row[i];
-            for (int j = R[i]; j != i; j = R[j])
-                remove(Col[j]);
-            danceLeast(d + 1);
-            for (int j = L[i]; j != i; j = L[j])
-                resume(Col[j]);
-        }
-        resume(c);
-    }
-} dlx;
+#define MAXN 10000//数组大小 
+int tree[MAXN];//树状数组 
 ```
 
-### 重复覆盖
+### 辅助函数
 
 ```c++
-struct DLX {//成员变量，init(),link()同上
-    void remove(int c) //列表中删掉c列
-    {
-        for(int i = D[c];i != c;i = D[i])
-             L[R[i]] = L[i], R[L[i]] = R[i];
-    }
-    void resume(int c) //恢复c列
-    {
-        for(int i = U[c];i != c;i = U[i])
-             L[R[i]]=R[L[i]]=i;
-    }
+int lowbit(int a)
+{
+    return a&-a;
+}
+```
 
-    bool v[MNN];
-    int f()
-    {
-        int ret = 0;
-        for(int c = R[0];c != 0;c = R[c])v[c] = true;
-        for(int c = R[0];c != 0;c = R[c])
-            if(v[c])
-            {
-                ret++;
-                v[c] = false;
-                for(int i = D[c];i != c;i = D[i])
-                    for(int j = R[i];j != i;j = R[j])
-                        v[Col[j]] = false;
-            }
-        return ret;
+### 初始化
 
-    }
+```c++
+memset(tree,0,sizeof(tree));
+```
 
-    //HDU 2295
-    //是否有解
-    bool dance(int d)
-    {
-        if(d + f() > K)return false; //此处K为题目要求最多能选择的数量
-        if(R[0] == 0)return d <= K;
-        int c = R[0];
-        for(int i = R[0];i != 0;i = R[i])
-            if(S[i] < S[c])
-                c = i;
-        for(int i = D[c];i != c;i = D[i])
-        {
-            remove(i);
-            for(int j = R[i];j != i;j = R[j])remove(j);
-            if(Dance(d+1))return true;
-            for(int j = L[i];j != i;j = L[j])resume(j);
-            resume(i);
-        }
-        return false;
-    }
+### 单点修改
 
-    //FZU 1686
-    //求最小解
-    void danceLeast(int d) {
-        if (d + f() >= ansd) return;
-        if (R[0] == 0) //全部覆盖了
-        {
-            //全覆盖了之后的操作
-            if (d < ansd)
-                ansd = d;
-            return;
-        }
-        int c = R[0];
-        for (int i = R[0]; i != 0; i = R[i])
-            if (S[i] < S[c])
-                c = i;
-        for (int i = D[c]; i != c; i = D[i]) {
-            remove(i);
-            for (int j = R[i]; j != i; j = R[j])
-                remove(j);
-            danceLeast(d + 1);
-            for (int j = L[i]; j != i; j = L[j])
-                resume(j);
-            resume(i);
-        }
-    }
-} dlx;
+>把a处的值增加b（如果是修改，需要记录原始数组，转化为增加就行了）
+
+```c++
+void tree_add(int a,int b)
+{
+    for(int i=a;i<MAXN;i+=lowbit(i))tree[i]+=b;
+}
+```
+
+### 区间查询
+
+>查询1到a之间的值的和
+
+```c++
+int tree_find(int a)
+{
+    int ans=0;
+    for(int i=a;i;i-=lowbit(i))ans+=tree[i];
+    return ans;
+}
 ```
 
 ## 线段树
@@ -896,6 +738,223 @@ int build(int l, int r)//在[l,r]上建立空树；返回空树的根
 int update(int rt, int pos, int val)
 //建立新树更新以rt为根节点的树上，pos节点，权值+val；返回新树的根
 int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
+```
+
+## 舞蹈链
+
+> 行列下标皆从1开始 
+
+### 头文件&宏&全局变量
+
+```c++
+const int MN = 1005; //最大行数
+const int MM = 1005; //最大列数
+const int MNN = MN*MM; //最大点数
+```
+
+### 精准覆盖
+
+```c++
+struct DLX {
+    int n, m, si; //n行数m列数si目前有的节点数
+    //十字链表组成部分
+    int U[MNN], D[MNN], L[MNN], R[MNN], Row[MNN], Col[MNN];
+    //第i个结点的U向上指针D下L左R右，所在位置Row行Col列
+    int H[MN], S[MM]; //记录行的选择情况和列的覆盖情况
+    int ansd, ans[MN];
+    void init(int _n, int _m) //初始化空表
+    {
+        n = _n;
+        m = _m;
+        for (int i = 0; i <= m; i++) //初始化第一横行（表头）
+        {
+            S[i] = 0;
+            U[i] = D[i] = i; //目前纵向的链是空的
+            L[i] = i - 1;
+            R[i] = i + 1; //横向的连起来
+        }
+        R[m] = 0;
+        L[0] = m;
+        si = m; //目前用了前0~m个结点
+        for (int i = 1; i <= n; i++)
+            H[i] = -1;
+    }
+    void link(int r, int c) //插入点(r,c)
+    {
+        ++S[Col[++si] = c]; //si++;Col[si]=c;S[c]++;
+        Row[si] = r;
+        D[si] = D[c];
+        U[D[c]] = si;
+        U[si] = c;
+        D[c] = si;
+        if (H[r] < 0)
+            H[r] = L[si] = R[si] = si;
+        else {
+            R[si] = R[H[r]];
+            L[R[H[r]]] = si;
+            L[si] = H[r];
+            R[H[r]] = si;
+        }
+    }
+    void remove(int c) //列表中删掉c列
+    {
+        L[R[c]] = L[c]; //表头操作
+        R[L[c]] = R[c];
+        for (int i = D[c]; i != c; i = D[i])
+            for (int j = R[i]; j != i; j = R[j]) {
+                U[D[j]] = U[j];
+                D[U[j]] = D[j];
+                --S[Col[j]];
+            }
+    }
+    void resume(int c) //恢复c列
+    {
+        for (int i = U[c]; i != c; i = U[i])
+            for (int j = L[i]; j != i; j = L[j])
+                ++S[Col[U[D[j]] = D[U[j]] = j]];
+        L[R[c]] = R[L[c]] = c;
+    }
+
+    // HUST-1017
+    //仅仅判断有无解
+    bool dance(int d) //选取了d行
+    {
+        if (R[0] == 0) //全部覆盖了
+        {
+            //全覆盖了之后的操作
+            ansd = d;
+            return 1;
+        }
+        int c = R[0];
+        for (int i = R[0]; i != 0; i = R[i])
+            if (S[i] < S[c])
+                c = i;
+        remove(c);
+        for (int i = D[c]; i != c; i = D[i]) {
+            ans[d] = Row[i];
+            for (int j = R[i]; j != i; j = R[j])
+                remove(Col[j]);
+            if (dance(d + 1))
+                return 1;
+            for (int j = L[i]; j != i; j = L[j])
+                resume(Col[j]);
+        }
+        resume(c);
+        return 0;
+    }
+    
+    //ZOJ 3209
+    //求最小解
+    void danceLeast(int d) //选取了d行
+    {
+        if (ansd != -1 && ansd <= d) return;
+        if (R[0] == 0) //全部覆盖了
+        {
+            //全覆盖了之后的操作
+            if (ansd == -1)
+                ansd = d;
+            else if (d < ansd)
+                ansd = d;
+            return;
+        }
+        int c = R[0];
+        for (int i = R[0]; i != 0; i = R[i])
+            if (S[i] < S[c])
+                c = i;
+        remove(c);
+        for (int i = D[c]; i != c; i = D[i]) {
+            ans[d] = Row[i];
+            for (int j = R[i]; j != i; j = R[j])
+                remove(Col[j]);
+            danceLeast(d + 1);
+            for (int j = L[i]; j != i; j = L[j])
+                resume(Col[j]);
+        }
+        resume(c);
+    }
+} dlx; 
+```
+
+### 重复覆盖
+
+```c++
+struct DLX {//成员变量，init(),link()同上
+    void remove(int c) //列表中删掉c列
+    {
+        for(int i = D[c];i != c;i = D[i])
+             L[R[i]] = L[i], R[L[i]] = R[i];
+    }
+    void resume(int c) //恢复c列
+    {
+        for(int i = U[c];i != c;i = U[i])
+             L[R[i]]=R[L[i]]=i;
+    }
+    
+    bool v[MNN];
+    int f()
+    {
+        int ret = 0;
+        for(int c = R[0];c != 0;c = R[c])v[c] = true;
+        for(int c = R[0];c != 0;c = R[c])
+            if(v[c])
+            {
+                ret++;
+                v[c] = false;
+                for(int i = D[c];i != c;i = D[i])
+                    for(int j = R[i];j != i;j = R[j])
+                        v[Col[j]] = false;
+            }
+        return ret;
+
+    }
+
+    //HDU 2295
+    //是否有解
+    bool dance(int d)
+    {
+        if(d + f() > K)return false; //此处K为题目要求最多能选择的数量
+        if(R[0] == 0)return d <= K;
+        int c = R[0];
+        for(int i = R[0];i != 0;i = R[i])
+            if(S[i] < S[c])
+                c = i;
+        for(int i = D[c];i != c;i = D[i])
+        {
+            remove(i);
+            for(int j = R[i];j != i;j = R[j])remove(j);
+            if(Dance(d+1))return true;
+            for(int j = L[i];j != i;j = L[j])resume(j);
+            resume(i);
+        }
+        return false;
+    }
+
+    //FZU 1686
+    //求最小解
+    void danceLeast(int d) {
+        if (d + f() >= ansd) return;
+        if (R[0] == 0) //全部覆盖了
+        {
+            //全覆盖了之后的操作
+            if (d < ansd)
+                ansd = d;
+            return;
+        }
+        int c = R[0];
+        for (int i = R[0]; i != 0; i = R[i])
+            if (S[i] < S[c])
+                c = i;
+        for (int i = D[c]; i != c; i = D[i]) {
+            remove(i);
+            for (int j = R[i]; j != i; j = R[j])
+                remove(j);
+            danceLeast(d + 1);
+            for (int j = L[i]; j != i; j = L[j])
+                resume(j);
+            resume(i);
+        }
+    }
+} dlx;
 ```
 
 # 字符串
