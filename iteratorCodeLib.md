@@ -3345,6 +3345,198 @@ inline long long work()
 }
 ```
 
+# 一些套路题
+
+## 区间第k大
+
+### 动态可修改(树状数组套线段树)
+
+#### 题目
+
+> [zoj2112 Dynamic Rankings](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemId=1112)
+> 
+> 数组长度n=50000,询问次数m=10000
+> 
+> 此题空间卡得很死,如果直接全部插入空间复杂度为(m+n)\*log(n)\*log(n)
+> 
+> 所以最开始建树使用线段树合并(n\*log(n)),然后修改时插入(m\*log(n)\*log(n)),
+
+#### 代码(省略头文件和读入优化)
+
+```c++
+#define MAXN 50010//数组长度
+#define MAXM 10010//询问次数
+#define MAXMM 2666666//MAXM*log(MAXX)*log(MAXX)
+#define MINX 0//最小数
+#define MAXX nn//最大数
+
+struct Tree{
+	int num;
+	int lson;
+	int rson;
+}tree[MAXMM];//线段树
+int top;
+
+int root[MAXN];//树状数组(存线段树的根)
+
+int n;
+int arr[MAXN];//原数组
+int nn;//离散化后数的数量
+int kkke[MAXN+MAXM];//离散化用
+
+inline int lowbit(int x)
+{
+	return x&-x;
+}
+
+inline void treeInit()//初始化
+{
+	top=0;
+	memset(root,-1,sizeof(root));
+}
+
+inline void treeAdd2(int& nown,int left,int right,int x,int c)
+{
+	if(nown==-1)
+	{
+		tree[top].lson=tree[top].rson=-1;
+		tree[top].num=c;
+	}
+	else
+	{
+		tree[top].lson=tree[nown].lson;
+		tree[top].rson=tree[nown].rson;
+		tree[top].num=tree[nown].num+c;
+	}
+	nown=top++;
+	if(left<right)
+	{
+		int mid=(left+right)>>1;
+		if(x<=mid)treeAdd2(tree[nown].lson,left,mid,x,c);
+		else treeAdd2(tree[nown].rson,mid+1,right,x,c);
+	}
+}
+
+inline void treeAdd(int x,int y,int c)//时空复杂度log(MAXX)*log(MAXX)
+{
+	for(int i=x;i<=n;i+=lowbit(i))
+		treeAdd2(root[i],MINX,MAXX,y,c);
+}
+
+inline int treeFind2(int nown,int left,int right,int l,int r)
+{
+	if(nown==-1)return 0;
+	if(l<=left&&right<=r)return tree[nown].num;
+	int mid=(left+right)>>1;
+	int ans=0;
+	if(l<=mid)ans+=treeFind2(tree[nown].lson,left,mid,l,r);
+	if(r>mid)ans+=treeFind2(tree[nown].rson,mid+1,right,l,r);
+	return ans;
+}
+
+inline int treeFind(int x,int y1,int y2)
+{
+	int ans=0;
+	for(int i=x;i;i^=lowbit(i))
+		ans+=treeFind2(root[i],MINX,MAXX,y1,y2);
+	return ans;
+}
+
+inline int treeMerge(int a,int b)//合并a,b两线段树
+{
+	if(a==-1)return b;
+	if(b==-1)return a;
+	int nown=top++;
+	tree[nown].num=tree[a].num+tree[b].num;
+	tree[nown].lson=treeMerge(tree[a].lson,tree[b].lson);
+	tree[nown].rson=treeMerge(tree[a].rson,tree[b].rson);
+	return nown;
+}
+
+inline void treeBuild()//通过共用节点合并建树n*log(n)
+{
+	for(int i=1;i<=n;i++)treeAdd2(root[i],MINX,MAXX,arr[i],1);
+	for(int i=1;i<=n;i++)
+	{
+		int j=i+lowbit(i);
+		if(j<=n)root[j]=treeMerge(root[i],root[j]);
+	}
+}
+
+inline int findKth(int l,int r,int k)//找[l,r]第k小,1<=k<=l+r
+{
+	int left=MINX,right=MAXX,mid;
+	while(left<right)
+	{
+		mid=(left+right)>>1;
+		int ans=treeFind(r,MINX,mid)-treeFind(l-1,MINX,mid);
+		if(ans<k)left=mid+1;
+		else right=mid;
+	}
+	return left;
+}
+
+inline void arrChange(int a,int b)//a位置变为b
+{
+	treeAdd(a,arr[a],-1);
+	treeAdd(a,b,1);
+	arr[a]=b;
+}
+
+char s[MAXM][2];
+int a[MAXM];
+int b[MAXM];
+int c[MAXM];
+
+int main()
+{
+	int t;
+	int m;
+	kread(t);
+	while(t--)
+	{
+		treeInit();
+		nn=0;
+		kread(n,m);
+		for(int i=1;i<=n;i++)
+		{
+			kread(arr[i]);
+			kkke[nn++]=arr[i];
+		}
+		for(int i=0;i<m;i++)
+		{
+			scanf("%s",s[i]);
+			if(s[i][0]=='Q')
+			{
+				kread(a[i],b[i],c[i]);
+				if(a[i]>b[i])swap(a[i],b[i]);
+			}
+			else
+			{
+				kread(a[i],b[i]);
+				kkke[nn++]=b[i];
+			}
+		}
+		sort(kkke,kkke+nn);
+		nn=unique(kkke,kkke+nn)-kkke;
+		for(int i=1;i<=n;i++)arr[i]=lower_bound(kkke,kkke+nn,arr[i])-kkke;
+		treeBuild();
+		for(int i=0;i<m;i++)
+		{
+			if(s[i][0]=='Q')
+			{
+				printf("%d\n",kkke[findKth(a[i],b[i],c[i])]);
+			}
+			else
+			{
+				arrChange(a[i],lower_bound(kkke,kkke+nn,b[i])-kkke);
+			}
+		}
+	}
+	return 0;
+}
+```
+
 # STL
 
 ## 求合并,交集,并集，差集
