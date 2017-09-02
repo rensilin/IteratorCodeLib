@@ -1644,7 +1644,6 @@ int dinic()
 
 ```c++
 int main(){
-	freopen("./divide/divide5.in","r",stdin);
 	kread(n,m);
 	S=1;T=n;
 	init_edge();
@@ -3595,10 +3594,14 @@ inline void kread(TN &x)
 {
     x=0;
     char c;
-    while(!isdigit(c=getchar()));
+	bool flag=false;
+    while(!isdigit(c=getchar()))
+		if(c=='-')
+			flag=true;
     do{
-        x=x*10+c-'0';
+        x=x*10+c-48;
     }while(isdigit(c=getchar()));
+	if(flag)x=-x;
 }
 
 template<class TN,class... ARGS>
