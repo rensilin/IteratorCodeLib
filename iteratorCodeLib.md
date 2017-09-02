@@ -2974,25 +2974,26 @@ int main() {
 ### 异或-高斯消元
 
 ```c++
-template<class TN>//TN为bitset
-void xor_gauss(TN bits[],int n,int m)//n行m列
+template <class TN>                    //TN为bitset
+int xor_gauss(TN bits[], int n, int m) //n行m列
 {
-	int i=0,k=m-1;//先消高位
-	//i枚举行,k枚举列
-	while(i<n&&k>=0)
-	{
-		int nown=i;
-		while(nown<n&&!bits[nown].test(k))nown++;
-		if(nown<n)
-		{
-			for(int j=nown+1;j<n;j++)
-				if(bits[j].test(k))
-					bits[j]^=bits[nown];
-			swap(bits[nown],bits[i]);
-			i++;
-		}
-		k--;
-	}
+    int i = 0, k = m - 1; //先消高位
+    //i枚举行,k枚举列
+    while (i < n && k >= 0) {
+        int nown = i;
+        while (nown < n && !bits[nown].test(k))
+            nown++;
+        if (nown < n) {
+            for (int j = nown + 1; j < n; j++)
+                if (bits[j].test(k))
+                    bits[j] ^= bits[nown];
+            swap(bits[nown], bits[i]);
+            i++;
+        }
+        k--;
+    }
+    //返回秩
+    return i;
 }
 ```
 
