@@ -2345,53 +2345,42 @@ int exgcd(int a,int b,int &x,int &y){
 ### 代码
 
 ```c++
-#define ll long long
+#define MAXN 111
+typedef long long ll;
 
 const ll MOD = 1000000007;
 struct Matrix{
-    ll a[N][N];
-    int r, c;
-}ori, res;
+	ll a[MAXN][MAXN];
+	int r, c;
+};
 
-void init(){
-    memset(res.a, 0, sizeof(res.a));
-    res.r = 1; res.c = 2;
-    res.a[1][1] = p;
-    res.a[1][2] = 2;
-    ori.r = 2; ori.c = 2;//构造矩阵
-    ori.a[1][1] = p;
-    ori.a[1][2] = 1;
-    ori.a[2][1] = -q;
-    ori.a[2][2] = 0;
-}
-
-Matrix multi(Matrix x, Matrix y)//矩阵乘法
+Matrix multi(const Matrix &x, const Matrix &y)//矩阵乘法
 {
-    Matrix z;
-    memset(z.a, 0, sizeof(z.a));
-    z.r = x.r, z.c = y.c;
-    for(int i = 1; i <= x.r; i++){
-        for(int k = 1; k <= x.c; k++)//加速优化
-        {
-            if(x.a[i][k] == 0) continue;
-            for(int j = 1; j<= y.c; j++)
-                z.a[i][j] =(
-						z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD
+	Matrix z;
+	memset(z.a, 0, sizeof(z.a));
+	z.r = x.r, z.c = y.c;
+	for(int i = 0; i < x.r; i++){
+		for(int k = 0; k < x.c; k++)//加速优化
+		{
+			if(x.a[i][k] == 0) continue;
+			for(int j = 0; j< y.c; j++)
+				z.a[i][j] =(
+					z.a[i][j] + (x.a[i][k] * y.a[k][j]) % MOD
 					) % MOD;
-        }
-    }
-    return z;
+		}
+	}
+	return z;
 }
 
-void Matrix_pow(int n)//矩阵快速幂
+Matrix kpow(Matrix a,Matrix b,int n)//a*b^n
 {
-    while(n){
-        if(n & 1)
-            res = multi(res, ori);
-        ori = multi(ori, ori);
-        n >>= 1;
-    }
-    printf("%llu\n", res.a[1][1] % MOD);
+	while(n){
+		if(n & 1)
+			a = multi(a, b);
+		b = multi(b, b);
+		n >>= 1;
+	}
+	return a;
 }
 ```
 
