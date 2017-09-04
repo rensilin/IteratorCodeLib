@@ -2335,10 +2335,13 @@ int exgcd(int a,int b,int &x,int &y){
 
 ### 求逆元
 
->求a对b的逆元，即(a^(-1))mod b
->int x,y;
->exgcd(a,b,x,y);
->x即为a对b的逆元
+> 求a对b的逆元，即(a^(-1))mod b
+>
+> int x,y;
+>
+> exgcd(a,b,x,y);
+>
+> x即为a对b的逆元
 
 ## 矩阵快速幂
 
@@ -3335,19 +3338,128 @@ inline long long work()
 
 # 一些套路题
 
-## 区间第k大
+## 区间第k小
 
-### 动态可修改(树状数组套线段树)
+### 静态不修改(可持久化线段树+树上二分)
 
 #### 题目
 
-> [zoj2112 Dynamic Rankings](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemId=1112)
+> [HDU 2665 Kth number](http://acm.hdu.edu.cn/showproblem.php?pid=2665)
+>
+> 数组下标从1开始,k从1开始
+>
+> 复杂度$\Theta \left ( nlog \left ( n \right ) \right )$
+
+### 动态可修改(树状数组套线段树)
+
+#### 代码
+
+```c++
+#define MAXN 111111//数组大小
+#define MAXM 6666666//MAXN*log(MAXN)
+
+struct Tree{
+	int num;
+	int lson;
+	int rson;
+}tree[MAXM];//线段树
+int top;
+
+void treeInit()
+{
+	tree[0].num=tree[0].lson=tree[0].rson=0;//用0节点表示NULL,便于处理
+	top=1;
+}
+
+int treeAdd(int ori,int left,int right,int x,int a)
+{//在ori[left,right]树上x位置加a,并返回新的根
+	int nown=top++;
+	tree[nown]=tree[ori];
+	tree[nown].num+=a;
+	if(left<right)
+	{
+		int mid=(left+right)>>1;
+		if(x<=mid)tree[nown].lson=treeAdd(tree[nown].lson,left,mid,x,a);
+		else tree[nown].rson=treeAdd(tree[nown].rson,mid+1,right,x,a);
+	}
+	return nown;
+}
+
+int treeFind(int nown,int left,int right,int l,int r)//查询区间[l,r]
+{
+	if(nown==0)return 0;
+	if(l<=left&&right<=r)return tree[nown].num;
+	int mid=(left+right)>>1;
+	int ans=0;
+	if(l<=mid)ans+=treeFind(tree[nown].lson,left,mid,l,r);
+	if(r>mid)ans+=treeFind(tree[nown].rson,mid+1,right,l,r);
+	return ans;
+}
+
+int root[MAXN];//第i棵线段树的根,下标从1开始
+int hehe[MAXN],nn;
+
+inline int khash(int x)
+{
+	return lower_bound(hehe,hehe+nn,x)-hehe;
+}
+
+void treeBuild(int arr[],int n)
+{
+	treeInit();
+	root[0]=0;
+	nn=0;
+	for(int i=1;i<=n;i++)
+		hehe[nn++]=arr[i];
+	sort(hehe,hehe+nn);
+	nn=unique(hehe,hehe+n)-hehe;
+	for(int i=1;i<=n;i++)
+		root[i]=treeAdd(root[i-1],0,nn,khash(arr[i]),1);
+}
+
+int findKth(int lr,int rr,int left,int right,int k)
+{//左边树为lr,右边树为rr,区间[left,right]中的第k大,k从1开始
+	if(left==right)return left;
+	int mid=(left+right)>>1;
+	int tmp=tree[tree[rr].lson].num-tree[tree[lr].lson].num;
+	if(tmp>=k)return findKth(tree[lr].lson,tree[rr].lson,left,mid,k);
+	return findKth(tree[lr].rson,tree[rr].rson,mid+1,right,k-tmp);
+}
+
+int n,m;
+int kkke[MAXN];
+
+int main()
+{
+	int t,l,r,k;
+	kread(t);
+	while(t--)
+	{
+		kread(n,m);
+		for(int i=1;i<=n;i++)
+			kread(kkke[i]);
+		treeBuild(kkke,n);
+		while(m--)
+		{
+			kread(l,r,k);
+			printf("%d\n",hehe[findKth(root[l-1],root[r],0,nn,k)]);
+		}
+	}
+	return 0;
+}
+```
+
+#### 题目
+
+> [ZOJ 2112 Dynamic Rankings](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemId=1112)
 > 
 > 数组长度n=50000,询问次数m=10000
 > 
-> 此题空间卡得很死,如果直接全部插入空间复杂度为(m+n)\*log(n)\*log(n)
+> 此题空间卡得很死,如果直接全部插入空间复杂度为$\Theta \left ( \left ( m+n \right ) log^{2}\left ( n \right ) \right )$
 > 
-> 所以最开始建树使用线段树合并(n\*log(n)),然后修改时插入(m\*log(n)\*log(n)),
+> 所以最开始建树使用线段树合并$\Theta \left ( nlog\left ( n \right ) \right )$,然后修改时插入$\Theta \left ( mlog^{2}\left ( n \right ) \right )$
+>
+> 查询时间复杂度$\Theta \left ( nlog^{3}\left ( n \right ) \right )$,若树上二分可少一个$log\left ( n \right )$
 
 #### 代码(省略头文件和读入优化)
 
@@ -3758,3 +3870,4 @@ public class Main{
 | BigDecimal | divide(BigDecimal divisor, int scale, int roundingMode) |
 | BigDecimal | setScale(int newScale)                                  |
 | BigDecimal | setScale(int newScale, int roundingMode)                |
+
