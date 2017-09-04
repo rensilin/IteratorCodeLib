@@ -2,8 +2,7 @@
 
 ## 加权并查集
 
->解决集合问题中，集合内元素有关系并且关系具有传递性的问题。
-
+>解决集合问题中，集合内元素有关系并且关系具有传递性的问题  
 >从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
 
 ### 头文件&宏&全局变量
@@ -57,7 +56,7 @@ void union_merge(int a,int b,int vab)
 
 ## 树状数组
 
->要求所有数的和不能超出范围,也可修改为记录最值
+>要求所有数的和不能超出范围,也可修改为记录最值  
 >数组下标应从1开始
 
 ### 头文件&宏&全局变量
@@ -1711,30 +1710,30 @@ int solve()
 
 ### 定理
 
->算法引入：
->给定一个无向图G，求它生成树的个数t(G);
->
->算法思想：
->(1)G的度数矩阵D[G]是一个n*n的矩阵,并且满足:当i≠j时,dij=0;当i=j时,dij等于vi的度数;
->(2)G的邻接矩阵A[G]是一个n*n的矩阵,并且满足:如果vi,vj之间有边直接相连,则aij=1,否则为0;
->定义图G的Kirchhoff矩阵C[G]为C[G]=D[G]-A[G];
->Matrix-Tree定理:G的所有不同的生成树的个数等于其Kirchhoff矩阵C[G]任何一个n-1阶主子式的行列式的绝对值；
->所谓n-1阶主子式,就是对于r(1≤r≤n),将C[G]的第r行,第r列同时去掉后得到的新矩阵,用Cr[G]表示;
->
->Kirchhoff矩阵的特殊性质：
->(1)对于任何一个图G,它的Kirchhoff矩阵C的行列式总是0,这是因为C每行每列所有元素的和均为0;
->(2)如果G是不连通的,则它的Kirchhoff矩阵C的任一个主子式的行列式均为0;
->(3)如果G是一颗树,那么它的Kirchhoff矩阵C的任一个n-1阶主子式的行列式均为1;
->
->算法举例： sd:
->SPOJ104(Highways)
->
->题目地址：
-><http://www.spoj.com/problems/HIGH/>
->
->题目大意：
->一个有n座城市的组成国家,城市1至n编号,其中一些城市之间可以修建高速公路;
->需要有选择的修建一些高速公路,从而组成一个交通网络;
+>算法引入：  
+>给定一个无向图G，求它生成树的个数t(G);  
+>  
+>算法思想：  
+>(1)G的度数矩阵D[G]是一个n*n的矩阵,并且满足:当i≠j时,dij=0;当i=j时,dij等于vi的度数;  
+>(2)G的邻接矩阵A[G]是一个n*n的矩阵,并且满足:如果vi,vj之间有边直接相连,则aij=1,否则为0;  
+>定义图G的Kirchhoff矩阵C[G]为C[G]=D[G]-A[G];  
+>Matrix-Tree定理:G的所有不同的生成树的个数等于其Kirchhoff矩阵C[G]任何一个n-1阶主子式的行列式的绝对值；  
+>所谓n-1阶主子式,就是对于r(1≤r≤n),将C[G]的第r行,第r列同时去掉后得到的新矩阵,用Cr[G]表示;  
+>  
+>Kirchhoff矩阵的特殊性质：  
+>(1)对于任何一个图G,它的Kirchhoff矩阵C的行列式总是0,这是因为C每行每列所有元素的和均为0;  
+>(2)如果G是不连通的,则它的Kirchhoff矩阵C的任一个主子式的行列式均为0;  
+>(3)如果G是一颗树,那么它的Kirchhoff矩阵C的任一个n-1阶主子式的行列式均为1;  
+>  
+>算法举例： sd:  
+>SPOJ104(Highways)  
+>  
+>题目地址：  
+><http://www.spoj.com/problems/HIGH/>  
+>  
+>题目大意：  
+>一个有n座城市的组成国家,城市1至n编号,其中一些城市之间可以修建高速公路;  
+>需要有选择的修建一些高速公路,从而组成一个交通网络;  
 >计算有多少种方案,使得任意两座城市之间恰好只有一条路径;
 
 ### 代码
@@ -2261,12 +2260,9 @@ int exgcd(int a,int b,int &x,int &y){
 
 ### 求逆元
 
-> 求a对b的逆元，即(a^(-1))mod b
->
-> int x,y;
->
-> exgcd(a,b,x,y);
->
+> 求a对b的逆元，即(a^(-1))mod b  
+> int x,y;  
+> exgcd(a,b,x,y);  
 > x即为a对b的逆元
 
 ## 矩阵快速幂
@@ -2317,32 +2313,36 @@ Matrix kpow(Matrix a,Matrix b,int n)//a*b^n
 
 ### 定义&通式
 
->给出了以下的一元线性同余方程组：</br>
-$$
-\left ( S \right ) :
-\left\{
-\begin{matrix}
-x \equiv a_1 \left ( mod\ m_1 \right )\\
-x \equiv a_2 \left ( mod\ m_2 \right )\\
-\vdots \\
-x \equiv a_n \left ( mod\ m_n \right )
-\end{matrix}
-\right.
-$$
-有解的判定条件，并用构造法给出了在有解情况下解的具体形式。</br>
-中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：</br>
-设</br>
-$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$ 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设</br>
-$$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} $$ 是除了mi以外的n- 1个整数的乘积。</br>
-设$t_i=M_i^{-1}$为$M_i$模$m_i$的数论倒数($t_i$为$M_i$意义下的逆元) </br>
-$$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \} $$ 方程组$\left ( S \right )$的通解形式为</br>
-$$
-\begin{aligned}
-x &= a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n + kM \\
-&= kM + \sum_{i=1}^na_it_iM_i, \ k \in \mathbb{Z}
-\end{aligned}
-$$ 在模$M_i$的意义下，方程组$\left ( S \right )$只有一个解:</br>
-$$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M $$
+> 给出了以下的一元线性同余方程组：
+> $$
+> \left ( S \right ) :
+> \left\{
+> \begin{matrix}
+> x \equiv a_1 \left ( mod\ m_1 \right )\\
+> x \equiv a_2 \left ( mod\ m_2 \right )\\
+> \vdots \\
+> x \equiv a_n \left ( mod\ m_n \right )
+> \end{matrix}
+> \right.
+> $$
+> 有解的判定条件，并用构造法给出了在有解情况下解的具体形式。  
+> 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：  
+> 设
+> $$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$
+> 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设
+> $$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} $$
+> 是除了$m_i$以外的$n-1$个整数的乘积。  
+> 设$t_i=M_i^{-1}$为$M_i$模$m_i$的数论倒数($t_i$为$M_i$意义下的逆元) 
+> $$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \}$$
+> 方程组$\left ( S \right )$的通解形式为
+> $$
+> \begin{aligned}
+> x &= a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n + kM \\
+> &= kM + \sum_{i=1}^na_it_iM_i, \ k \in \mathbb{Z}
+> \end{aligned}
+> $$
+> 在模$M_i$的意义下，方程组$\left ( S \right )$只有一个解:
+> $$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M $$
 
 ### 代码
 
@@ -2399,12 +2399,9 @@ int main()
 
 ### 定义&通式
 
-> 欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。
-
-> 通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$
-
-> 应用：欧拉降幂公式
-
+> 欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。  
+> 通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$  
+> 应用：欧拉降幂公式  
 > $a^b \equiv a^{b \  \% \  \varphi \left( n\right) + \varphi \left( n \right)} (mod\ n)\ (b > \varphi (n))$
 
 ### 代码
@@ -2705,13 +2702,13 @@ bool miller_rabin(ll n){
 
 ### 莫比乌斯反演
 
-> $$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$
-> $$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$
->倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$
+> $$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$  
+> $$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$  
+> 倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$  
 
 ### 技巧
->若$g(d)=[\frac n d]*[\frac m d]$之类的阶梯状函数</br>
-记录$\mu$的前缀和
+> 若$g(d)=[\frac n d]*[\frac m d]$之类的阶梯状函数  
+> 记录$\mu$的前缀和
 
 ```c++
 int d=1;
@@ -2727,13 +2724,13 @@ while(d<=min(n,m))
 ## 求原根
 
 ### 定义
->给定一个数$n$，若存在一个与 $n$互素的 $a$,使得 $a^i(i=0,1,\cdots,\varphi(n))$在模$n$ 下两两不同,那么称$a$是$n$的一个原根。
+> 给定一个数$n$，若存在一个与 $n$互素的 $a$,使得 $a^i(i=0,1,\cdots,\varphi(n))$在模$n$ 下两两不同,那么称$a$是$n$的一个原根。
 
 ### 性质
->$1,2,4,p^n,2p^n$有原根，其中$p$是奇素数
->一个数$n$如果有原根，原根个数为 $\varphi(\varphi(n))$
->一个数$n$的全体原根的乘积模 $n$余1
->一个数$n$的全体原根的总和模 $n$余 $\mu(n-1)$(莫比乌斯函数)
+> $1,2,4,p^n,2p^n$有原根，其中$p$是奇素数  
+> 一个数$n$如果有原根，原根个数为 $\varphi(\varphi(n))$  
+> 一个数$n$的全体原根的乘积模 $n$余1  
+> 一个数$n$的全体原根的总和模 $n$余 $\mu(n-1)$(莫比乌斯函数)
 
 ### 头文件&全局变量
  
@@ -3039,7 +3036,7 @@ int main()
 ## 离散对数
 
 ### 问题描述
->给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
+> 给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
 
 ### 全局变量 & 宏
 
@@ -3109,7 +3106,7 @@ int main()
 ## 扩展离散对数
 
 ### 问题描述
->给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
+> 给定B、N、P，求一个整数L满足 $B^L \equiv N \ (mod \ P)$
 
 ### 全局变量&结构体&宏
 
@@ -3270,10 +3267,8 @@ inline long long work()
 
 #### 题目
 
-> [HDU 2665 Kth number](http://acm.hdu.edu.cn/showproblem.php?pid=2665)
->
-> 数组下标从1开始,k从1开始
->
+> [HDU 2665 Kth number](http://acm.hdu.edu.cn/showproblem.php?pid=2665)  
+> 数组下标从1开始,k从1开始  
 > 复杂度$\Theta \left ( nlog \left ( n \right ) \right )$
 
 ### 动态可修改(树状数组套线段树)
@@ -3377,14 +3372,10 @@ int main()
 
 #### 题目
 
-> [ZOJ 2112 Dynamic Rankings](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemId=1112)
-> 
-> 数组长度n=50000,询问次数m=10000
-> 
-> 此题空间卡得很死,如果直接全部插入空间复杂度为$\Theta \left ( \left ( m+n \right ) log^{2}\left ( n \right ) \right )$
-> 
-> 所以最开始建树使用线段树合并$\Theta \left ( nlog\left ( n \right ) \right )$,然后修改时插入$\Theta \left ( mlog^{2}\left ( n \right ) \right )$
->
+> [ZOJ 2112 Dynamic Rankings](http://acm.zju.edu.cn/onlinejudge/showProblem.do?problemId=1112)  
+> 数组长度n=50000,询问次数m=10000  
+> 此题空间卡得很死,如果直接全部插入空间复杂度为$\Theta \left ( \left ( m+n \right ) log^{2}\left ( n \right ) \right )$  
+> 所以最开始建树使用线段树合并$\Theta \left ( nlog\left ( n \right ) \right )$,然后修改时插入$\Theta \left ( mlog^{2}\left ( n \right ) \right )$  
 > 查询时间复杂度$\Theta \left ( nlog^{3}\left ( n \right ) \right )$,若树上二分可少一个$log\left ( n \right )$
 
 #### 代码(省略头文件和读入优化)
@@ -3734,8 +3725,8 @@ public class Main{
 
 ### 构造函数
 
->BigInteger(String val, int radix)
->Translates the String representation of a BigInteger in the specified radix into a BigInteger.
+> BigInteger(String val, int radix)  
+> Translates the String representation of a BigInteger in the specified radix into a BigInteger.
 
 ### 方法
 
@@ -3773,20 +3764,20 @@ public class Main{
 
 ### 舍入方式
 
->以下在roundingMode参数填入
->ROUND_CEILING向正无穷方向舍入
->ROUND_DOWN向零方向舍入
->ROUND_FLOOR向负无穷方向舍入
->ROUND_HALF_DOWN
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5
->
->ROUND_HALF_EVEN
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN
->
->ROUND_HALF_UP
->向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6
->
->ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
+> 以下在roundingMode参数填入  
+> ROUND_CEILING向正无穷方向舍入  
+> ROUND_DOWN向零方向舍入  
+> ROUND_FLOOR向负无穷方向舍入  
+> ROUND_HALF_DOWN  
+> 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5  
+>   
+> ROUND_HALF_EVEN  
+> 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN  
+>   
+> ROUND_HALF_UP  
+> 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6  
+>   
+> ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
 ### 方法
 
