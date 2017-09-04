@@ -1217,70 +1217,64 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 
 # 图论
 
-## 最大权匹配KM
+## 最大权匹配Kuhn-Munkres
 
-> 复杂度$O(nm)$
+> 复杂度$O(n^{2}m)$
 
 ### 头文件&宏&结构体&全局变量
 
 ```c++
-#include <vector>
-
-#define MAXN 66666
+#define MAXN 666
+#define MAXM 666666
 #define INF 0x3f3f3f3f
+
+using namespace std;
 
 struct Edge{
 	int to;
 	int v;
-	Edge(int to,int v):to(to),v(v)
-	{
-	}
-};
+	int next;
+}edge[MAXM];
+int head[MAXN],top;
 
-int n;
-vector<Edge> edge[MAXN];
 int from[MAXN];
 int X[MAXN];
 int Y[MAXN];
-bool L[MAXN];
-bool R[MAXN];
-int ans;
+bool visX[MAXN];
+bool visY[MAXN];
 ```
 
-### 初始化
+### 初始化&加边
 ```c++
-void init()
+void initEdge()
 {
-	ans=0;
-	for(int i=0;i<n;i++)
-	{
-		from[i]=-1;
-		Y[i]=0;
-		X[i]=-INF;
-		for(auto j=edge[i].begin();j!=edge[i].end();j++)
-		{
-			X[i]=max(X[i],j->v);
-		}
-		ans+=X[i];
-	}
+	memset(head,-1,sizeof(head));
+	top=0;
+}
+
+void addEdge(int a,int b,int v)//第一个集合的a连向第二个集合的b
+{
+	edge[top].to=b;
+	edge[top].v=v;
+	edge[top].next=head[a];
+	head[a]=top++;
 }
 ```
 
 ### 辅助函数
 
 ```c++
-bool dfs(int nown)
+bool dfs(int nown)//匈牙利找增广路
 {
-	L[nown]=true;
-	for(auto i=edge[nown].begin();i!=edge[nown].end();i++)
+	visX[nown]=true;
+	for(int i=head[nown];i!=-1;i=edge[i].next)
 	{
-		if(X[nown]+Y[i->to]!=i->v)continue;
-
-		if(R[i->to])continue;
-		R[i->to]=true;
-		if(from[i->to]==-1||dfs(from[i->to]))
+		if(visY[edge[i].to])continue;
+		if(X[nown]+Y[edge[i].to]!=edge[i].v)continue;
+		visY[edge[i].to]=true;
+		if(from[edge[i].to]==-1||dfs(from[edge[i].to]))
 		{
-			from[i->to]=nown;
+			from[edge[i].to]=nown;
 			return true;
 		}
 	}
@@ -1291,30 +1285,51 @@ bool dfs(int nown)
 ### 核心代码
 
 ```c++
-int KM() //自己建图edge
+int KM(int n)//n为点数,需保证有完备匹配,标号从0开始
 {
-	init();
-	for(int k=0;k<n;k++)
+	int ans=0;
+	for(int i=0;i<n;i++)
 	{
-		for(int i=0;i<n;i++)R[i]=L[i]=false;
-		if(dfs(k))continue;
-		int d=INF;
-		for(int i=0;i<n;i++)
-			if(L[i])
-				for(auto j=edge[i].begin();j!=edge[i].end();j++)
-					if(!R[j->to])
-						d=min(d,X[i]+Y[j->to]-j->v);
-		ans-=d;
-		for(int i=0;i<n;i++)
-			if(L[i])
-				X[i]-=d;
-		for(int i=0;i<n;i++)
-			if(R[i])
-				Y[i]+=d;
-		k--;
+		from[i]=-1;
+		Y[i]=0;
+		X[i]=-INF;
+		for(int j=head[i];j!=-1;j=edge[j].next)
+			X[i]=max(X[i],edge[j].v);
+		ans+=X[i];
+	}
+	for(int k=0;k<n;)
+	{
+		memset(visX,0,sizeof(visX));
+		memset(visY,0,sizeof(visY));
+		if(dfs(k))k++;
+		else
+		{
+			int d=INF;
+			for(int i=0;i<n;i++)
+				if(visX[i])
+					for(int j=head[i];j!=-1;j=edge[j].next)
+						if(!visY[edge[j].to])
+							d=min(d,X[i]+Y[edge[j].to]-edge[j].v);
+			ans-=d;
+			for(int i=0;i<n;i++)
+			{
+				if(visX[i])X[i]-=d;
+				if(visY[i])Y[i]+=d;
+			}
+		}
 	}
 	return ans;
 }
+```
+
+### 用法
+
+```c++
+//需保证是二分图且有完备匹配(两边点数相同)
+//两边点的标号都从0开始
+initEdge();//初始化
+for(each a->b)addEdge(a,b,v);//加边
+int ans=KM();//求解
 ```
 
 ## 全局最小割SW
