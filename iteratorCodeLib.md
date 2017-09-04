@@ -1240,8 +1240,6 @@ struct Edge{
 int head[MAXN];
 int top;
 
-int dist[MAXN][MAXN];
-
 typedef __gnu_pbds::priority_queue<pair<int,int>,greater<pair<int,int>>
 ,__gnu_pbds::pairing_heap_tag>
 Heap;
