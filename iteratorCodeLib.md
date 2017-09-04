@@ -1638,7 +1638,7 @@ queue<int>q;
 void init() //初始化  
 {  
 	memset(head,0,sizeof(head));  
-	top=1;
+	top=2;//必须是2
 }
 
 void addEdge(int from,int to,int flow,int worth)  //建图   
