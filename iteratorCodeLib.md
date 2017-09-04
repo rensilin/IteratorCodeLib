@@ -2401,6 +2401,7 @@ int main()
 
 > 欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目（$\varphi \left ( 1 \right )=1$）。  
 > 通式：$\varphi \left ( x \right ) = x\left ( 1 - \frac{1}{p_1} \right )\left ( 1 - \frac{1}{p_2} \right )\left ( 1 - \frac{1}{p_3} \right )\cdots\left ( 1 - \frac{1}{p_n} \right )$  
+> 性质: 若a与b**互质**,则$\varphi \left( ab \right) = \varphi \left(a \right)\varphi \left(b \right)$  
 > 应用：欧拉降幂公式  
 > $a^b \equiv a^{b \  \% \  \varphi \left( n\right) + \varphi \left( n \right)} (mod\ n)\ (b > \varphi (n))$
 
