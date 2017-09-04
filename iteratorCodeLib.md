@@ -2,8 +2,8 @@
 
 ## 加权并查集
 
->解决集合问题中，集合内元素有关系并且关系具有传递性的问题  
->从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
+> 解决集合问题中，集合内元素有关系并且关系具有传递性的问题  
+> 从集合中删除节点的方法：消除该点对集合的影响(如集合中的点个数、和、最值)，然后给它分配一个新的编号(原来的编号不管)
 
 ### 头文件&宏&全局变量
 
@@ -28,7 +28,7 @@ void union_init(int minn,int maxn)//编号最小值到最大值
 
 ### 查找
 
->执行后p[a]为a所在集合的根节点,v[a]为a到其集合的根节点的权值
+> 执行后p[a]为a所在集合的根节点,v[a]为a到其集合的根节点的权值
 
 ```c++
 void union_find(int a)
@@ -1216,6 +1216,79 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 ```
 
 # 图论
+
+## 最短路
+
+> 复杂度$\Theta \left ( m \right )$
+
+### dijkstra
+
+#### 头文件&宏&全局变量
+
+```c++
+#include <ext/pb_ds/priority_queue.hpp>
+
+#define MAXN 666
+#define MAXM 6666666
+#define INF 0x3f3f3f3f
+
+struct Edge{
+	int to;
+	int v;
+	int next;
+}edge[MAXM];
+int head[MAXN];
+int top;
+
+int dist[MAXN][MAXN];
+
+typedef __gnu_pbds::priority_queue<pair<int,int>,greater<pair<int,int>>
+,__gnu_pbds::pairing_heap_tag>
+Heap;
+
+Heap heap;
+Heap::point_iterator pit[MAXN];
+```
+
+#### 初始化&加边
+
+```c++
+void initEdge()
+{
+	memset(head,-1,sizeof(head));
+	top=0;
+}
+
+void addEdge(int a,int b,int v)
+{
+	edge[top].to=b;
+	edge[top].v=v;
+	edge[top].next=head[a];
+	head[a]=top++;
+}
+```
+
+#### 核心代码
+
+```c++
+void dijkstra(int n,int S,int dist[])//点标号从0开始
+{
+	for(int i=0;i<n;i++)
+		dist[i]=INF;
+	dist[S]=0;
+	for(int i=0;i<n;i++)
+		pit[i]=heap.push(make_pair(dist[i],i));
+	while(!heap.empty())
+	{
+		int nown=heap.top().second;heap.pop();
+		for(int i=head[nown];i!=-1;i=edge[i].next)
+			if(dist[edge[i].to]>dist[nown]+edge[i].v)
+				heap.modify(pit[edge[i].to],
+								make_pair(dist[edge[i].to]=dist[nown]+edge[i].v,
+										  edge[i].to));
+	}
+}
+```
 
 ## 最大权匹配Kuhn-Munkres
 
