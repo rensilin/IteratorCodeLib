@@ -609,135 +609,61 @@ push_up,insert函数并创建对应的修改函数*/
 ### 全局变量
 
 ```c++
-const int maxn = 1e5 + 10;
-const int M = maxn * 30;
+#define MAXM 6666666//插入次数*log(表示范围)
 
-int n, q, m, tot;
-// tot:节点总个数
-int a[maxn], t[maxn];
-// a:原数组元素 t:将原数组元素按大小去重映射到t数组上
-int T[maxn], lson[M], rson[M], c[M];
-// T:树的根节点 lson:节点左孩子指针 rson:节点右孩子指针 c:树节点上的权值
+using namespace std;
+
+struct Tree{
+	int num;
+	int lson;
+	int rson;
+}tree[MAXM];//线段树
+int top;
 ```
 
-### 离散化
+### 主要代码
 
 ```c++
-//将原数组a元素按大小去重映射到t数组上
-void init_hash() {
-	for (int i = 1; i <= n; i++)
-	t[i] = a[i];
-	sort(t + 1, t + n + 1);
-	m = unique(t + 1, t + n + 1) - t - 1;
+void treeInit()
+{
+	tree[0].num=tree[0].lson=tree[0].rson=0;//用0节点表示NULL,便于处理
+	top=1;
 }
 
-//在t数组上二分查找x，返回位置
-int hash(int x) {
-	return lower_bound(t + 1, t + 1 + m, x) - t;
+int treeAdd(int ori,int left,int right,int x,int a)
+{//在ori[left,right]树上x位置加a,并返回新的根
+	int nown=top++;
+	tree[nown]=tree[ori];
+	tree[nown].num+=a;
+	if(left<right)
+	{
+		int mid=(left+right)>>1;
+		if(x<=mid)tree[nown].lson=treeAdd(tree[nown].lson,left,mid,x,a);
+		else tree[nown].rson=treeAdd(tree[nown].rson,mid+1,right,x,a);
+	}
+	return nown;
+}
+
+int treeFind(int nown,int left,int right,int l,int r)//查询区间[l,r]
+{
+	if(nown==0)return 0;
+	if(l<=left&&right<=r)return tree[nown].num;
+	int mid=(left+right)>>1;
+	int ans=0;
+	if(l<=mid)ans+=treeFind(tree[nown].lson,left,mid,l,r);
+	if(r>mid)ans+=treeFind(tree[nown].rson,mid+1,right,l,r);
+	return ans;
 }
 ```
 
-### 线段树相关
-
-```c++
-//建空树
-int build(int l, int r) {
-	int rt = tot++;
-	c[rt] = 0;
-	if (l != r) {
-		int mid = (l + r) >> 1;
-		lson[rt] = build(l, mid);
-		rson[rt] = build(mid + 1, r);
-	}
-	return rt;
-}
-
-//更新节点，建立新树
-int update(int rt, int pos, int val) {
-	int newrt = tot++, tmp = newrt;
-	c[newrt] = c[rt] + val;
-	int l = 1, r = m;
-	while (l < r) {
-		int mid = (l + r) >> 1;
-		if (pos <= mid) {
-			//若更新节点在左子树，则新建左子树的根节点，
-			//右子树的根节点利用已有的节点，同时新树与原树同时移向左子树
-			lson[newrt] = tot++;
-			rson[newrt] = rson[rt];
-			newrt = lson[newrt];
-			rt = lson[rt];
-			r = mid;
-		} else { //同理
-			rson[newrt] = tot++;
-			lson[newrt] = lson[rt];
-			newrt = rson[newrt];
-			rt = rson[rt];
-			l = mid + 1;
-		}
-		c[newrt] = c[rt] + val; //更新新建节点
-	}
-	return tmp; //返回新树的根节点
-}
-
-//询问[lrt,rrt]区间第k大
-int query(int lrt, int rrt, int k) {
-	int l = 1, r = m;
-	//二分查找t[i]，使得[lrt,rrt]中小于等于t[i]的数的个数为k个
-	//则t[i]为区间第k大
-	while (l < r) {
-		int mid = (l + r) >> 1;
-		if (c[lson[lrt]] - c[lson[rrt]] >= k) {
-			r = mid;
-			lrt = lson[lrt];
-			rrt = lson[rrt];
-		} else {
-			l = mid + 1;
-			k -= c[lson[lrt]] - c[lson[rrt]];
-			lrt = rson[lrt];
-			rrt = rson[rrt];
-		}
-	}
-	return l;
-}
-```
-
-### 实例
-
-```c++
-//poj 2104
-int main(){
-	while (~scanf("%d%d", &n, &q)) {
-
-		for (int i = 1; i <= n; i++)
-			scanf("%d", a + i);
-		init_hash();
-		tot = 0;
-		T[n + 1] = build(1, m); //建空树
-
-		//向空树中插入原数组中的元素
-		for (int i = n; i; i--) {
-			int pos = hash(a[i]);
-			T[i] = update(T[i + 1], pos, 1);
-		}
-
-		//处理询问
-		while (q--) {
-			int l, r, k;
-			scanf("%d%d%d", &l, &r, &k);
-			printf("%d\n", t[query(T[l], T[r + 1], k)]);
-		}
-	}
-	return 0;
-}
-```
 
 ### 用法
 
 ```c++
-int build(int l, int r)//在[l,r]上建立空树；返回空树的根
-int update(int rt, int pos, int val)
-//建立新树更新以rt为根节点的树上，pos节点，权值+val；返回新树的根
-int query(int lrt, int rrt, int k)//返回区间[lrt,rrt]上的第k大
+//使用前先treeInit()初始化
+int treeAdd(int ori,int left,int right,int x,int a)//x位置加a并返回新的根
+int treeFind(int nown,int left,int right,int l,int r)//查询区间[l,r]
+//需要保证传入x,l,r∈[left,right],并且每次left与right应相同
 ```
 
 ## 舞蹈链
