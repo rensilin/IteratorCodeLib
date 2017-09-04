@@ -1219,9 +1219,9 @@ int calcLCP(int l,int r)//后缀l到后缀r的最长公共前缀
 
 ## 最短路
 
-> 复杂度$\Theta \left ( m \right )$
+### dijkstra配对堆优化
 
-### dijkstra
+> 复杂度$\Theta \left ( m \right )$
 
 #### 头文件&宏&全局变量
 
