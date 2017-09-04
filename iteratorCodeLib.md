@@ -3272,8 +3272,6 @@ inline long long work()
 > 数组下标从1开始,k从1开始  
 > 复杂度$\Theta \left ( nlog \left ( n \right ) \right )$
 
-### 动态可修改(树状数组套线段树)
-
 #### 代码
 
 ```c++
@@ -3370,6 +3368,8 @@ int main()
 	return 0;
 }
 ```
+
+### 动态可修改(树状数组套线段树)
 
 #### 题目
 
