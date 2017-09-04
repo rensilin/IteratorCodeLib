@@ -1710,12 +1710,10 @@ int dfs()
 ```c++
 int solve()  
 {  
-	int cur=0;  
-	int ans=INF;  
+	int ans=0;  
 	while(bfs())  
 	{  
-		cur+=dfs();  
-		if(cur<ans) ans=cur;  
+		ans+=dfs();  
 	}   
 	return ans;  
 }
