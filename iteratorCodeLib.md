@@ -3301,48 +3301,6 @@ int main(){
 }
 ```
 
-# DP
-
-## 插头DP
-
-### 示例代码
-
-```c++
-inline long long work()
-{
-	memset(dp,0,sizeof(dp));
-	dp[0][0][0]=1;
-	for(int i=0;i<n;i++)
-	{
-		for(int j=0;j<m;j++)
-		{
-			if(mp[i][j])
-			{
-				for(int k=0;k<=mask;k++)
-				{
-					if(dp[i][j][k]==0)continue;
-					int tmp=k&(3<<j);
-					if(0<tmp&&tmp<(3<<j))
-						dp[i][j+1][k]+=dp[i][j][k];
-					dp[i][j+1][k^(3<<j)]+=dp[i][j][k];
-				}
-			}
-			else
-			{
-				for(int k=0;k<=mask;k++)
-				{
-					if(dp[i][j][k]==0)continue;
-					if(k&(3<<j))continue;
-					dp[i][j+1][k]+=dp[i][j][k];
-				}
-			}
-		}
-		for(int k=mask>>1;k>=0;k--)dp[i+1][0][k<<1]=dp[i][m][k];//处理换行
-	}
-	return dp[n][0][0];
-}
-```
-
 ## Pollard_rho 质因子分解
 
 ### 环境
@@ -3466,6 +3424,48 @@ void findfac(LL n){
 ### 用法
 
 > 初始化tot=0，调用findfac(n)，factor[0~tot-1]中为n的全部质因子
+
+# DP
+
+## 插头DP
+
+### 示例代码
+
+```c++
+inline long long work()
+{
+	memset(dp,0,sizeof(dp));
+	dp[0][0][0]=1;
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<m;j++)
+		{
+			if(mp[i][j])
+			{
+				for(int k=0;k<=mask;k++)
+				{
+					if(dp[i][j][k]==0)continue;
+					int tmp=k&(3<<j);
+					if(0<tmp&&tmp<(3<<j))
+						dp[i][j+1][k]+=dp[i][j][k];
+					dp[i][j+1][k^(3<<j)]+=dp[i][j][k];
+				}
+			}
+			else
+			{
+				for(int k=0;k<=mask;k++)
+				{
+					if(dp[i][j][k]==0)continue;
+					if(k&(3<<j))continue;
+					dp[i][j+1][k]+=dp[i][j][k];
+				}
+			}
+		}
+		for(int k=mask>>1;k>=0;k--)dp[i+1][0][k<<1]=dp[i][m][k];//处理换行
+	}
+	return dp[n][0][0];
+}
+```
 
 # 一些套路题
 
