@@ -8,7 +8,10 @@ noTocHtml.html:../iteratorCodeLib.md noTocHtml.latex
 	pandoc --mathjax --template noTocHtml.latex -s -N -o "$@" "$<"
 
 kkke.me:index.html
-	scp "$<" acm@kkke.me:html
+	scp "$<" acm@kkke.me:html/index.html
+
+kkke.me/pdf:iteratorCodeLibrary.pdf
+	scp "$<" acm@kkke.me:html/ICL.pdf
 
 pdf:iteratorCodeLibrary.pdf
 	@echo iteratorCodeLibrary.pdf
