@@ -3440,26 +3440,26 @@ IDFT: $x \left( n \right) = \frac{1}{N} \sum_{k=0}^{N-1}X \left( k \right)W_N^{-
 
 若N为偶数,且$k<\frac{n}{2}$,则  
 $$
-\begin{align*}
+\begin{align}
 X\left ( k \right ) 
  &=\sum_{n=0}^{N-1}x \left( n \right ) e^{-i2\pi kn/N} \\ 
  &=\sum_{m=0}^{\frac{N}{2}-1}x \left( 2m \right ) e^{-i2\pi km/\frac{N}{2}}
    +
    e^{-i2\pi k/N}\sum_{m=0}^{\frac{N}{2}-1}x \left( 2m+1 \right ) e^{-i2\pi km/\frac{N}{2}} \\ 
  &=X_1\left( k \right ) + W_N^{k}X_2\left( k \right )
-\end{align*}
+\end{align}
 $$
 其中对偶数项做FFT得到$X_1\left( k \right )$,对奇数项做FFT得到$X_2\left( k \right )$  
 其中$X_1\left( k \right )$为第k个偶数项的DFT值  
 由于$e^{i\pi 2n}=1,n\in Z$且$e^{i\pi \left(2n+1\right)}=-1,n\in Z$  
 $$
-\begin{align*}
+\begin{align}
 X\left ( k+\frac{N}{2} \right ) 
  &=e^{-i\pi 2m}\sum_{m=0}^{\frac{N}{2}-1}x \left( 2m \right ) e^{-i2\pi km/\frac{N}{2}}
    +
    e^{-i\pi \left(2m+1\right)}\cdot e^{-i2\pi k/N}\sum_{m=0}^{\frac{N}{2}-1}x \left( 2m+1 \right ) e^{-i2\pi km/\frac{N}{2}} \\ 
  &=X_1\left( k \right ) - W_N^{k}X_2\left( k \right )
-\end{align*}
+\end{align}
 $$
 这样$X$每一项都可通过$X_1$和$X_2$求出
 
@@ -3987,7 +3987,7 @@ template < class Key,
     class Hash = hash<Key>,  
     class Pred = equal_to<Key>,  
     class Alloc = allocator<Key>  
-class unordered_set;  
+>class unordered_set;  
 ```
 
 ### 特例化hash类
