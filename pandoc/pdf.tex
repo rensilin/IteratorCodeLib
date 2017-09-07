@@ -16,7 +16,6 @@
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 % use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[utf8]{inputenc}
 $if(euro)$
@@ -26,8 +25,15 @@ $endif$
   \ifxetex
     \usepackage{mathspec}
     \usepackage{xltxtra,xunicode}
-    \usepackage{ctex}
 	\usepackage{xeCJK}
+	%%%% 重定义 %%%%
+	\renewcommand{\contentsname}{目录}  % 将Contents改为目录
+	\renewcommand{\abstractname}{摘要}  % 将Abstract改为摘要
+	\renewcommand{\refname}{参考文献}   % 将References改为参考文献
+	\renewcommand{\indexname}{索引}
+	\renewcommand{\figurename}{图}
+	\renewcommand{\tablename}{表}
+	\renewcommand{\appendixname}{附录}
     \setCJKmainfont{WenQuanYi Micro Hei} 	% 設定中文字型
     \setmainfont{WenQuanYi Micro Hei} 	% 設定英文字型
     \setromanfont{WenQuanYi Micro Hei} 	% 字型
