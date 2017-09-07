@@ -3006,9 +3006,9 @@ http://blog.csdn.net/xf_zhen/article/details/52097988
 #include <iostream>  
 #include <cstdio>  
 using namespace std;  
-  
+
 #define LL long long  
-  
+
 LL quick_mod(LL a,LL b,LL p)//快速幂  
 {  
     LL ans = 1;  
@@ -3034,7 +3034,7 @@ struct T //二次域
     LL p,d;  
 };  
 LL w; //二次域第二个单位参数  
-  
+
 LL mod(LL t, LL p)  
 {  
     t %=p;  
@@ -3053,7 +3053,7 @@ T pow_er(T a,LL b,LL p)//二次域上的快速幂
      T ans;  
      ans.p=1;  
      ans.d =0;  
-  
+
     while(b)  
     {  
         if(b&1)  
@@ -4118,13 +4118,13 @@ ROUND_DOWN向零方向舍入
 ROUND_FLOOR向负无穷方向舍入  
 ROUND_HALF_DOWN  
 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向下舍入, 例如1.55 保留一位小数结果为1.5  
-  
+
 ROUND_HALF_EVEN  
 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，如果保留位数是奇数，使用ROUND_HALF_UP ，如果是偶数，使用ROUND_HALF_DOWN  
-  
+
 ROUND_HALF_UP  
 向（距离）最近的一边舍入，除非两边（的距离）是相等,如果是这样，向上舍入, 1.55保留一位小数结果为1.6  
-  
+
 ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
 ### 方法
