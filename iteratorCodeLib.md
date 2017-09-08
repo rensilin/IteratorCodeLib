@@ -3508,7 +3508,7 @@ $$
 #include <cmath>
 
 typedef complex<double> Complex;
-const double PI=4.0*atan(1);
+const double PI=acos(-1.0);
 ```
 
 ### 辅助函数
