@@ -4012,6 +4012,78 @@ $$
 g(n) = \sum ^n _{i=0} (-1)^i C^i_n \ f(n-i)
 $$
 
+## 卡特兰数
+
+### 定义
+
+*  n个元素进出栈方案数
+*  n个左括号与n个右括号的匹配方案数
+*  一个正n多边形用n-3条不相交的对角线划分成n-2个三角形的方案数
+*  一棵体积为n的有根二叉树有多少种形态
+*  $\cdots \cdots$
+
+$$
+Catalon(n) = \frac{(2n)!}{n!(n+1)!} \ \ (0! = 1)
+$$
+
+### 代码
+
+#### 环境
+
+```c++
+typedef long long ll;
+
+const int MAXN = 2000010;
+
+int prime[MAXN], size[MAXN]={0}, p, n, len, num[MAXN];
+bool isnot[MAXN];
+```
+
+#### 辅助函数
+
+```c++
+void init() { //素数筛
+    for (int i = 2; i <= (n << 1); i++) {
+        if (!isnot[i]) prime[++len] = i, num[i] = len;
+        for (int j = 1; prime[j] * i <= (n << 1); j++) {
+            isnot[prime[j] * i] = 1, num[prime[j] * i] = j;
+            if (i % prime[j] == 0) break;
+        }
+    }
+}
+
+void div(int x, int s) {
+    while (x != 1) {
+        size[num[x]] += s;
+        x /= prime[num[x]];
+    }
+}
+
+inline void quickPow(long long &ans, int x, int y) {
+    while (y) {
+        if (y & 1) (ans *= x) %= p;
+        y >>= 1;
+        (x *= x) %= p;
+    }
+}
+```
+
+#### 核心代码
+
+```c++
+ll catalon(ll n) {
+    for (int i = n + 2; i <= (n << 1); i++)
+        div(i, 1);
+    for (int i = 2; i <= n; i++)
+        div(i, -1);
+    long long ans = 1;
+    for (int i = 1; i <= len; i++)
+        if (size[i])
+            quickPow(ans, prime[i], size[i]);
+    return ans;
+}
+```
+
 # DP
 
 ## 插头DP
