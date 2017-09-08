@@ -3742,6 +3742,7 @@ $$
 满足指数为8的项的和：$1\times 22x^8 - x^4 \times 5 x^4 - x^8 \times 1 = 16 x^8$
 
 *  示例代码：
+
 ```c++
 #include<iostream>
 #include<cstdio>
