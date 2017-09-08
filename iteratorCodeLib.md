@@ -2322,6 +2322,24 @@ hk_match.max_match();
 
 # 数论
 
+## 二分等比数列求和
+
+### 代码
+
+```c++
+ll sum(ll a, ll p, ll n) {
+    if (n <= 1) return a;
+    if (n & 1)
+        return (sum(a, p, n / 2) * (1 + quickPow(p, n / 2)) % MOD + quickPow(p, n - 1)) % MOD;
+    else
+        return (sum(a, p, n / 2) * (1 + quickPow(p, n / 2))) % MOD;
+}
+```
+
+### 用法
+
+调用函数 $sum(a,p,n)$ ,求 $\sum_{i=0}^{n-1}ap^i$
+
 ## 扩展欧几里得
 
 ### 定义
@@ -2398,6 +2416,7 @@ Matrix kpow(Matrix a,Matrix b,int n)//a*b^n
 ### 定义&通式
 
 给出了以下的一元线性同余方程组：
+
 $$
 \left ( S \right ) :
 \left\{
@@ -2409,24 +2428,39 @@ x \equiv a_n \left ( mod\ m_n \right )
 \end{matrix}
 \right.
 $$
+
 有解的判定条件，并用构造法给出了在有解情况下解的具体形式。  
 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：  
 设
-$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i $$
+
+$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i 
+$$
+
 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设
-$$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} $$
+
+$$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} 
+$$
+
 是除了$m_i$以外的$n-1$个整数的乘积。  
 设$t_i=M_i^{-1}$为$M_i$模$m_i$的数论倒数($t_i$为$M_i$意义下的逆元) 
-$$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \}$$
+
+$$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \}
+$$
+
 方程组$\left ( S \right )$的通解形式为
+
 $$
 \begin{aligned}
 x &= a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n + kM \\
 &= kM + \sum_{i=1}^na_it_iM_i, \ k \in \mathbb{Z}
 \end{aligned}
 $$
+
 在模$M_i$的意义下，方程组$\left ( S \right )$只有一个解:
-$$ x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M $$
+
+$$
+x \equiv \left ( a_1t_1M_1 + a_2t_2M_2 + \cdots + a_nt_nM_n \right ) \ mod \ M
+$$
 
 ### 代码
 
@@ -3438,7 +3472,8 @@ IDFT: $x \left( n \right) = \frac{1}{N} \sum_{k=0}^{N-1}X \left( k \right)W_N^{-
 
 ### 推导
 
-若N为偶数,且$k<\frac{n}{2}$,则  
+若N为偶数,且$k<\frac{n}{2}$,则
+
 $$
 \begin{aligned}
 X\left ( k \right ) 
@@ -3449,9 +3484,11 @@ X\left ( k \right )
  &=X_1\left( k \right ) + W_N^{k}X_2\left( k \right )
 \end{aligned}
 $$
+
 其中对偶数项做FFT得到$X_1\left( k \right )$,对奇数项做FFT得到$X_2\left( k \right )$  
 其中$X_1\left( k \right )$为第k个偶数项的DFT值  
-由于$e^{i\pi 2n}=1,n\in Z$且$e^{i\pi \left(2n+1\right)}=-1,n\in Z$  
+由于$e^{i\pi 2n}=1,n\in Z$且$e^{i\pi \left(2n+1\right)}=-1,n\in Z$
+
 $$
 \begin{aligned}
 X\left ( k+\frac{N}{2} \right ) 
@@ -3461,6 +3498,7 @@ X\left ( k+\frac{N}{2} \right )
  &=X_1\left( k \right ) - W_N^{k}X_2\left( k \right )
 \end{aligned}
 $$
+
 这样$X$每一项都可通过$X_1$和$X_2$求出
 
 ### 头文件&全局变量
@@ -3564,6 +3602,415 @@ for(int i=0;i<n;i++)
 	ans[i]%=10;
 }
 ```
+
+# 组合数学
+
+## 第一类斯特林数
+
+### 定义
+
+把n个元素分成k个环排列的方法数。  
+边界值：$S_1(n,0)=0$ $S_1(n,n)=1$  
+递推式：$S_1(n+1, k) = S_1(n, k-1)+nS_1(n,k)$
+
+### 递推初始化
+
+```c++
+void init(){
+    for(ll i=1; i<MAXN; i++){
+        S[i][0] = 0;
+        S[i][i] = 1;
+        for(ll j=1; j<i; j++){
+            S[i][j] = (((i-1)*S[i-1][j])%MOD+S[i-1][j-1])%MOD;
+        }
+    }
+}
+```
+
+## 第二类斯特林数
+
+### 定义
+
+把n个元素分为k个非空子集的方案数  
+边界值：$S_2(n,0)=0$ $S_2(n,n)=1$  
+递推式：$S_2(n+1, k) = S_2(n, k-1)+kS_2(n,k)$
+
+### 递推初始化
+
+```c++
+void init() {
+    for (int i = 1; i <= 100; i++) {
+        S2[i][0] = 0, S2[i][i] = 1;
+        for (int j = 1; j < i; j++) {
+            S2[i][j] = (S2[i - 1][j - 1] + (j * S2[i - 1][j]) % MOD) % MOD;
+        }
+    }
+}
+```
+
+### 常见用法
+
+把n个小球放入k个盒子中
+*  盒子不能为空，不可区分： $S_2(n, k)$
+*  盒子能为空，不可区分： $\sum_{i=1}^k{S_2(n, i)}$
+*  盒子不能为空，可区分： $k!S_2(n, k)$
+
+## 分拆数
+
+### 定义
+
+把正整数n拆分为至多k个正整数之和的方案数。
+把正整数n拆分为不超过k的若干个正整数之和的方案数。
+
+### DP递推
+
+复杂度： $O(n^2)$  
+初始值：$dp[0][0]=1\ \ \ dp[n][0]=0$  
+递推：
+
+$$
+\begin{aligned}
+& dp[n][m]=dp[n][m-1]+dp[n-m][m]\ \ \ (n \geqslant  m) \\
+& dp[n][m] = dp[n][n] \ \ \ (n < m)
+\end{aligned}
+$$
+
+### 母函数
+
+复杂度： $O(n\sqrt{n})$ 
+
+#### 推导
+
+正整数n的划分可以用母函数表示为
+
+$$
+\sum_{i=0}^{\infty}p(i)x^i = (1+x^1+x^2+\cdots)(1+x^2+x^4+\cdots)(1+x^3+x^6+\cdots)\cdots
+$$
+
+对其进行等比数列求和，可得
+
+$$
+\sum_{i=0}^{\infty}p(i)x^i = \prod_{k=1}^{\infty}(\frac{1}{1-x^k})
+$$
+
+将$\prod^{\infty}_{k=1}(\frac{1}{1-x^k})$展开可得：
+
+$$
+(1-x)(1-x^2)(1-x^3)\cdots = 1 -x - x^2 + x^5 + x^7 - x^{12} - x^{15} + x^{22} + x^{26} + \cdots
+$$
+
+观察可得：  
+指数即扩展五边形数（下一列为对应下标）：
+
+$$
+\begin{aligned}
+& 0 & 1 && 2 && 5 && 7 && 12 && 15 \\
+& 0 & 1 && -1 && 2 && -2 && 3 && -3 
+\end{aligned}
+$$
+
+*扩展五边形数：$Five(x)=\frac{3x^2-x}{2}$
+
+令$Q(x)=\prod^{\infty}_{k=1}{(1-x^k)}$，所以$Q(x)P(x) = 1$，即：
+
+$$
+(p(0)x^0+p(1)x^1+p(2)x^2+\cdots)(1-x-x^2+x^5+x^7-x^22\cdots) = 1
+$$
+
+所以$p(k) = p(k-1) + p(k-2) - p(k-5) \cdots$
+
+#### 应用
+
+要求拆分的数中每个数出现的次数不能大于等于k此，则
+
+$$
+\begin{aligned}
+P_k(x) \ 
+& = (1+x+x^2+ \cdots +x^{k-1})(1+x^2+x^4+\cdots + c^{2(k-1)})\cdots \\
+& = \prod^{\infty}_{i=1}{\frac {1-x^{ki}} {1-x^{i}}} \\
+& = \frac {Q(x^k)} {Q(x)} \\
+& = Q(x^k)P(x)
+\end{aligned}
+$$
+
+例如：当$n=8, k=4$时：
+
+$$
+Q(x^4)P(x) = (1-x^4-x^8+x^{12}+\cdots)P(x)
+$$
+
+满足指数为8的项的和：$1\times 22x^8 - x^4 \times 5 x^4 - x^8 \times 1 = 16 x^8$
+
+*  示例代码：
+```c++
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<cmath>
+#include<algorithm>
+
+using namespace std;
+
+typedef __int64 LL;
+const int Maxn=100010;
+const LL MOD=1000000007;
+LL Q[Maxn],P[Maxn];
+LL GetQ(LL x)
+{
+    LL ans=(LL)x*x*3-x;
+    return (ans/2)%MOD;
+}
+void _init()
+{
+    Q[0]=0;
+    for(int i=1;i<Maxn;i++)
+    {
+        if(i&1) Q[i]=GetQ(i/2+1);
+        else Q[i]=GetQ(i/2*(-1));
+    }
+    P[0]=P[1]=1;
+    for(int i=2;i<Maxn;i++)
+    {
+        for(int j=1;;j++)
+        {
+            if(Q[j]>i) break;
+            int t=j;
+            if(t&1) t=t/2+1;
+            else t=t/2;
+            if(t&1)
+                P[i]=(P[i]+P[i-Q[j]]);
+            else
+                P[i]=(P[i]-P[i-Q[j]]);
+            if(P[i]>=MOD) P[i]%=MOD;
+            if(P[i]<0) P[i]+=MOD;
+        }
+    }
+}
+void solved(LL n,LL k)
+{
+    LL ans=0;
+    for(int i=0;;i++)
+    {
+        if(Q[i]*k>n) break;
+        int t=i;
+        if(t&1) t=t/2+1;
+        else t=t/2;
+        if(t&1) ans=(ans-P[n-Q[i]*k]);
+        else ans=(ans+P[n-Q[i]*k]);
+        if(ans>=MOD) ans%=MOD;
+        if(ans<0) ans+=MOD;
+    }
+    printf("%I64d\n",ans);
+}
+int main()
+{
+    _init();
+    int T;
+    LL n,k;
+    scanf("%d",&T);
+    while(T--)
+    {
+        scanf("%I64d%I64d",&n,&k);
+        solved(n,k);
+    }
+    return 0;
+}
+```
+
+### 性质
+  
+限制拆分结论：  
+*  “将一个正整数n拆为若干个两两不同的正整数之和” 与 “将一个正整数n拆为若干个奇数之和”的方案数相同
+*  “把正整数n拆分为至多k个正整数之和” 与 “把正整数n拆分为不超过k的若干个正整数之和”的方案数相同
+*  “把正整数n拆分为若干个相等的正整数之和”的方案数为n的因子个数
+
+### 代码
+
+#### 环境
+
+```c++
+typedef long long LL;
+
+const int MAXN = 100010;
+const LL MOD = 1000000007;
+
+LL dp[MAXN]={0};
+```
+
+#### 辅助函数
+
+```c++
+LL Five(LL x) { //计算正五边形数
+    LL ans = 3 * x * x - x;
+    return ans / 2;
+}
+
+bool change(int i, int j) {
+    LL k = Five(j);
+    if (k > i) return false;
+
+    if (j % 2 == 0) //判断奇偶从而判断系数为正还是为负
+        dp[i] = (dp[i] - dp[i - k]);
+    else
+        dp[i] = (dp[i] + dp[i - k]);
+    (dp[i] += MOD) %= MOD;
+
+    return true;
+}
+```
+
+#### 递推母函数初始化
+
+```c++
+void init() {
+    dp[0] = 1;
+    for (int i = 1; i < MAXN; i++)
+        for (int j = 1;change(i,j)&&change(i,-j); j++);
+}
+```
+
+#### 用法
+
+调用init()后，dp数组内dp[i]表示将正整数划分为若干个正整数之和的方案数。
+
+## 错排
+
+### 定义
+
+将n个不同的元素重新排列后每个元素都不放在自己原来位置上的方法数
+
+### 递推
+
+$$F(i) = (i-1)\times (\ F(i-1)+F(i-2)\ )$$
+
+### 代码
+
+```c++
+//初始化错排函数，循环节为2*mod
+void initF(LL n, LL mod) {
+    F[0] = 1, F[1] = 0;
+    for (int i = 2; i < 2 * mod; i++)
+        F[i] = LL(i - 1) * (F[i - 1] + F[i - 2]) % mod;
+}
+```
+
+## 扩展Lucas定理
+
+快速求组合数取模
+
+### 预处理加速
+
+空间复杂度O(MOD)
+
+#### 环境
+
+```c++
+typedef long long LL;
+
+const int MAXF = 200003;
+const int MAXMOD = 100003;
+
+LL num[MAXMOD], factor[MAXMOD], power[MAXMOD], tot, pri[MAXMOD];
+```
+
+#### 辅助函数
+
+```c++
+//对模数分解质因子，记录每个质因子factor的指数power和对应的值num
+void div(LL mod) {
+    tot = 0;
+    LL tmp = mod;
+    for (int i = 2; i * i <= mod; i++) {
+        if (tmp % i != 0) continue;
+        factor[++tot] = i, num[tot] = 1, power[tot] = 0;
+        while (tmp % i == 0)
+            num[tot] *= i, tmp /= i, power[tot]++;
+    }
+    if (tmp != 1) factor[++tot] = tmp, num[tot] = tmp, power[tot] = 1;
+}
+
+//扩展欧几里得求逆元
+void ext_gcd(LL a, LL b, LL &x, LL &y) {
+    if (b == 0) {
+        x = 1, y = 0;
+        return;
+    }
+    ext_gcd(b, a % b, x, y);
+    LL tp = x;
+    x = y;
+    y = tp - a / b * y;
+}
+
+LL quickPow(LL a, LL b, LL mod) {
+    LL res = 1;
+    for (; b > 0; b /= 2) {
+        if (b % 2 == 1) res = res * a % mod;
+        a = a * a % mod;
+    }
+    return res;
+}
+
+LL calc(LL n, LL p, LL _p) {
+    if (n < _p) return pri[n];
+    return (LL(pri[n % p]) * calc(n / _p, p, _p) % p * quickPow(pri[p - 1], n / p, p) % p + p) % p;
+}
+
+LL count(LL n, LL p) {
+    if (n < p) return 0;
+    return n / p + count(n / p, p);
+}
+
+LL C(LL n, LL k, LL p, LL _p, LL t) {
+    pri[0] = 1;
+    for (int i = 1; i <= p; i++)
+        if (i % _p != 0)
+            pri[i] = LL(pri[i - 1]) * i % p;
+        else
+            pri[i] = pri[i - 1];
+    LL t3 = count(n, _p) - count(k, _p) - count(n - k, _p);
+    if (t3 >= t) return 0;
+    LL t1 = calc(n, p, _p), t2 = calc(k, p, _p) * calc(n - k, p, _p) % p;
+    LL x, y;
+    ext_gcd(t2, p, x, y);
+    return (t1 * x % p * quickPow(_p, t3, p) + p) % p;
+}
+```
+
+#### 核心代码
+
+```c++
+//求n个元素中任意取m个的方法数模mod
+LL exLucas(LL n, LL m, LL mod) {
+    LL res = 0, tp;
+    LL x, y;
+    for (int i = 1; i <= tot; i++) {
+        ext_gcd(mod / num[i], num[i], x, y);
+        tp = C(n, m, num[i], factor[i], power[i]);
+        res += x * tp * (mod / num[i]) % mod, res %= mod;
+    }
+    return (res + mod) % mod;
+}
+```
+#### 用法
+
+调用$div(mod)$对模数质因数分解，随后调用$exLucas(n, m, mod)$求n个元素中任意取m个的方法数模mod
+
+## 二项式反演
+
+### 定义
+
+若
+
+$$
+f(n) = \sum^n_{j=0} C^j_n \ g(j)
+$$
+
+可由二项式反演得
+
+$$
+g(n) = \sum ^n _{i=0} (-1)^i C^i_n \ f(n-i)
+$$
 
 # DP
 
