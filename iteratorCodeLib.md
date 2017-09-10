@@ -2328,7 +2328,8 @@ hk_match.max_match();
 ll sum(ll a, ll p, ll n) {
     if (n <= 1) return a;
     if (n & 1)
-        return (sum(a, p, n / 2) * (1 + quickPow(p, n / 2)) % MOD + quickPow(p, n - 1)) % MOD;
+        return (sum(a, p, n / 2) * (1 + quickPow(p, n / 2)) % MOD
+				+ quickPow(p, n - 1)) % MOD;
     else
         return (sum(a, p, n / 2) * (1 + quickPow(p, n / 2))) % MOD;
 }
@@ -3950,7 +3951,8 @@ LL quickPow(LL a, LL b, LL mod) {
 
 LL calc(LL n, LL p, LL _p) {
     if (n < _p) return pri[n];
-    return (LL(pri[n % p]) * calc(n / _p, p, _p) % p * quickPow(pri[p - 1], n / p, p) % p + p) % p;
+    return (LL(pri[n % p]) * calc(n / _p, p, _p) % p
+		* quickPow(pri[p - 1], n / p, p) % p + p) % p;
 }
 
 LL count(LL n, LL p) {
@@ -4298,12 +4300,16 @@ int dots_inline(point p1,point p2,point p3)
 //判点是否在线段上,包括端点（下面为两种接口模式）
 int dot_online_in(point p,line l)
 {
-	return zero(xmult(p,l.a,l.b))&&(l.a.x-p.x)*(l.b.x-p.x)<eps&&(l.a.y-p.y)*(l.b.y-p.y)<eps;
+	return zero(xmult(p,l.a,l.b))
+			&&(l.a.x-p.x)*(l.b.x-p.x)<eps
+			&&(l.a.y-p.y)*(l.b.y-p.y)<eps;
 }
 
 int dot_online_in(point p,point l1,point l2)
 {
-	return zero(xmult(p,l1,l2))&&(l1.x-p.x)*(l2.x-p.x)<eps&&(l1.y-p.y)*(l2.y-p.y)<eps;
+	return zero(xmult(p,l1,l2))
+		&&(l1.x-p.x)*(l2.x-p.x)<eps
+		&&(l1.y-p.y)*(l2.y-p.y)<eps;
 }
 
 //判点是否在线段上,不包括端点
@@ -4569,9 +4575,9 @@ int inside_polygon(point q,int n,point* p,int on_edge=2)
 	while (i<n)
 		for (count=i=0,q2.x=rand()+offset,q2.y=rand()+offset;i<n;i++)
 		{
-			if
-				(zero(xmult(q,p[i],p[(i+1)%n]))&&(p[i].x-q.x)*(p[(i+1)%n].x-q.x)<eps
-				 &&(p[i].y-q.y)*(p[(i+1)%n].y-q.y)<eps)
+			if(zero(xmult(q,p[i],p[(i+1)%n]))
+				&&(p[i].x-q.x)*(p[(i+1)%n].x-q.x)<eps
+				&&(p[i].y-q.y)*(p[(i+1)%n].y-q.y)<eps)
 					return on_edge;
 			else if (zero(xmult(q,q2,p[i])))
 				break;
@@ -4594,8 +4600,9 @@ inline int opposite_side(point p1,point p2,point l1,point l2)
 
 inline int dot_online_in(point p,point l1,point l2)
 {
-	return
-		zero(xmult(p,l1,l2))&&(l1.x-p.x)*(l2.x-p.x)<eps&&(l1.y-p.y)*(l2.y-p.y)<eps;
+	return zero(xmult(p,l1,l2))
+			&&(l1.x-p.x)*(l2.x-p.x)<eps
+			&&(l1.y-p.y)*(l2.y-p.y)<eps;
 }
 
 //判线段在任意多边形内,顶点按顺时针或逆时针给出,与边界相交返回 1
@@ -4606,9 +4613,9 @@ int inside_polygon(point l1,point l2,int n,point* p) {
 		return 0;
 	for (i=0;i<n;i++)
 	{
-		if
-			(opposite_side(l1,l2,p[i],p[(i+1)%n])&&opposite_side(p[i],p[(i+1)%n],l1,l2))
-				return 0;
+		if(opposite_side(l1,l2,p[i],p[(i+1)%n])
+			&&opposite_side(p[i],p[(i+1)%n],l1,l2))
+			return 0;
 		else if (dot_online_in(l1,p[i],p[(i+1)%n]))
 			t[k++]=l1;
 		else if (dot_online_in(l2,p[i],p[(i+1)%n]))
@@ -4996,28 +5003,32 @@ int dots_onplane(point3 a,point3 b,point3 c,point3 d)
 
 //判点是否在线段上,包括端点和共线
 int dot_online_in(point3 p,line3 l){
-	return
-		zero(vlen(xmult(subt(p,l.a),subt(p,l.b))))&&(l.a.x-p.x)*(l.b.x-p.x)<eps&&
-		(l.a.y-p.y)*(l.b.y-p.y)<eps&&(l.a.z-p.z)*(l.b.z-p.z)<eps;
+	return zero(vlen(xmult(subt(p,l.a),subt(p,l.b))))
+			&&(l.a.x-p.x)*(l.b.x-p.x)<eps
+			&&(l.a.y-p.y)*(l.b.y-p.y)<eps
+			&&(l.a.z-p.z)*(l.b.z-p.z)<eps;
 }
 
 int dot_online_in(point3 p,point3 l1,point3 l2){
-	return
-		zero(vlen(xmult(subt(p,l1),subt(p,l2))))&&(l1.x-p.x)*(l2.x-p.x)<eps&&
-		(l1.y-p.y)*(l2.y-p.y)<eps&&(l1.z-p.z)*(l2.z-p.z)<eps;
+	return zero(vlen(xmult(subt(p,l1),subt(p,l2))))
+			&&(l1.x-p.x)*(l2.x-p.x)<eps
+			&&(l1.y-p.y)*(l2.y-p.y)<eps
+			&&(l1.z-p.z)*(l2.z-p.z)<eps;
 }
 
 //判点是否在线段上,不包括端点
 int dot_online_ex(point3 p,line3 l){
 	return
-		dot_online_in(p,l)&&(!zero(p.x-l.a.x)||!zero(p.y-l.a.y)||!zero(p.z-l.a.z))&&
-		(!zero(p.x-l.b.x)||!zero(p.y-l.b.y)||!zero(p.z-l.b.z));
+		dot_online_in(p,l)
+		&&(!zero(p.x-l.a.x)||!zero(p.y-l.a.y)||!zero(p.z-l.a.z))
+		&&(!zero(p.x-l.b.x)||!zero(p.y-l.b.y)||!zero(p.z-l.b.z));
 }
 
 int dot_online_ex(point3 p,point3 l1,point3 l2){
 	return
-		dot_online_in(p,l1,l2)&&(!zero(p.x-l1.x)||!zero(p.y-l1.y)||!zero(p.z-l1.z))&&
-		(!zero(p.x-l2.x)||!zero(p.y-l2.y)||!zero(p.z-l2.z));
+		dot_online_in(p,l1,l2)
+		&&(!zero(p.x-l1.x)||!zero(p.y-l1.y)||!zero(p.z-l1.z))
+		&&(!zero(p.x-l2.x)||!zero(p.y-l2.y)||!zero(p.z-l2.z));
 }
 ```
 
@@ -5026,29 +5037,29 @@ int dot_online_ex(point3 p,point3 l1,point3 l2){
 ```c++
 //判点是否在空间三角形上,包括边界,三点共线无意义
 int dot_inplane_in(point3 p,plane3 s){
-	return
-		zero(vlen(xmult(subt(s.a,s.b),subt(s.a,s.c)))
+	return zero(vlen(xmult(subt(s.a,s.b),subt(s.a,s.c)))
 			 -vlen(xmult(subt(p,s.a),subt(p,s.b)))
 			 -vlen(xmult(subt(p,s.b),subt(p,s.c)))
 			 -vlen(xmult(subt(p,s.c),subt(p,s.a))));
 }
 int dot_inplane_in(point3 p,point3 s1,point3 s2,point3 s3){
-	return
-		zero(vlen(xmult(subt(s1,s2),subt(s1,s3)))
+	return zero(vlen(xmult(subt(s1,s2),subt(s1,s3)))
 			 -vlen(xmult(subt(p,s1),subt(p,s2)))
 			 -vlen(xmult(subt(p,s2),subt(p,s3)))
 			 -vlen(xmult(subt(p,s3),subt(p,s1))));
 }
 //判点是否在空间三角形上,不包括边界,三点共线无意义
 int dot_inplane_ex(point3 p,plane3 s){
-	return
-		dot_inplane_in(p,s)&&vlen(xmult(subt(p,s.a),subt(p,s.b)))>eps&&
-		vlen(xmult(subt(p,s.b),subt(p,s.c)))>eps&&vlen(xmult(subt(p,s.c),subt(p,s.a)))>eps;
+	return dot_inplane_in(p,s)
+		&&vlen(xmult(subt(p,s.a),subt(p,s.b)))>eps
+		&&vlen(xmult(subt(p,s.b),subt(p,s.c)))>eps
+		&&vlen(xmult(subt(p,s.c),subt(p,s.a)))>eps;
 }
 int dot_inplane_ex(point3 p,point3 s1,point3 s2,point3 s3){
-	return
-		dot_inplane_in(p,s1,s2,s3)&&vlen(xmult(subt(p,s1),subt(p,s2)))>eps&&
-		vlen(xmult(subt(p,s2),subt(p,s3)))>eps&&vlen(xmult(subt(p,s3),subt(p,s1)))>eps;
+	return dot_inplane_in(p,s1,s2,s3)
+		&&vlen(xmult(subt(p,s1),subt(p,s2)))>eps
+		&&vlen(xmult(subt(p,s2),subt(p,s3)))>eps
+		&&vlen(xmult(subt(p,s3),subt(p,s1)))>eps;
 }
 ```
 
@@ -5056,13 +5067,13 @@ int dot_inplane_ex(point3 p,point3 s1,point3 s2,point3 s3){
 
 ```c++
 int same_side(point3 p1,point3 p2,line3 l){
-	return
-		dmult(xmult(subt(l.a,l.b),subt(p1,l.b)),xmult(subt(l.a,l.b),subt(p2,l.b)))>eps;
+	return dmult(xmult(subt(l.a,l.b),subt(p1,l.b))
+				,xmult(subt(l.a,l.b),subt(p2,l.b)))>eps;
 }
 
 int same_side(point3 p1,point3 p2,point3 l1,point3 l2){
-	return
-		dmult(xmult(subt(l1,l2),subt(p1,l2)),xmult(subt(l1,l2),subt(p2,l2)))>eps;
+	return dmult(xmult(subt(l1,l2),subt(p1,l2))
+				,xmult(subt(l1,l2),subt(p2,l2)))>eps;
 }
 ```
 
@@ -5071,13 +5082,13 @@ int same_side(point3 p1,point3 p2,point3 l1,point3 l2){
 ```c++
 //判两点在线段异侧,点在线段上返回 0,不共面无意义
 int opposite_side(point3 p1,point3 p2,line3 l){
-	return
-		dmult(xmult(subt(l.a,l.b),subt(p1,l.b)),xmult(subt(l.a,l.b),subt(p2,l.b)))<-eps;
+	return dmult(xmult(subt(l.a,l.b),subt(p1,l.b))
+				,xmult(subt(l.a,l.b),subt(p2,l.b)))<-eps;
 }
 
 int opposite_side(point3 p1,point3 p2,point3 l1,point3 l2){
-	return
-		dmult(xmult(subt(l1,l2),subt(p1,l2)),xmult(subt(l1,l2),subt(p2,l2)))<-eps;
+	return dmult(xmult(subt(l1,l2),subt(p1,l2))
+				,xmult(subt(l1,l2),subt(p2,l2)))<-eps;
 }
 ```
 
@@ -5086,13 +5097,12 @@ int opposite_side(point3 p1,point3 p2,point3 l1,point3 l2){
 ```c++
 //判两点在平面同侧,点在平面上返回 0
 int same_side(point3 p1,point3 p2,plane3 s){
-	return
-		dmult(pvec(s),subt(p1,s.a))*dmult(pvec(s),subt(p2,s.a))>eps;
+	return dmult(pvec(s),subt(p1,s.a))*dmult(pvec(s),subt(p2,s.a))>eps;
 }
 
 int same_side(point3 p1,point3 p2,point3 s1,point3 s2,point3 s3){
-	return
-		dmult(pvec(s1,s2,s3),subt(p1,s1))*dmult(pvec(s1,s2,s3),subt(p2,s1))>eps;
+	return dmult(pvec(s1,s2,s3),subt(p1,s1))
+			*dmult(pvec(s1,s2,s3),subt(p2,s1))>eps;
 }
 ```
 
@@ -5101,13 +5111,12 @@ int same_side(point3 p1,point3 p2,point3 s1,point3 s2,point3 s3){
 ```c++
 //判两点在平面异侧,点在平面上返回 0
 int opposite_side(point3 p1,point3 p2,plane3 s){
-	return
-		dmult(pvec(s),subt(p1,s.a))*dmult(pvec(s),subt(p2,s.a))<-eps;
+	return dmult(pvec(s),subt(p1,s.a))*dmult(pvec(s),subt(p2,s.a))<-eps;
 }
 
 int opposite_side(point3 p1,point3 p2,point3 s1,point3 s2,point3 s3){
-	return
-		dmult(pvec(s1,s2,s3),subt(p1,s1))*dmult(pvec(s1,s2,s3),subt(p2,s1))<-eps;
+	return dmult(pvec(s1,s2,s3),subt(p1,s1))
+			*dmult(pvec(s1,s2,s3),subt(p2,s1))<-eps;
 }
 ```
 
