@@ -2813,12 +2813,25 @@ bool miller_rabin(ll n){
 
 ### 定义
 
-$$ \mu = \begin{cases} 1 & n=1 \\ (-1)^k & n = p_1p_2\cdots p_k \\ 0 & other \end{cases}$$
+$$
+\mu = 
+\begin{cases} 
+1 & n=1 \\ 
+(-1)^k & n = p_1p_2\cdots p_k \\
+0 & other 
+\end{cases}
+$$
 
 ### 莫比乌斯反演
 
-$$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$  
-$$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$  
+$$
+f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})
+$$
+
+$$
+g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d)
+$$
+
 倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$  
 
 ### 技巧
