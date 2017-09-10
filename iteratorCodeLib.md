@@ -1794,25 +1794,25 @@ int solve()
 ### 定理
 
 算法引入：  
-给定一个无向图G，求它生成树的个数t(G);  
+给定一个无向图G，求它生成树的个数t(G);
  
 算法思想：  
 (1)G的度数矩阵D[G]是一个n*n的矩阵,并且满足:当i≠j时,dij=0;当i=j时,dij等于vi的度数;  
 (2)G的邻接矩阵A[G]是一个n*n的矩阵,并且满足:如果vi,vj之间有边直接相连,则aij=1,否则为0;  
 定义图G的Kirchhoff矩阵C[G]为C[G]=D[G]-A[G];  
 Matrix-Tree定理:G的所有不同的生成树的个数等于其Kirchhoff矩阵C[G]任何一个n-1阶主子式的行列式的绝对值；  
-所谓n-1阶主子式,就是对于r(1≤r≤n),将C[G]的第r行,第r列同时去掉后得到的新矩阵,用Cr[G]表示;  
+所谓n-1阶主子式,就是对于r(1≤r≤n),将C[G]的第r行,第r列同时去掉后得到的新矩阵,用Cr[G]表示;
  
 Kirchhoff矩阵的特殊性质：  
 (1)对于任何一个图G,它的Kirchhoff矩阵C的行列式总是0,这是因为C每行每列所有元素的和均为0;  
 (2)如果G是不连通的,则它的Kirchhoff矩阵C的任一个主子式的行列式均为0;  
-(3)如果G是一颗树,那么它的Kirchhoff矩阵C的任一个n-1阶主子式的行列式均为1;  
+(3)如果G是一颗树,那么它的Kirchhoff矩阵C的任一个n-1阶主子式的行列式均为1;
  
 算法举例： sd:  
 SPOJ104(Highways)  
  
 题目地址：  
-<http://www.spoj.com/problems/HIGH/>  
+<http://www.spoj.com/problems/HIGH/>
  
 题目大意：  
 一个有n座城市的组成国家,城市1至n编号,其中一些城市之间可以修建高速公路;  
@@ -2080,6 +2080,7 @@ int main() {
 ## 强连通分量
 
 ### 变量&宏
+
 ```c++
 #include <cstring>
 #include <vector>
@@ -2432,18 +2433,21 @@ $$
 中国剩余定理说明：假设整数$m_1,m_2, \cdots ,m_n$两两互质，则对任意的整数：$a1,a2, \cdots ,an$，方程组 有解，并且通解可以用如下方式构造得到：  
 设
 
-$$ M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i 
+$$
+M = m_1 \times m_2 \times m_3 \times \cdots \times m_n = \prod_{i=1}^n m_i 
 $$
 
 是整数$m_1,m_2, \cdots ,m_n$的乘积，并设
 
-$$ M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} 
+$$
+M_i = M \div m_i \ , \forall i \in \left \{ 1, 2, \cdots, n \right \} 
 $$
 
 是除了$m_i$以外的$n-1$个整数的乘积。  
 设$t_i=M_i^{-1}$为$M_i$模$m_i$的数论倒数($t_i$为$M_i$意义下的逆元) 
 
-$$ M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \}
+$$
+M_it_i \equiv 1 \left ( mod \ m_i \right ), \forall i \in \left \{ 1,2,\cdots,n \right \}
 $$
 
 方程组$\left ( S \right )$的通解形式为
@@ -3656,7 +3660,7 @@ void init() {
 
 ### 定义
 
-把正整数n拆分为至多k个正整数之和的方案数。
+把正整数n拆分为至多k个正整数之和的方案数。  
 把正整数n拆分为不超过k的若干个正整数之和的方案数。
 
 ### DP递推
