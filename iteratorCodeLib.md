@@ -3488,7 +3488,7 @@ $$
 
 其中对偶数项做FFT得到$X_1\left( k \right )$,对奇数项做FFT得到$X_2\left( k \right )$  
 其中$X_1\left( k \right )$为第k个偶数项的DFT值  
-由于$e^{i\pi 2n}=1,n\in Z$且$e^{i\pi \left(2n+1\right)}=-1,n\in Z$
+由于$e^{i\pi 2n}=1,n\in \mathbb{Z}$且$e^{i\pi \left(2n+1\right)}=-1,n\in \mathbb{Z}$
 
 $$
 \begin{aligned}
