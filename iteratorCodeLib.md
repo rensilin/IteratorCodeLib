@@ -2142,6 +2142,127 @@ int scc(int n){
 }
 ```
 
+## tarjan缩点/找割边/找割点
+
+> 复杂度$\theta\left(m\right)$
+
+### 环境
+
+```c++
+#define MAXN 100001//点数
+#define MAXM 200002//边数
+
+//此题是无向图找割边,然后把环缩点
+int n,m;
+int DFN;
+int dfn[MAXN];//dfs序
+int low[MAXN];//不经过父节点能访问的最早的点的dfn
+int stk[MAXN],tp;//栈
+int fa[MAXN];//并查集,fa[i]为缩点后i所在的点
+
+struct Edge{
+	int to;
+	int next;
+}edge[MAXM];//无向图
+int head[MAXN],top;
+```
+
+### 初始化&加边
+
+```c++
+inline void initTarjan(int n)//点编号从1开始
+{
+	tp=DFN=top=0;
+	for(int i=1;i<=n;i++)
+	{
+		fa[i]=i;
+		head[i]=dfn[i]=-1;
+	}
+}
+
+inline void addEdge(int a,int b)
+{
+	edge[top].to=b;
+	edge[top].next=head[a];
+	head[a]=top++;
+
+	edge[top].to=a;
+	edge[top].next=head[b];
+	head[b]=top++;
+}
+```
+
+### 辅助函数(并查集,栈)
+
+```c++
+inline void stkPush(int x)
+{
+	stk[tp++]=x;
+}
+
+inline int stkPop()
+{
+	return stk[--tp];
+}
+
+inline int unionFind(int x)
+{
+	while(fa[fa[x]]!=fa[x])fa[x]=fa[fa[x]];
+	return fa[x];
+}
+
+inline int reAddEdge(int e,int a)//边e交给a
+{
+	if(unionFind(edge[e].to)==a)return edge[e].next;
+	int tmp=edge[e].next;
+	edge[e].next=head[a];
+	head[a]=e;
+	edge[e^1].to=a;
+	return tmp;
+}
+```
+
+### 核心代码
+
+```c++
+void tarjan(int nown,int p)//缩点
+{
+	if(dfn[nown]!=-1)return;
+	dfn[nown]=low[nown]=DFN++;
+	stkPush(nown);
+	for(int i=head[nown];i!=-1;i=edge[i].next)
+	{
+		if(edge[i].to==p)continue;
+		tarjan(edge[i].to,nown);
+		low[nown]=min(low[nown],low[edge[i].to]);
+	}
+	if(dfn[nown]==low[nown])
+	{
+		//此时p为割点
+		//把栈顶到nown的点合并到nown上
+		int i;
+		for(i=tp-1;stk[i]!=nown;i--)
+			fa[stk[i]]=nown;
+		//重连边
+		i=head[nown];head[nown]=-1;
+		while(i!=-1)i=reAddEdge(i,nown);
+		while((i=stkPop())!=nown)
+			for(int j=head[i];j!=-1;j=reAddEdge(j,nown))
+				;
+	}
+}
+```
+
+### 用法
+
+```c++
+//要求无重边,无自环!!!
+initTarjan();
+for(e:u->v)addEdge(u,v);
+tarjan(1,0);
+//之后图变为以1为根节点的树
+```
+
 ## 二分图最大匹配
 
 ### 建图&变量
