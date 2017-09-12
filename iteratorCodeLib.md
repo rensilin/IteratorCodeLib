@@ -2144,7 +2144,7 @@ int scc(int n){
 
 ## tarjan缩点/找割边/找割点
 
-> 复杂度$\theta\left(m\right)$
+> 复杂度$\Theta\left(m\right)$
 
 ### 环境
 
