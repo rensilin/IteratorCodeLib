@@ -7438,7 +7438,10 @@ int main()
 
 ### 动态可修改(整体二分)
 
-> 复杂度&\Theta\left(nlog\leftn\right\right)&
+题目同上
+复杂度$\Theta\left(nlog\leftn\right\right)$
+
+#### 代码
 
 ```c++
 #define MAXN 66666
