@@ -7436,6 +7436,156 @@ int main()
 }
 ```
 
+### 动态可修改(整体二分)
+
+> 复杂度&\Theta\left(nlog\leftn\right\right)&
+
+```c++
+#define MAXN 66666
+
+int tree[MAXN];//树状数组 
+
+int lowbit(int a)
+{
+	return a&-a;
+}
+
+void tree_add(int a,int b)
+{
+	for(int i=a;i<MAXN;i+=lowbit(i))tree[i]+=b;
+}
+
+int tree_find(int a)
+{
+	int ans=0;
+	for(int i=a;i;i-=lowbit(i))ans+=tree[i];
+	return ans;
+}
+
+int kkke[MAXN],nk;//离散化用
+
+int khash(int x)
+{
+	return lower_bound(kkke,kkke+nk,x)-kkke;
+}
+
+int n,m;
+int arr[MAXN];//原数组
+struct Query{
+	int a,b,k,id;
+	//id>=0 : 查询[a,b]中第k小,是第id个询问
+	//id==-1 : a位置+1 位置上变为b
+	//id==-2 : a位置-1 位置上原是b
+}query[MAXN],q1[MAXN],q2[MAXN];
+int ID;//询问数
+int mm;//修改拆为删除和添加后的总操作数
+int ans[MAXN];//储存答案
+
+char S[22];
+
+void work(int head,int tail,int left,int right)
+{
+	if(head>tail)return;
+	if(left>=right)
+	{
+		for(int i=head;i<=tail;i++)
+			if(query[i].id>=0)
+				ans[query[i].id]=left;
+		return;
+	}
+	int mid=(left+right)>>1;
+	int n1=0,n2=0;
+	for(int i=head;i<=tail;i++)
+	{
+		if(query[i].id<0)
+		{
+			if(query[i].b<=mid)
+			{
+				tree_add(query[i].a,query[i].id==-1?1:-1);
+				q1[n1++]=query[i];
+			}
+			else q2[n2++]=query[i];
+		}
+		else
+		{
+			int tmp=tree_find(query[i].b)-tree_find(query[i].a-1);
+			if(tmp>=query[i].k)q1[n1++]=query[i];
+			else
+			{
+				query[i].k-=tmp;
+				q2[n2++]=query[i];
+			}
+		}
+	}
+
+	for(int i=head;i<=tail;i++)//还原
+		if(query[i].id<0&&query[i].b<=mid)
+			tree_add(query[i].a,query[i].id==-1?-1:1);
+
+	int nn=head;
+	for(int i=0;i<n1;i++)
+		query[nn++]=q1[i];
+	for(int i=0;i<n2;i++)
+		query[nn++]=q2[i];
+	work(head,head+n1-1,left,mid);
+	work(head+n1,tail,mid+1,right);
+}
+
+int main()
+{
+	int t;
+	kread(t);
+	while(t--)
+	{
+		memset(tree,0,sizeof(tree));
+		kread(n,m);
+		ID=mm=nk=0;
+		for(int i=1;i<=n;i++)
+		{
+			kread(arr[i]);
+
+			query[mm].a=i;
+			query[mm].b=arr[i];
+			query[mm++].id=-1;
+
+			kkke[nk++]=arr[i];
+		}
+		int a,b;
+		for(int i=0;i<m;i++)
+		{
+			scanf("%s",S);
+			if(S[0]=='Q')
+			{
+				kread(query[mm].a,query[mm].b,query[mm].k);
+				query[mm++].id=ID++;
+			}
+			else
+			{
+				kread(a,b);
+				query[mm].a=a;
+				query[mm].b=b;
+				query[mm++].id=-1;
+
+				query[mm].a=a;
+				query[mm].b=arr[a];
+				query[mm++].id=-2;
+
+				kkke[nk++]=arr[a]=b;
+			}
+		}
+		sort(kkke,kkke+nk);
+		nk=unique(kkke,kkke+nk)-kkke;
+		for(int i=0;i<mm;i++)
+			if(query[i].id<0)
+				query[i].b=khash(query[i].b);
+		work(0,mm-1,0,nk-1);
+		for(int i=0;i<ID;i++)
+			printf("%d\n",kkke[ans[i]]);
+	}
+	return 0;
+}
+```
+
 # STL
 
 ## 求合并,交集,并集，差集
