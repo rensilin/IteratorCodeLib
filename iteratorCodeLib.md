@@ -7439,7 +7439,7 @@ int main()
 ### 动态可修改(整体二分)
 
 题目同上
-复杂度$\Theta \left( nlog \left n \right \right)$
+复杂度$\Theta \left( nlog \left( n \right) \right)$
 
 #### 代码
 
