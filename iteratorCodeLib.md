@@ -883,6 +883,30 @@ struct DLX {//成员变量，init(),link()同上
 
 # 字符串
 
+## 最小循环表示
+
+### 代码
+
+```c++
+//最小循环表示
+//input: str[2*len] 原串扩展了一倍的串。如原串为“abc”， str为“abcabc”。
+//         len 原串的长度。
+//output：ptr 最小循环表示法的起始下标。
+int min_representation(int len){
+    int i = 0, j = 1, k = 0;
+    while(i < len && j < len && k < len){
+        if(str[i+k] == str[j+k])k++;
+        else{
+            if(str[i+k] < str[j+k]) j += k+1;
+            else i += k+1;
+            k = 0;
+            if(i == j)j++;
+        }
+    }
+    return min(i, j);
+}
+```
+
 ## 最长回文Manacher
 
 ### 代码
