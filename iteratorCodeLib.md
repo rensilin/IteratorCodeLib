@@ -7867,32 +7867,32 @@ Translates the String representation of a BigInteger in the specified radix into
 | 返回值            | 函数                                      | 简介                                                                                       |
 |:------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------|
 | BigInteger        | abs()                                     | Returns a BigInteger whose value is the absolute value of this BigInteger.                 |
-| BigInteger        | add(BigInteger val)                       | Returns a BigInteger whose value is (this + val).                                          |
-| BigInteger        | and(BigInteger val)                       | Returns a BigInteger whose value is (this & val).                                          |
-| BigInteger        | andNot(BigInteger val)                    | Returns a BigInteger whose value is (this & ~val).                                         |
-| int               | compareTo(BigInteger val)                 | Compares this BigInteger with the specified BigInteger.                                    |
-| BigInteger        | divide(BigInteger val)                    | Returns a BigInteger whose value is (this / val).                                          |
-| BigInteger[]      | divideAndRemainder     (BigInteger val)   | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
+| BigInteger        | add(BigInteger val)                       | Returns a BigInteger whose value is (this + val).                                          |
+| BigInteger        | and(BigInteger val)                       | Returns a BigInteger whose value is (this & val).                                          |
+| BigInteger        | andNot(BigInteger val)                    | Returns a BigInteger whose value is (this & ~val).                                         |
+| int               | compareTo(BigInteger val)                 | Compares this BigInteger with the specified BigInteger.                                    |
+| BigInteger        | divide(BigInteger val)                    | Returns a BigInteger whose value is (this / val).                                          |
+| BigInteger[]      | divideAndRemainder     (BigInteger val)   | Returns an array of two BigIntegers containing (this / val) followed by (this % val).      |
 | double            | doubleValue()                             | Converts this BigInteger to a double.                                                      |
-| boolean           | equals(Object x)                          | Compares this BigInteger with the specified Object for equality.                           |
-| BigInteger        | gcd(BigInteger val)                       | Returns a BigInteger whose value is the greatest common divisor of abs(this) and abs(val). |
-| BigInteger        | max(BigInteger val)                       | Returns the maximum of this BigInteger and val.                                            |
-| BigInteger        | min(BigInteger val)                       | Returns the minimum of this BigInteger and val.                                            |
-| BigInteger        | mod(BigInteger m)                         | Returns a BigInteger whose value is (this mod m).                                          |
-| BigInteger        | modInverse(BigInteger m)                  | Returns a BigInteger whose value is (this ^ -1 mod m).                                     |
-| BigInteger        | modPow(BigInteger exponent, BigInteger m) | Returns a BigInteger whose value is (this ^ exponent mod m).                               |
-| BigInteger        | multiply(BigInteger val)                  | Returns a BigInteger whose value is (this * val).                                          |
+| boolean           | equals(Object x)                          | Compares this BigInteger with the specified Object for equality.                           |
+| BigInteger        | gcd(BigInteger val)                       | Returns a BigInteger whose value is the greatest common divisor of abs(this) and abs(val). |
+| BigInteger        | max(BigInteger val)                       | Returns the maximum of this BigInteger and val.                                            |
+| BigInteger        | min(BigInteger val)                       | Returns the minimum of this BigInteger and val.                                            |
+| BigInteger        | mod(BigInteger m)                         | Returns a BigInteger whose value is (this mod m).                                          |
+| BigInteger        | modInverse(BigInteger m)                  | Returns a BigInteger whose value is (this ^ -1 mod m).                                     |
+| BigInteger        | modPow(BigInteger exponent, BigInteger m) | Returns a BigInteger whose value is (this ^ exponent mod m).                               |
+| BigInteger        | multiply(BigInteger val)                  | Returns a BigInteger whose value is (this * val).                                          |
 | BigInteger        | negate()                                  | Returns a BigInteger whose value is (-this).                                               |
-| BigInteger        | or(BigInteger val)                        | Returns a BigInteger whose value is (this &#124; val).                                     |
-| BigInteger        | pow(int exponent)                         | Returns a BigInteger whose value is (this ^ exponent).                                     |
-| BigInteger        | remainder(BigInteger val)                 | Returns a BigInteger whose value is (this % val).                                          |
-| BigInteger        | shiftLeft(int n)                          | Returns a BigInteger whose value is (this << n).                                           |
-| BigInteger        | shiftRight(int n)                         | Returns a BigInteger whose value is (this >> n).                                           |
-| BigInteger        | subtract(BigInteger val)                  | Returns a BigInteger whose value is (this - val).                                          |
+| BigInteger        | or(BigInteger val)                        | Returns a BigInteger whose value is (this &#124; val).                                     |
+| BigInteger        | pow(int exponent)                         | Returns a BigInteger whose value is (this ^ exponent).                                     |
+| BigInteger        | remainder(BigInteger val)                 | Returns a BigInteger whose value is (this % val).                                          |
+| BigInteger        | shiftLeft(int n)                          | Returns a BigInteger whose value is (this << n).                                           |
+| BigInteger        | shiftRight(int n)                         | Returns a BigInteger whose value is (this >> n).                                           |
+| BigInteger        | subtract(BigInteger val)                  | Returns a BigInteger whose value is (this - val).                                          |
 | String            | toString()                                | Returns the decimal String representation of this BigInteger.                              |
-| String            | toString(int radix)                       | Returns the String representation of this BigInteger in the given radix.                   |
-| static BigInteger | valueOf(long val)                         | Returns a BigInteger whose value is equal to that of the specified long.                   |
-| BigInteger        | xor(BigInteger val)                       | Returns a BigInteger whose value is (this ^ val).                                          |
+| String            | toString(int radix)                       | Returns the String representation of this BigInteger in the given radix.                   |
+| static BigInteger | valueOf(long val)                         | Returns a BigInteger whose value is equal to that of the specified long.                   |
+| BigInteger        | xor(BigInteger val)                       | Returns a BigInteger whose value is (this ^ val).                                          |
 
 ## BigDecimal
 
@@ -7917,8 +7917,8 @@ ROUND_UNNECESSARY 计算结果是精确的，不需要舍入模式
 
 | 返回值     | 函数                                                    |
 |:-----------|:--------------------------------------------------------|
-| BigDecimal | divide(BigDecimal divisor, int roundingMode)            |
-| BigDecimal | divide(BigDecimal divisor, int scale, int roundingMode) |
-| BigDecimal | setScale(int newScale)                                  |
-| BigDecimal | setScale(int newScale, int roundingMode)                |
+| BigDecimal | divide(BigDecimal divisor, int roundingMode)            |
+| BigDecimal | divide(BigDecimal divisor, int scale, int roundingMode) |
+| BigDecimal | setScale(int newScale)                                  |
+| BigDecimal | setScale(int newScale, int roundingMode)                |
 
