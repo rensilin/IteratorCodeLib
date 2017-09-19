@@ -1,0 +1,53 @@
+body{
+    counter-reset:h1cnt;
+}
+
+h1{
+    counter-reset:h2cnt;
+}
+
+h2{
+    counter-reset:h3cnt;
+}
+
+h3{
+    counter-reset:h4cnt;
+}
+
+h4{
+    counter-reset:h5cnt;
+}
+
+h5{
+    counter-reset:h6cnt;
+}
+
+h1:before{
+    counter-increment:h1cnt;
+    content:counter(h1cnt) " "
+}
+
+h2:before{
+    counter-increment:h2cnt;
+    content:counter(h1cnt) "." counter(h2cnt) " "
+}
+
+h3:before{
+    counter-increment:h3cnt;
+    content:counter(h1cnt) "." counter(h2cnt) "." counter(h3cnt) " "
+}
+
+h4:before{
+    counter-increment:h4cnt;
+    content:counter(h1cnt) "." counter(h2cnt) "." counter(h3cnt) "." counter(h4cnt) " "
+}
+
+h5:before{
+    counter-increment:h5cnt;
+    content:counter(h1cnt) "." counter(h2cnt) "." counter(h3cnt) "." counter(h4cnt) "." counter(h5cnt) " "
+}
+
+h5:before{
+    counter-increment:h6cnt;
+    content:counter(h1cnt) "." counter(h2cnt) "." counter(h3cnt) "." counter(h4cnt) "." counter(h5cnt) "." counter(h6cnt) " "
+}
