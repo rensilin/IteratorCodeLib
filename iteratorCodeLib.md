@@ -1767,7 +1767,7 @@ int bfs() //寻找最短路
 {  
 
     while(!q.empty()) q.pop(); //初始化队列  
-    for(int i=0;i<=MAXN;i++) dis[i]=INF; //初始化距离   
+    for(int i=0;i<MAXN;i++) dis[i]=INF; //初始化距离   
     q.push(S); //源点入队  
     dis[S]=0;  
     visque[S]=true;  
