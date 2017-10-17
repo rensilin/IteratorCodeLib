@@ -3029,9 +3029,15 @@ $$ \mu = \begin{cases} 1 & n=1 \\ (-1)^k & n = p_1p_2\cdots p_k \\ 0 & other \en
 
 ### 莫比乌斯反演
 
-$$f(n) = \sum_{d,n}g(d)=\sum_{d,n} g(\frac{n}{d})$$  
-$$ g(n) = \sum_{d,n} \mu(d) f(\frac{n}{d}) = \sum_{d,n} \mu(\frac{n}{d})f(d) $$  
-倍数形式只用把$\frac{n}{d}$变为$\frac{d}{n}$  
+分数形式:
+
+$$f(n) = \sum_{d|n}g(d)=\sum_{d|n} g(\frac{n}{d})$$  
+$$g(n) = \sum_{d|n} \mu(d) f(\frac{n}{d}) = \sum_{d|n} \mu(\frac{n}{d})f(d)$$  
+
+倍数形式:
+
+$$f(n) = \sum_{n|d}g(d)$$
+$$g(n) = \sum_{n|d} \mu(\frac{d}{n})f(d)$$  
 
 ### 技巧
 若$g(d)=[\frac n d]*[\frac m d]$之类的阶梯状函数  
