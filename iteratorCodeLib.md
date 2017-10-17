@@ -2351,7 +2351,9 @@ tarjan(1,0);
 
 ## 二分图最大匹配
 
-### 建图&变量
+### 匈牙利算法
+
+#### 建图&变量
 
 ```c++
 const int N = 1010;
@@ -2376,7 +2378,7 @@ void add_edge(int u, int v){
 }
 ```
 
-### 匈牙利算法代码
+#### 核心代码
 
 复杂度： $O(nm)$
 
@@ -2417,7 +2419,9 @@ int hungarian(){
 }
 ```
 
-### Hopcroft_Karp算法 变量&建图
+### Hopcroft_Karp算法
+
+#### 变量&建图
 
 ```c++
 const int N = 100000;
@@ -2435,7 +2439,7 @@ void add_edge(int u, int v){
 }
 ```
 
-### Hopcroft_Karp算法代码
+#### 核心代码
 
 复杂度：$O(\sqrt{V}E)$
 
