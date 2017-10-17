@@ -1583,8 +1583,6 @@ int main()
 ### 头文件&全局变量&宏
 
 ```c++
-#include <algorithm>
-#include <cstring>
 #include <queue>
 
 using namespace std;
@@ -1603,7 +1601,6 @@ struct the_edge{
     int next;
     int to;
     int v;
-    int re;
 }edge[MAXM];
 ```
 
