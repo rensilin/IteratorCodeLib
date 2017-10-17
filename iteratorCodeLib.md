@@ -1594,7 +1594,6 @@ const int MAXM=66666;
 const int INF = 0x3f3f3f3f;
 
 int S,T;
-int n;
 
 int head[MAXN*2],top;
 int cur[MAXN*2];
@@ -1606,9 +1605,6 @@ struct the_edge{
     int v;
     int re;
 }edge[MAXM];
-int va[MAXN];
-int vb[MAXN];
-int m;
 ```
 
 ### 建图
@@ -1693,20 +1689,15 @@ int dinic()
 ### 用法
 
 ```c++
+//指定MAXN,MAXM
 int main(){
-    kread(n,m);
-    S=1;T=n;
-    init_edge();
-    for(int i=2;i<n;i++)kread(va[i]);
-    for(int i=2;i<n;i++)kread(vb[i]);
-    int x,y,a,b,c;
-    for(int i=0;i<m;i++)
-    {
-        kread(x,y,a,b,c);
-        add_edge(x,y,c);
-        add_edge(y,x,c);
-    }
-    printf("%d\n",-dinic());
+    S=1;T=n;//指定源点汇点
+    init_edge();//初始化边
+	...
+    for(...)
+        add_edge(x,y,c);//加边
+	...
+    printf("%d\n",dinic());
     return 0;
 }
 ```
