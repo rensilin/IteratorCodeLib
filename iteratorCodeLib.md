@@ -2521,7 +2521,7 @@ struct Hopcroft_Karp{
 
 ```
 
-### Hopcroft_Karp算法 用法
+#### 用法
 
 ```c++
 hk_match.init(n, m);//n为左集合大小，m为右集合大小
