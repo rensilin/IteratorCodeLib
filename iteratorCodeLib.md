@@ -7326,6 +7326,89 @@ int main()
 }
 ```
 
+## 斜率优化
+
+### 问题描述
+
+将方程$dp[i] = \min or \max \left ( f_1(j)*g(i)+f_2(j) \right )+c$中形如若干条直线的极值的部分用单调栈维护。从而将复杂度从$O(n^2)$降至$O(n)$。
+
+### 代码
+
+```c++
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+#include <queue>
+
+using namespace std;
+
+typedef long long ll;
+
+const int MAXN = 500005;
+
+ll dp[MAXN];
+ll sum[MAXN];
+ll que[MAXN];
+int l, r;
+int n, m;
+
+/*----------------辅助函数----------------*/
+
+// 获取直线交点横坐标通常用 x = (c2 - c1) / (a2 - a1) (c为截距，a为自变量的系数)
+inline ll getDown(int i, int j) { // 获取交点横坐标分母部分
+    return -2 * (sum[i] - sum[j]);
+}
+
+inline ll getUp(int i, int j) { // 获取交点横坐标分子部分
+    return sum[i] * sum[i] + dp[i] - sum[j] * sum[j] - dp[j];
+}
+
+inline ll getNum(int i, int j) { // 获取DP值（直接求方程）
+    if (i < j) swap(i, j);
+    ll tmp = sum[i] - sum[j];
+    return tmp * tmp + m + dp[j];
+}
+/*----------------辅助函数----------------*/
+
+int main() {
+    while (~scanf("%d%d", &n, &m)) {
+        /*----------------输入----------------*/
+        int tmp;
+        sum[0] = 0;
+        for (int i = 1; i <= n; i++) {
+            scanf("%d", &tmp);
+            sum[i] = sum[i - 1] + tmp;
+        }
+        /*----------------输入----------------*/
+        
+        // 初始化队列、DP
+        l = r = 0;
+        que[r++] = 0;
+        dp[0] = 0;
+
+        for (int i = 1; i <= n; i++) {
+            // 去除队首无法得到最优解的元素（即交点在i的左侧）
+            while (r - l > 1 && getNum(i, que[l]) >= getNum(i, que[l + 1])) {
+                l++;
+            }
+            // 状态转移
+            dp[i] = getNum(i, que[l]);
+
+            /*----------------单调栈----------------*/
+            while (r - l > 1 && 
+                    getUp(i, que[r - 1]) * getDown(que[r - 1], que[r - 2]) >= 
+                    getUp(que[r - 1], que[r - 2]) * getDown(i, que[r - 1])) {
+                r--;
+            }
+            que[r++] = i;
+            /*----------------单调栈----------------*/
+        }
+        printf("%lld\n", dp[n]);
+    }
+    return 0;
+}
+```
+
 ## 插头DP
 
 ### 示例代码
