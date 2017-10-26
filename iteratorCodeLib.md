@@ -233,6 +233,7 @@ int tree_find(int left,int right,int k,int l,int r,int v)
 ## 树的点分治
 
 ```c++
+// 求距离小于k的顶点对数
 #include <cstdio>
 #include <cstring>
 #include <iostream>
