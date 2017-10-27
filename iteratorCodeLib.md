@@ -7220,17 +7220,17 @@ double area_of_overlap(point c1, double r1, point c2, double r2)
 
 ## 数位DP
 
-## 常规解法
+### 常规解法
 
 按位枚举状态，适用于统计连续范围内具有某一和位相关性质的数的数量等。
 
-## 示例问题
+### 示例问题
 
-### B-number
+#### B-number
 
 含有数字13和能够被13整除的数的个数。
 
-### 循环
+#### 循环
 
 ```c++
 #include <iostream>
@@ -7279,7 +7279,7 @@ int main() {
 }
 ```
 
-### 记忆化搜索
+#### 记忆化搜索
 
 ```c++
 /*
@@ -7411,6 +7411,59 @@ int main() {
     }
     return 0;
 }
+```
+
+## 四边形不等式优化
+
+### 原理
+
+利用单调性优化枚举次数，降低一维复杂度。  
+  
+基本形式：
+
+$$
+dp(i, j) = \min (dp(i,k)+dp(k+1, j)) + w(i, j)
+$$
+
+$$
+dp(i, j) = \min (dp(i,k)+w(i,k)+dp(k+1, j)+w(k+1,j))
+$$
+
+$$
+dp(i, j) = \min(dp(i,k) + w(k+1, j))
+$$
+
+只要证明$w(i, j+1) + w(i+1, j) \leqslant w(i, j) + w(i+1, j+ 1)$且$w(i,j) \leqslant w(i',j') \ i' \leqslant i \leqslant j \leqslant j'$即可使用四边形不等式优化：  
+上述基本形式中$dp(i, j)$取最小值时的$k(i,j)$满足性质$k(i,j-1) \leqslant k(i,j) \leqslant k(i, j+1)$。根据此性质枚举$k$能够降低一维的复杂度。  
+
+在实际应用场景中，可以将矩阵$k(i,j)$打印出来，观察其是否具有单调性。
+
+### 代码
+
+```c++
+// 初始化
+dp[1][0] = 0;
+for(int i=1; i<=n; i++){
+    dp[1][i] = cost(1, i);
+}
+
+// dp
+for(int i=2; i<=m+1; i++){
+    K[i][n+1] = n;
+    for(int j=n; j>=i; j--){
+        dp[i][j] = 1e9;
+
+        // 寻找最优决策点，并记录
+        for(int k = K[i-1][j]; k<= K[i][j+1]; k++){
+            if(dp[i-1][k]+cost(k+1, j) <= dp[i][j]){
+                dp[i][j] = dp[i-1][k]+cost(k+1, j);
+                K[i][j] = k;
+            }
+        }
+    }
+}
+
+printf("%lld\n", dp[m+1][n]);
 ```
 
 ## 插头DP
