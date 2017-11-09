@@ -1,8 +1,8 @@
 html:index.html
 	@echo index.html
 
-index.html:../iteratorCodeLib.md html.latex
-	pandoc --mathjax --template html.latex -s -N -o "$@" "$<"
+index.html:../iteratorCodeLib.md html.tem
+	pandoc --mathjax --template html.tem -s -N -o "$@" "$<"
 
 noTocHtml.html:../iteratorCodeLib.md noTocHtml.latex
 	pandoc --mathjax --template noTocHtml.latex -s -N -o "$@" "$<"
