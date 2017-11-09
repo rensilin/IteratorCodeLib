@@ -4,8 +4,8 @@ html:index.html
 index.html:../iteratorCodeLib.md html.tem
 	pandoc --mathjax --template html.tem -s -N -o "$@" "$<"
 
-noTocHtml.html:../iteratorCodeLib.md noTocHtml.latex
-	pandoc --mathjax --template noTocHtml.latex -s -N -o "$@" "$<"
+noTocHtml.html:../iteratorCodeLib.md noTocHtml.tem
+	pandoc --mathjax --template noTocHtml.tem -s -N -o "$@" "$<"
 
 kkke.me:index.html
 	scp "$<" acm@kkke.me:html/index.html
