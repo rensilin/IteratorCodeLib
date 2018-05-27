@@ -1,17 +1,17 @@
 # IteratorCodeLib
 
-[http://acm.kkke.me]
+<http://acm.kkke.me>
 
 ## PDF
 
-[http://acm.kkke.me/ICL.pdf]
+<http://acm.kkke.me/ICL.pdf>
 
 ## Build Yourself
 
-use `make` in dir `pandoc/`
+use `make` in dir `pandoc/`  
 You can find some details in `pandoc/makefile`.
 
-## OTHER
+## Other
 
 looking for your pull requests and issues
 
