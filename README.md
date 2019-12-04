@@ -1,6 +1,6 @@
 # IteratorCodeLib
 
-<http://acm.kkke.me>
+~~http://acm.kkke.me~~
 
 ## MainFile
 
@@ -8,7 +8,7 @@
 
 ## PDF
 
-<http://acm.kkke.me/ICL.pdf>
+~~http://acm.kkke.me/ICL.pdf~~
 
 ## Build Yourself
 
